@@ -1,12 +1,11 @@
-import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
 import * as path from "node:path";
-import mammoth from "mammoth";
 import type {
   CheckResult,
   Stage0ValidationResult,
   ValidationFailure,
 } from "../schemas/stage0.types";
+import { readFile } from "node:fs/promises";
+import { computeFactReviewHash, extractFactReviewText } from "../utils/factReviewIO";
 
 const DEFAULT_VOLATILE_RATES_PATH = "kb/v1_2/02_reference/08_volatile_rates_lookup.md";
 
@@ -289,9 +288,10 @@ export async function validateFactReview(
   let extractedText = "";
 
   try {
-    let buffer: Buffer;
     try {
-      buffer = await readFile(filePath);
+      // Probe readability first so we can distinguish "file missing" from
+      // "valid file but mammoth couldn't parse" with clean failure context.
+      await readFile(filePath);
     } catch (err) {
       result.checks.file_integrity = {
         status: "failed",
@@ -303,7 +303,6 @@ export async function validateFactReview(
         remediation: "Verify the file path is correct and the file is accessible.",
       });
       result.status = "failed";
-      // Still attempt rates check so caller sees full picture.
       const rates = await checkVolatileRatesFreshness(ratesPath, referenceDate);
       result.checks.volatile_rates_freshness = rates.check;
       if (rates.failure) result.failures.push(rates.failure);
@@ -313,8 +312,8 @@ export async function validateFactReview(
     }
 
     try {
-      const extraction = await mammoth.extractRawText({ buffer });
-      extractedText = extraction.value ?? "";
+      const extraction = await extractFactReviewText(filePath);
+      extractedText = extraction.text;
     } catch (err) {
       result.checks.file_integrity = {
         status: "failed",
@@ -367,7 +366,7 @@ export async function validateFactReview(
     result.flags.volatile_rates_stale = rates.stale;
 
     try {
-      const hash = createHash("sha256").update(extractedText, "utf8").digest("hex");
+      const hash = computeFactReviewHash(extractedText);
       result.source_fr_content_hash = hash;
       result.checks.content_hash = {
         status: "passed",
