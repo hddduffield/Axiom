@@ -478,6 +478,60 @@ export interface MethodologyAppendixResultFailed {
   _failure_reason: string;
 }
 
+// ────────────────────────────────────────────────────────────────────────
+// Stage 5 mechanical pre-checks
+// ────────────────────────────────────────────────────────────────────────
+
+export interface PreCheckResult {
+  status: "passed" | "warning" | "failed_auto_fixed" | "failed_blocked";
+  issue_count: number;
+  details: string;
+}
+
+export interface PreCheckIssue {
+  check_name: string;
+  severity: "blocking" | "auto_fixable" | "warning";
+  description: string;
+  prose_span_excerpt: string;
+  expected_value: string | null;
+  matched_value: string | null;
+  whitelist_candidates: string[];
+  remediation: string;
+}
+
+export interface MechanicalCheckResults {
+  overall_status: "passed" | "failed_auto_fixed" | "failed_blocked";
+  checks: {
+    number_coherence: PreCheckResult;
+    statute_consistency: PreCheckResult;
+    entity_name_consistency: PreCheckResult;
+    cascade_integrity: PreCheckResult;
+    recommendation_reference_resolution: PreCheckResult;
+    provenance_map_completeness: PreCheckResult;
+  };
+  issues: PreCheckIssue[];
+  auto_fixed_issues: PreCheckIssue[];
+  blocked_issues: PreCheckIssue[];
+  _orchestrator_flags: {
+    state_c_alternative_value_protection_fired: boolean;
+    auto_fix_count: number;
+    blocked_count: number;
+    warning_count: number;
+  };
+}
+
+export interface MechanicalCheckResultsFailed {
+  _builder_status: "FAILED";
+  _failure_reason: string;
+}
+
+export interface StatuteReferenceData {
+  current_estate_exemption_year: number;
+  tcja_expiration: string;
+  obbba_enactment: string;
+  current_year: number;
+}
+
 export type RenderingState = "A" | "B" | "C" | "D";
 
 export interface TopPrioritiesSelectedRecord {
