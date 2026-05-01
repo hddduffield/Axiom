@@ -62,3 +62,45 @@ export function isRange(v: NumericValue): boolean {
 export function rangeBounds(v: NumericValue): { low: number; high: number } {
   return bounds(v);
 }
+
+// ────────────────────────────────────────────────────────────────────────
+// Currency formatting (K/M/B + sig figs)
+// 3 sig figs under $10M, 2 sig figs above. No trailing zeros after the decimal.
+// ────────────────────────────────────────────────────────────────────────
+
+function toSigFigs(value: number, sf: number): string {
+  if (value === 0) return "0";
+  const sign = value < 0 ? "-" : "";
+  const abs = Math.abs(value);
+  const magnitude = Math.floor(Math.log10(abs));
+  const factor = Math.pow(10, magnitude - sf + 1);
+  const rounded = Math.round(abs / factor) * factor;
+  const decimals = Math.max(0, sf - 1 - magnitude);
+  let s = rounded.toFixed(decimals);
+  if (s.includes(".")) s = s.replace(/0+$/, "").replace(/\.$/, "");
+  return sign + s;
+}
+
+export function formatMoney(value: number): string {
+  const abs = Math.abs(value);
+  const sf = abs < 10_000_000 ? 3 : 2;
+  if (abs < 1000) {
+    return `$${Math.round(value)}`;
+  }
+  if (abs < 1_000_000) {
+    return `$${toSigFigs(value / 1000, sf)}K`;
+  }
+  if (abs < 1_000_000_000) {
+    return `$${toSigFigs(value / 1_000_000, sf)}M`;
+  }
+  return `$${toSigFigs(value / 1_000_000_000, sf)}B`;
+}
+
+// Render a NumericValue as a money string. Single → "$X"; range → "$low–$high".
+export function formatNumericValueMoney(v: NumericValue): string {
+  if (Array.isArray(v.value)) {
+    const [low, high] = v.value;
+    return `${formatMoney(low)}–${formatMoney(high)}`;
+  }
+  return formatMoney(v.value);
+}

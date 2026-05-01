@@ -13,8 +13,10 @@ import type {
   TopPrioritiesSelectedRecord,
 } from "../schemas/pipelineTypes";
 import { detectRenderingState } from "../utils/renderingState";
+import { formatMoney } from "../utils/numericValue";
 
 export { detectRenderingState };
+export { formatMoney };
 
 const ELIGIBLE_TIMING_BUCKETS = new Set(["0-30 days", "30-60 days", "60-120 days"]);
 const TIMING_SCORE: Record<string, number> = {
@@ -130,38 +132,6 @@ function impactScore(rec: SequencedRecommendation, state: RenderingState, maxSta
   if (maxStateAValue <= 0) return 0;
   const ratio = Math.log10(value + 1) / Math.log10(maxStateAValue + 1);
   return Math.max(0, Math.min(1, ratio));
-}
-
-// ────────────────────────────────────────────────────────────────────────
-// Currency formatting (K/M/B + sig figs)
-// ────────────────────────────────────────────────────────────────────────
-
-function toSigFigs(value: number, sf: number): string {
-  if (value === 0) return "0";
-  const sign = value < 0 ? "-" : "";
-  const abs = Math.abs(value);
-  const magnitude = Math.floor(Math.log10(abs));
-  const factor = Math.pow(10, magnitude - sf + 1);
-  const rounded = Math.round(abs / factor) * factor;
-  const decimals = Math.max(0, sf - 1 - magnitude);
-  let s = rounded.toFixed(decimals);
-  if (s.includes(".")) s = s.replace(/0+$/, "").replace(/\.$/, "");
-  return sign + s;
-}
-
-export function formatMoney(value: number): string {
-  const abs = Math.abs(value);
-  const sf = abs < 10_000_000 ? 3 : 2;
-  if (abs < 1000) {
-    return `$${Math.round(value)}`;
-  }
-  if (abs < 1_000_000) {
-    return `$${toSigFigs(value / 1000, sf)}K`;
-  }
-  if (abs < 1_000_000_000) {
-    return `$${toSigFigs(value / 1_000_000, sf)}M`;
-  }
-  return `$${toSigFigs(value / 1_000_000_000, sf)}B`;
 }
 
 // ────────────────────────────────────────────────────────────────────────

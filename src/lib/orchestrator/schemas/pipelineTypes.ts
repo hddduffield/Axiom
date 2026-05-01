@@ -428,6 +428,56 @@ export interface AggregateMetricsFailed {
   _failure_reason: string;
 }
 
+// ────────────────────────────────────────────────────────────────────────
+// Stage 4 deterministic-glue: methodology appendix
+// ────────────────────────────────────────────────────────────────────────
+
+export interface PerRecMethodologyEntry {
+  recommendation_id: string;
+  plan_section: PlanSectionName | null;
+  category: RecommendationCategory;
+  formula_id: string | null;
+  formula_source_file: string | null;
+  computation_inputs: Record<string, unknown>;
+  volatile_rates_referenced: string[];
+  firm_policy_resolutions_applied: Array<{
+    question_id: FirmPolicyQuestionId;
+    resolved_value: unknown;
+    resolved_by: string;
+  }>;
+  alternative_values_considered: Array<{
+    value: NumericValue;
+    formula_variant: string;
+    awaiting: string;
+    context: string;
+  }>;
+  pending_reconciliation: boolean;
+  blocked_inputs: Array<{
+    input_name: string;
+    blocked_reason: string;
+    source: string;
+    would_unblock_when: string;
+  }>;
+  rendered_block: string;
+}
+
+export interface MethodologyAppendixResult {
+  rendered_appendix: string;
+  rec_count: number;
+  aggregate_count: number;
+  per_rec_entries: PerRecMethodologyEntry[];
+  _orchestrator_flags: {
+    recs_pending_reconciliation_in_appendix: string[];
+    aggregates_with_partial_inputs_in_appendix: string[];
+    aggregates_skipped_in_appendix: string[];
+  };
+}
+
+export interface MethodologyAppendixResultFailed {
+  _builder_status: "FAILED";
+  _failure_reason: string;
+}
+
 export type RenderingState = "A" | "B" | "C" | "D";
 
 export interface TopPrioritiesSelectedRecord {
