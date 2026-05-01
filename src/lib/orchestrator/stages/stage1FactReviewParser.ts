@@ -254,7 +254,10 @@ export async function parseFactReview(
             typeof m.content === "string"
               ? false
               : Array.isArray(m.content)
-              ? m.content.some((b: { cache_control?: unknown }) => b.cache_control !== undefined)
+              ? m.content.some(
+                  (b) =>
+                    (b as { cache_control?: unknown }).cache_control !== undefined,
+                )
               : false,
         })),
       };
