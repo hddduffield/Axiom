@@ -12,6 +12,7 @@ export interface NumericValue {
   narrative_context?: string;
   is_approximate?: boolean;
   known_unknown?: boolean;
+  is_annual?: boolean;
 }
 
 export type RecommendationCategory =
@@ -377,4 +378,50 @@ export interface SequencedPlan {
 export interface SequencedPlanFailed {
   _sequencer_status: "FAILED" | "STAGE_3B_FAILED";
   _failures: SequencerFailure[];
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Stage 4 deterministic-glue: aggregate metrics + top priorities
+// ────────────────────────────────────────────────────────────────────────
+
+export type AggregateMetrics = Record<string, unknown>;
+
+export type RenderingState = "A" | "B" | "C" | "D";
+
+export interface TopPrioritiesSelectedRecord {
+  recommendation_id: string;
+  category: RecommendationCategory;
+  priority_score: number;
+  component_scores: {
+    impact: number;
+    timing: number;
+    archetype: number;
+    cluster_source: number;
+  };
+  rendering_state: RenderingState;
+  cluster_id: string | null;
+  is_combined_cluster_row: boolean;
+  cluster_member_ids: string[];
+  rendered_descriptor: string;
+  rendered_estimated_impact: string;
+  rendered_timing: string;
+}
+
+export interface TopPrioritiesFlags {
+  top_priorities_count_below_default: boolean;
+  clusters_combined_to_single_row: number;
+  qualitative_phrasings_in_table: number;
+  pending_firm_policy_in_table: number;
+}
+
+export interface TopPrioritiesResult {
+  rendered_block: string;
+  row_count: number;
+  selected_recommendations: TopPrioritiesSelectedRecord[];
+  _orchestrator_flags: TopPrioritiesFlags;
+}
+
+export interface TopPrioritiesResultFailed {
+  _builder_status: "FAILED";
+  _failure_reason: string;
 }
