@@ -384,7 +384,49 @@ export interface SequencedPlanFailed {
 // Stage 4 deterministic-glue: aggregate metrics + top priorities
 // ────────────────────────────────────────────────────────────────────────
 
-export type AggregateMetrics = Record<string, unknown>;
+export interface AggregateMetrics {
+  estate_tax_savings_total: NumericValue | null;
+  annual_income_tax_savings_total: NumericValue | null;
+  annual_yield_capture_total: NumericValue | null;
+  insurance_face_amount_total: NumericValue | null;
+  recommended_implementation_cost_estimate: NumericValue | null;
+
+  structural_exposures_eliminated: string[];
+  any_pending_reconciliations: boolean;
+  transaction_window: string | null;
+  roi_framing: string | null;
+
+  _aggregator_flags: AggregatorFlags;
+  _metric_provenance: Record<string, MetricProvenance>;
+}
+
+export interface AggregatorFlags {
+  metrics_with_partial_inputs: Array<{
+    metric: string;
+    excluded_rec_ids: string[];
+    qualitative_only_rec_ids: string[];
+    remaining_contributors: number;
+  }>;
+  metrics_skipped_due_to_pending_reconciliation: Array<{
+    metric: string;
+    reason: string;
+    excluded_rec_ids: string[];
+    qualitative_only_rec_ids: string[];
+  }>;
+}
+
+export interface MetricProvenance {
+  contributing_rec_ids: string[];
+  excluded_rec_ids: string[];
+  qualitative_only_rec_ids: string[];
+  partial_ratio: number;
+  requires_hedge: boolean;
+}
+
+export interface AggregateMetricsFailed {
+  _builder_status: "FAILED";
+  _failure_reason: string;
+}
 
 export type RenderingState = "A" | "B" | "C" | "D";
 

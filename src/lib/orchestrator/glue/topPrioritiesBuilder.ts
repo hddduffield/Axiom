@@ -12,6 +12,9 @@ import type {
   TopPrioritiesResultFailed,
   TopPrioritiesSelectedRecord,
 } from "../schemas/pipelineTypes";
+import { detectRenderingState } from "../utils/renderingState";
+
+export { detectRenderingState };
 
 const ELIGIBLE_TIMING_BUCKETS = new Set(["0-30 days", "30-60 days", "60-120 days"]);
 const TIMING_SCORE: Record<string, number> = {
@@ -86,18 +89,6 @@ export interface TopPrioritiesOptions {
 // ────────────────────────────────────────────────────────────────────────
 // Helpers
 // ────────────────────────────────────────────────────────────────────────
-
-export function detectRenderingState(rec: SequencedRecommendation): RenderingState | null {
-  const qi = rec.quantified_impact;
-  // Order: A > C > B > D
-  if (qi.estimate !== null && qi.alternative_values.length === 0 && qi.blocked_inputs.length === 0) {
-    return "A";
-  }
-  if (qi.alternative_values.length > 0) return "C";
-  if (qi.blocked_inputs.length > 0) return "B";
-  if (qi.qualitative_phrasing !== null && qi.formula_id === null) return "D";
-  return null;
-}
 
 function midpoint(value: NumericValue["value"]): number {
   if (Array.isArray(value)) return (value[0] + value[1]) / 2;
