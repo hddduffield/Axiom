@@ -9,33 +9,7 @@ import type {
   StatuteReferenceData,
 } from "../schemas/pipelineTypes";
 import { formatMoney, rangeBounds } from "../utils/numericValue";
-
-// ────────────────────────────────────────────────────────────────────────
-// Cascade walking stub.
-// Replace with import from cascadeWalking.ts when implemented.
-// ────────────────────────────────────────────────────────────────────────
-
-export function walkCascadeSet(
-  seedRecIds: string[],
-  sequencedPlan: SequencedPlan,
-): Set<string> {
-  const recById = new Map(
-    sequencedPlan.sequenced_recommendations.map((r) => [r.recommendation_id, r]),
-  );
-  const visited = new Set<string>();
-  const queue: string[] = [...seedRecIds];
-  while (queue.length > 0) {
-    const id = queue.shift()!;
-    if (visited.has(id)) continue;
-    visited.add(id);
-    const rec = recById.get(id);
-    if (!rec) continue;
-    for (const co of rec.co_triggered_with) {
-      if (!visited.has(co)) queue.push(co);
-    }
-  }
-  return visited;
-}
+import { walkCascadeSet } from "./cascadeWalking";
 
 // ────────────────────────────────────────────────────────────────────────
 // Helpers

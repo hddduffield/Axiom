@@ -532,6 +532,15 @@ export interface StatuteReferenceData {
   current_year: number;
 }
 
+export interface CascadeWalkResult {
+  cascade_set: Set<string>;
+  cascade_set_sorted: string[];
+  starter_count: number;
+  expanded_count: number;
+  iterations: number;
+  unresolved_starters: string[];
+}
+
 export type RenderingState = "A" | "B" | "C" | "D";
 
 export interface TopPrioritiesSelectedRecord {
