@@ -1,4 +1,14 @@
-# Stage 2 — Recommendation Selector
+> **ARCHIVED 2026-05-01.** Monolithic three-pass design failed live testing under compound constraints — token budgets, field-length limits, count caps, and cross-reference validation interacted such that the LLM could not reliably converge on valid output under all constraints simultaneously. Replaced by the Stage 2a / 2b / 2c decomposition documented at:
+>
+> - `specs/stages/stage2a_hard_filter.spec.md` — pattern-match hard filter on Haiku 4.5
+> - `specs/stages/stage2b_calibration.spec.md` — calibration over Stage 2a candidates on Opus
+> - `specs/stages/stage2c_sequencing.spec.md` — deterministic sequencing relations + landmine status, no LLM
+>
+> This file is preserved for architectural reference and post-mortem reasoning. Do not implement against it.
+
+---
+
+# Stage 2 — Recommendation Selector (ARCHIVED v1 attempt 1)
 
 **Type:** LLM stage. Calls Anthropic API. Three-pass logic within a single call.
 
