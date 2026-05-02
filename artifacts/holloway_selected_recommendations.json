@@ -1,0 +1,2457 @@
+{
+  "selected": [
+    {
+      "recommendation_id": "REC-ENT-001",
+      "category": "Entity Structure",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "RE in op LLC",
+        "transaction window",
+        "$4.2M facility"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Real estate inside operating LLC; pre-exit window"
+    },
+    {
+      "recommendation_id": "REC-ENT-002",
+      "category": "Entity Structure",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "S-Corp",
+        "no holdco",
+        "pre-exit",
+        "estate goal"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-001"
+        }
+      ],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-ENT-003"
+        },
+        {
+          "recommendation_id": "REC-EST-006"
+        },
+        {
+          "recommendation_id": "REC-EST-008"
+        }
+      ],
+      "sequenced_with": [
+        {
+          "recommendation_id": "REC-ENT-003"
+        }
+      ],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-008"
+        },
+        {
+          "recommendation_id": "REC-FAM-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "S-Corp pass-through, no holdco; pre-exit + estate goals"
+    },
+    {
+      "recommendation_id": "REC-ENT-003",
+      "category": "Entity Structure",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "estate >exemption",
+        "GRAT planned",
+        "owner retains control"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-EST-006"
+        },
+        {
+          "recommendation_id": "REC-EST-008"
+        }
+      ],
+      "sequenced_with": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Estate >$11M; recap creates non-voting interest for transfers"
+    },
+    {
+      "recommendation_id": "REC-ENT-004",
+      "category": "Entity Structure",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "form OA",
+        "12 yrs old",
+        "Derek 12%",
+        "restructuring"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        },
+        {
+          "recommendation_id": "REC-SUC-008"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "12-yr-old form OA; ownership changed (Derek 12%); restructuring"
+    },
+    {
+      "recommendation_id": "REC-ENT-007",
+      "category": "Entity Structure",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "annual cycle"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Annual review cycle; long-running annually"
+    },
+    {
+      "recommendation_id": "REC-EST-001",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "married",
+        "no trust",
+        "NW >$1M"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-EST-002"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-SPC-001"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Married, no trust, NW $33-46M; foundation document"
+    },
+    {
+      "recommendation_id": "REC-EST-002",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "wills 12yrs stale",
+        "no DPOA",
+        "no HIPAA",
+        "Sophie no guardian"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-EST-001"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Stale 2014 wills; no DPOA/HC directive/HIPAA; Sophie no guardian"
+    },
+    {
+      "recommendation_id": "REC-EST-003",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "estate >exemption",
+        "HNW",
+        "no gifting"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-001"
+        },
+        {
+          "recommendation_id": "REC-CHR-002"
+        },
+        {
+          "recommendation_id": "REC-CHR-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "$11M+ estate exposure; HNW; no systematic gifting program"
+    },
+    {
+      "recommendation_id": "REC-EST-004",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "estate >exemption",
+        "buy/sell planned",
+        "no ILIT"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        },
+        {
+          "recommendation_id": "REC-RSK-004"
+        },
+        {
+          "recommendation_id": "REC-RSK-012"
+        },
+        {
+          "recommendation_id": "REC-SPC-006"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "ILIT for buy/sell + estate liquidity; existing $2M term not in trust"
+    },
+    {
+      "recommendation_id": "REC-EST-005",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "3 children",
+        "estate >exemption",
+        "no <35 access"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-EST-006"
+        },
+        {
+          "recommendation_id": "REC-EST-008"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "3 children; hard rule no unrestricted before 35"
+    },
+    {
+      "recommendation_id": "REC-EST-006",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "holdco+recap",
+        "estate >exemption",
+        "good health"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        },
+        {
+          "recommendation_id": "REC-ENT-003"
+        },
+        {
+          "recommendation_id": "REC-EST-005"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [
+        {
+          "recommendation_id": "REC-EST-008"
+        }
+      ],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "GRAT for non-voting interest; Marcus excellent health"
+    },
+    {
+      "recommendation_id": "REC-EST-008",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "recap done",
+        "good health",
+        "growth above AFR"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-003"
+        },
+        {
+          "recommendation_id": "REC-EST-005"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [
+        {
+          "recommendation_id": "REC-EST-006"
+        }
+      ],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "IDGT sale; recap done; trust seeded for non-voting transfer"
+    },
+    {
+      "recommendation_id": "REC-EST-009",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "married",
+        "US citizens",
+        "exemption avail"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "SLAT: stable marriage, both citizens, exemption available"
+    },
+    {
+      "recommendation_id": "REC-EST-012",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "estate >exemption",
+        "multi-gen intent"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Dynasty/GST allocation to children's trusts"
+    },
+    {
+      "recommendation_id": "REC-EST-011",
+      "category": "Estate",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "primary res >$2M",
+        "good health"
+      ],
+      "triggers_partial": [
+        "RE intent uncertain"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "QPRT borderline; depends on Catherine RE intent"
+    },
+    {
+      "recommendation_id": "REC-EST-020",
+      "category": "Estate",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "plan updates",
+        "stale review"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-001"
+        },
+        {
+          "recommendation_id": "REC-EST-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "No beneficiary review since 2014"
+    },
+    {
+      "recommendation_id": "REC-TAX-001",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "GA S-Corp",
+        "PTET unelected",
+        "AGI >$500K"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-002"
+        },
+        {
+          "recommendation_id": "REC-TAX-010"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "GA S-Corp; PTET not elected; AGI $3.6M; ~$130-160K/yr savings"
+    },
+    {
+      "recommendation_id": "REC-TAX-002",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "S-Corp",
+        "W-2 >$100K",
+        "23% CAGR"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-001"
+        },
+        {
+          "recommendation_id": "REC-RET-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "S-Corp; W-2 $480K; QBI not optimized; cash-balance pending"
+    },
+    {
+      "recommendation_id": "REC-TAX-003",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "Catherine $0 W-2",
+        "marketing prior",
+        "minor children"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-TAX-004"
+        },
+        {
+          "recommendation_id": "REC-RET-005"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Catherine $0 W-2; legit role; enables 401k+DI+children Roth path"
+    },
+    {
+      "recommendation_id": "REC-TAX-004",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business owner",
+        "minor children",
+        "high income"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        },
+        {
+          "recommendation_id": "REC-TAX-003"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "James 16 + Olivia 19 eligible; FICA-free via family-mgmt LLC"
+    },
+    {
+      "recommendation_id": "REC-TAX-005",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "primary res",
+        "high income"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Augusta Rule 14-day; HQ + Blue Ridge; high income; non-SSTB"
+    },
+    {
+      "recommendation_id": "REC-TAX-006",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "$1M+ basis",
+        "no prior study"
+      ],
+      "triggers_partial": [
+        "pre-2025 PIS"
+      ],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-001"
+        }
+      ],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-TAX-007"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cost seg post-RE-separation; pre-2025 PIS phase-down to 20% bonus"
+    },
+    {
+      "recommendation_id": "REC-TAX-007",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "RE+business",
+        "mat. participation",
+        "cost seg planned"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-001"
+        },
+        {
+          "recommendation_id": "REC-TAX-006"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "§469 grouping post-RE-separation; both activities mat. participation"
+    },
+    {
+      "recommendation_id": "REC-TAX-008",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "holdco path",
+        "non-SSTB",
+        "<$75M assets"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "§1202 evaluation; non-SSTB; assets <$75M; 3-5yr window borderline"
+    },
+    {
+      "recommendation_id": "REC-TAX-009",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "no prior R&D",
+        "engineering work"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "R&D for engineered systems; $42.8M rev; never pursued"
+    },
+    {
+      "recommendation_id": "REC-TAX-010",
+      "category": "Tax",
+      "match_strength": "strong",
+      "triggers_matched": [
+        ">20% income change",
+        "structure change"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-TAX-001"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "PTET + cost seg + cash-balance change tax structure materially"
+    },
+    {
+      "recommendation_id": "REC-TAX-011",
+      "category": "Tax",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "multi-state biz"
+      ],
+      "triggers_partial": [
+        "no residence change"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "HIS multi-state nexus (5+ states); residence stable"
+    },
+    {
+      "recommendation_id": "REC-RSK-001",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "2 owners",
+        "no buy/sell",
+        "insurable"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-004"
+        },
+        {
+          "recommendation_id": "REC-ENT-004"
+        },
+        {
+          "recommendation_id": "REC-RSK-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cross-purchase 2-owner; both insurable; goal #2 take care of Derek"
+    },
+    {
+      "recommendation_id": "REC-RSK-004",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "HNW",
+        "estate >exemption",
+        "insurable"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-004"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Estate liquidity life; $11M+ exposure; ILIT-owned"
+    },
+    {
+      "recommendation_id": "REC-RSK-005",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "K-1 dominant",
+        "active operator",
+        "age 52"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-006"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Group LTD inadequate; K-1 dominates; max-issue ind DI"
+    },
+    {
+      "recommendation_id": "REC-RSK-006",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "owner-operator",
+        "fixed overhead"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-005"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "BOE; Marcus founder/CEO; $4M revolver + 87 FTE overhead"
+    },
+    {
+      "recommendation_id": "REC-RSK-007",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "key employee",
+        "no key person cov"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Key person on Derek + controller; gap; replacement cost real"
+    },
+    {
+      "recommendation_id": "REC-RSK-008",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "NW >$5M",
+        "umbrella inadequate"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-RSK-010"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Umbrella $2M inadequate for $33-46M NW; layered to $35-50M"
+    },
+    {
+      "recommendation_id": "REC-RSK-010",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "annual review",
+        "umbrella underlying"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Auto $250/$250 sub-umbrella mismatch"
+    },
+    {
+      "recommendation_id": "REC-RSK-012",
+      "category": "Risk & Insurance",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "age 50+",
+        "LTC need real"
+      ],
+      "triggers_partial": [
+        "NW>$15M self-fund alt"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-004"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Hybrid LTC life; Marcus 52, Catherine 49; eliminates use-or-lose"
+    },
+    {
+      "recommendation_id": "REC-RSK-017",
+      "category": "Risk & Insurance",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "PII handling",
+        "cyber inadequate"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cyber $1M underinsured given hyperscale customer mix"
+    },
+    {
+      "recommendation_id": "REC-RSK-018",
+      "category": "Risk & Insurance",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "board service"
+      ],
+      "triggers_partial": [
+        "entity cov verify needed"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Catherine 2 nonprofit boards; verify entity D&O adequacy"
+    },
+    {
+      "recommendation_id": "REC-SUC-002",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "pre-exit",
+        "key employees",
+        "no retention pkg"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Stay bonus pre-LOI; Derek+controller+lead estimators retention"
+    },
+    {
+      "recommendation_id": "REC-SUC-007",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "LLC",
+        "actual equity desired"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Profits interest grants for additional key employees beyond Derek"
+    },
+    {
+      "recommendation_id": "REC-SUC-008",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "operating partner",
+        "owner willing"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        },
+        {
+          "recommendation_id": "REC-ENT-004"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Formalize Derek economics; possible additional grant pre-transaction"
+    },
+    {
+      "recommendation_id": "REC-SUC-010",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "pre-exit",
+        "no QofE",
+        "$10M+ rev"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-SUC-012"
+        }
+      ],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-SUC-011"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "QofE never performed; $42.8M rev; T-12mo engagement"
+    },
+    {
+      "recommendation_id": "REC-SUC-011",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "pre-exit",
+        "no banker",
+        "lower-mid-market"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-SUC-010"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Boutique M&A intermediary; $6.4M EBITDA fits LMM scope"
+    },
+    {
+      "recommendation_id": "REC-SUC-012",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "no CFO",
+        "complex restructuring"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-SUC-010"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Fractional CFO; no internal CFO; $42.8M rev; multi-entity restructuring"
+    },
+    {
+      "recommendation_id": "REC-SUC-013",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "owner critical",
+        "pre-exit",
+        "team gaps"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Mgmt bench: identify COO+sales+CFO permanentize over 18-24mo"
+    },
+    {
+      "recommendation_id": "REC-SUC-015",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "no plan",
+        "owner critical"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        },
+        {
+          "recommendation_id": "REC-RSK-005"
+        },
+        {
+          "recommendation_id": "REC-RSK-006"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Written succession doc; complement to buy/sell mechanics"
+    },
+    {
+      "recommendation_id": "REC-SUC-016",
+      "category": "Succession & Continuity",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "concentration >40%",
+        ">12mo window"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Top 3 = 47%; single = 22%; valuation discount risk 20-40%"
+    },
+    {
+      "recommendation_id": "REC-SUC-001",
+      "category": "Succession & Continuity",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "business",
+        "key employees",
+        "no SERP"
+      ],
+      "triggers_partial": [
+        "transaction complexity"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RSK-001"
+        },
+        {
+          "recommendation_id": "REC-RET-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "SERP for Derek+controller; design accommodate transaction continuity"
+    },
+    {
+      "recommendation_id": "REC-SUC-004",
+      "category": "Succession & Continuity",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "§162 desired",
+        "vesting needed"
+      ],
+      "triggers_partial": [
+        "competing vehicles"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-SUC-001"
+        },
+        {
+          "recommendation_id": "REC-SUC-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Restricted §162 as one option in retention vehicle stack"
+    },
+    {
+      "recommendation_id": "REC-INV-001",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "idle cash",
+        "low yield"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-SUC-010"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Tiered business cash structure; Truist op + reserve + strategic"
+    },
+    {
+      "recommendation_id": "REC-INV-002",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "cash >$250K",
+        "no layering"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-INV-005"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Personal cash $310K; layer between operating/emergency/near-term/invested"
+    },
+    {
+      "recommendation_id": "REC-INV-003",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "taxable >$1M",
+        "32%+ bracket",
+        "long horizon"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-INV-007"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "$1.8M brokerage; top bracket; DI replaces index funds; 50-100bps alpha"
+    },
+    {
+      "recommendation_id": "REC-INV-004",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "mixed accts",
+        "multi-asset class"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-INV-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "$1.8M tax + $1.26M ret; sub-optimal placement; 50-100bps alpha"
+    },
+    {
+      "recommendation_id": "REC-INV-005",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "pre-exit",
+        "concentration >50%",
+        ">1yr window"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "60-85% concentration in HIS; pre-exit; discipline avoid sector add"
+    },
+    {
+      "recommendation_id": "REC-INV-007",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "taxable >$250K",
+        "high bracket"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-INV-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "TLH coordination above DI; covers transition + non-DI holdings"
+    },
+    {
+      "recommendation_id": "REC-INV-010",
+      "category": "Investment",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "32%+ bracket",
+        "FI in taxable"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-INV-004"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Muni allocation in taxable fixed-income sleeve as portfolio scales"
+    },
+    {
+      "recommendation_id": "REC-INV-009",
+      "category": "Investment",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "idle cash",
+        "GA tax exempt"
+      ],
+      "triggers_partial": [
+        "MMF practical alt"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-INV-001"
+        },
+        {
+          "recommendation_id": "REC-INV-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Treasury holdings via Schwab; treasurydirect platform optional"
+    },
+    {
+      "recommendation_id": "REC-RET-001",
+      "category": "Retirement",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "401k in place",
+        "spouse via REC-TAX-003"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-003"
+        },
+        {
+          "recommendation_id": "REC-RET-007"
+        },
+        {
+          "recommendation_id": "REC-RET-010"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Confirm 2026 max $32,500; Catherine 401k post-payroll; SECURE2.0 catch-up"
+    },
+    {
+      "recommendation_id": "REC-RET-002",
+      "category": "Retirement",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "business",
+        "age 45+",
+        "stable cash flow",
+        "401k maxed"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-002"
+        },
+        {
+          "recommendation_id": "REC-RET-003"
+        },
+        {
+          "recommendation_id": "REC-RET-009"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cash-balance; Marcus 52; $200-300K/yr deductible; transaction termination plan"
+    },
+    {
+      "recommendation_id": "REC-RET-003",
+      "category": "Retirement",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "age 40+",
+        "workforce composition",
+        "no current PSP"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RET-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cross-tested PSP layered with cash-balance; 87 FTE workforce supports"
+    },
+    {
+      "recommendation_id": "REC-RET-007",
+      "category": "Retirement",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "plan lacks features",
+        "SECURE 2.0 mandate"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-RET-001"
+        },
+        {
+          "recommendation_id": "REC-RET-004"
+        },
+        {
+          "recommendation_id": "REC-RET-010"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RET-008"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Plan amendment for Roth/after-tax/in-service; precondition for 001+004+010"
+    },
+    {
+      "recommendation_id": "REC-RET-010",
+      "category": "Retirement",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "W-2 >$150K",
+        "age 50+"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-RET-007"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "SECURE 2.0 Roth catch-up; W-2 $480K above $150K; 2026 effective"
+    },
+    {
+      "recommendation_id": "REC-RET-004",
+      "category": "Retirement",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "401k in place",
+        "cash flow"
+      ],
+      "triggers_partial": [
+        "plan amendment needed"
+      ],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-RET-007"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Mega-backdoor conditional on plan amendment; modest scale vs cash-balance"
+    },
+    {
+      "recommendation_id": "REC-RET-005",
+      "category": "Retirement",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "income >phase-out",
+        "earned income"
+      ],
+      "triggers_partial": [
+        "Catherine pro-rata"
+      ],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-TAX-003"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Backdoor Roth Marcus immediate; Catherine pro-rata barrier from $340K IRA"
+    },
+    {
+      "recommendation_id": "REC-RET-008",
+      "category": "Retirement",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "plan in place",
+        "SECURE 2.0 changes"
+      ],
+      "triggers_partial": [
+        "restatement timing TBD"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RET-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Plan restatement bundled with TPA engagement + amendment work"
+    },
+    {
+      "recommendation_id": "REC-RET-009",
+      "category": "Retirement",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "DB plan in place",
+        "approaching transaction"
+      ],
+      "triggers_partial": [
+        "timing TBD"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-RET-002"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Cash-balance termination at tx close; coordinate timing pre/post-LOI"
+    },
+    {
+      "recommendation_id": "REC-FAM-001",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "3 children",
+        "exclusion capacity"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "529 for 3 kids; 5-yr front-load $190K each for Sophie+James"
+    },
+    {
+      "recommendation_id": "REC-FAM-002",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "future 529s",
+        "earned income kids"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-FAM-001"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "529-to-Roth rollover; 15-yr clock from new 529s; build into design"
+    },
+    {
+      "recommendation_id": "REC-FAM-003",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "family business",
+        "kids work eligible"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-TAX-004"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Custodial Roth James+Olivia; FICA-free via family-mgmt LLC"
+    },
+    {
+      "recommendation_id": "REC-FAM-005",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "aging parent",
+        "expects support",
+        "no LTC plan"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Eleanor 78 anticipated 5-10yr support; verify LTC + model costs"
+    },
+    {
+      "recommendation_id": "REC-FAM-007",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "multi-gen wealth",
+        "adult kids approaching"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-008"
+        },
+        {
+          "recommendation_id": "REC-CHR-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Annual family meeting cadence; foundation governance prep by yr 5"
+    },
+    {
+      "recommendation_id": "REC-FAM-008",
+      "category": "Family",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "kids near distribution",
+        "material stake"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-007"
+        },
+        {
+          "recommendation_id": "REC-EST-005"
+        },
+        {
+          "recommendation_id": "REC-CHR-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Multi-yr financial education; age-scaled curriculum 3 kids"
+    },
+    {
+      "recommendation_id": "REC-FAM-006",
+      "category": "Family",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "multi-gen >$10M",
+        "values articulated"
+      ],
+      "triggers_partial": [
+        "facilitator availability"
+      ],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-FAM-007"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Mission statement codifying values; engage facilitator"
+    },
+    {
+      "recommendation_id": "REC-CHR-001",
+      "category": "Charitable",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "charitable goal",
+        "32%+ bracket",
+        "lump-sum capacity"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [
+        {
+          "recommendation_id": "REC-CHR-002"
+        }
+      ],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "DAF year 1; major funding pre-transaction with appreciated stock"
+    },
+    {
+      "recommendation_id": "REC-CHR-002",
+      "category": "Charitable",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "pre-exit",
+        "charitable goal",
+        "holdco+recap"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-002"
+        },
+        {
+          "recommendation_id": "REC-ENT-003"
+        },
+        {
+          "recommendation_id": "REC-CHR-001"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Pre-LOI gift of non-voting Holdco units; $900K-$2.4M tax savings"
+    },
+    {
+      "recommendation_id": "REC-CHR-003",
+      "category": "Charitable",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "appreciated asset",
+        "income+charity desire"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-ENT-003"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-SPC-002"
+        },
+        {
+          "recommendation_id": "REC-SPC-006"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "CRUT funded with non-voting units; income + remainder + cap gain defer"
+    },
+    {
+      "recommendation_id": "REC-CHR-007",
+      "category": "Charitable",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "liquidity >$25M",
+        "charitable scale",
+        "family engaged"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-FAM-007"
+        },
+        {
+          "recommendation_id": "REC-FAM-008"
+        },
+        {
+          "recommendation_id": "REC-CHR-008"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Family foundation post-liquidity with kids governance; hard-rule client goal"
+    },
+    {
+      "recommendation_id": "REC-CHR-005",
+      "category": "Charitable",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "estate exposure",
+        "charitable lead intent"
+      ],
+      "triggers_partial": [
+        "§7520 sensitivity"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-006"
+        },
+        {
+          "recommendation_id": "REC-EST-008"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "CLAT alt for portion of estate transfer; competing with GRAT/IDGT"
+    },
+    {
+      "recommendation_id": "REC-CHR-008",
+      "category": "Charitable",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "DAF in place",
+        "scale justifies"
+      ],
+      "triggers_partial": [
+        "parallel vs transition"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-CHR-001"
+        },
+        {
+          "recommendation_id": "REC-CHR-007"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "DAF→foundation transition or parallel structure"
+    },
+    {
+      "recommendation_id": "REC-SPC-001",
+      "category": "Specialty",
+      "match_strength": "strong",
+      "triggers_matched": [
+        "trust funding $5M+",
+        "multi-gen",
+        "asset protection"
+      ],
+      "triggers_partial": [],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-EST-001"
+        },
+        {
+          "recommendation_id": "REC-EST-005"
+        },
+        {
+          "recommendation_id": "REC-EST-008"
+        },
+        {
+          "recommendation_id": "REC-EST-012"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Trust situs DE/SD for long-duration trusts; GA for grantor trusts"
+    },
+    {
+      "recommendation_id": "REC-SPC-002",
+      "category": "Specialty",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "material gain",
+        "GA 5.19%"
+      ],
+      "triggers_partial": [
+        "coordinate w/ CRUT"
+      ],
+      "must_come_after": [],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [
+        {
+          "recommendation_id": "REC-CHR-003"
+        }
+      ],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "NING/DING for transaction gain; ~$1-1.5M GA tax avoidance"
+    },
+    {
+      "recommendation_id": "REC-SPC-006",
+      "category": "Specialty",
+      "match_strength": "borderline",
+      "triggers_matched": [
+        "appreciated asset",
+        "charity+heirs",
+        "insurable"
+      ],
+      "triggers_partial": [
+        "component integration"
+      ],
+      "must_come_after": [
+        {
+          "recommendation_id": "REC-CHR-003"
+        },
+        {
+          "recommendation_id": "REC-EST-004"
+        }
+      ],
+      "must_come_before": [],
+      "sequenced_with": [],
+      "coordinated_with": [],
+      "mutually_exclusive_with": [],
+      "preliminary_preference": null,
+      "preliminary_preference_rationale": null,
+      "landmine": false,
+      "landmine_status": "not_a_landmine",
+      "brief_rationale": "Wealth-replacement bailout: CRUT + ILIT integration"
+    }
+  ],
+  "supplemental_candidates": [
+    {
+      "recommendation_id": "REC-ENT-005",
+      "reason_supplemental": "C-Corp §1202 conversion conditional on REC-TAX-008 outcome",
+      "match_strength": "borderline",
+      "brief_rationale": "C-Corp §1202 conv; pending REC-TAX-008; cost-benefit borderline at scale"
+    },
+    {
+      "recommendation_id": "REC-ENT-006",
+      "reason_supplemental": "Asset protection partly covered by REC-ENT-001+002; revisit later",
+      "match_strength": "borderline",
+      "brief_rationale": "Multi-entity asset prot; partly covered by 001+002; revisit post-tx"
+    },
+    {
+      "recommendation_id": "REC-EST-007",
+      "reason_supplemental": "Activate post-first-GRAT seasoning year-2+",
+      "match_strength": "borderline",
+      "brief_rationale": "Rolling/laddered GRAT; activate post-first-GRAT seasoning year-2+"
+    },
+    {
+      "recommendation_id": "REC-EST-013",
+      "reason_supplemental": "Preserve as death-time election option for executor",
+      "match_strength": "borderline",
+      "brief_rationale": "§645 election; preserve as death-time option for executor"
+    },
+    {
+      "recommendation_id": "REC-EST-014",
+      "reason_supplemental": "Preserve as first-spouse-death election option",
+      "match_strength": "borderline",
+      "brief_rationale": "Portability DSUE; preserve as first-spouse-death election option"
+    },
+    {
+      "recommendation_id": "REC-EST-017",
+      "reason_supplemental": "Activate when child needs liquidity (Olivia future)",
+      "match_strength": "borderline",
+      "brief_rationale": "Intra-family loan at AFR; activate when child needs liquidity"
+    },
+    {
+      "recommendation_id": "REC-TAX-012",
+      "reason_supplemental": "Activate post-transaction gap years; pre-exit MFJ punitive",
+      "match_strength": "borderline",
+      "brief_rationale": "Roth conversion; activate post-transaction gap years; MFJ punitive now"
+    },
+    {
+      "recommendation_id": "REC-TAX-013",
+      "reason_supplemental": "Post-transaction multi-year tool",
+      "match_strength": "borderline",
+      "brief_rationale": "Bracket-fill smoothing; post-transaction multi-year tool"
+    },
+    {
+      "recommendation_id": "REC-TAX-015",
+      "reason_supplemental": "Post-transaction tool; defers up to $20M+ gain; 10-yr hold",
+      "match_strength": "borderline",
+      "brief_rationale": "QOZ; post-transaction tool; defers up to $20M+ gain; 10-yr hold"
+    },
+    {
+      "recommendation_id": "REC-RSK-009",
+      "reason_supplemental": "Audit during plan delivery for items above sublimits",
+      "match_strength": "borderline",
+      "brief_rationale": "Valued articles schedule; audit during plan delivery for sublimit items"
+    },
+    {
+      "recommendation_id": "REC-RSK-013",
+      "reason_supplemental": "Post-transaction at $25M+ liquid; long horizon required",
+      "match_strength": "borderline",
+      "brief_rationale": "PPLI; post-transaction at $25M+ liquid; long horizon required"
+    },
+    {
+      "recommendation_id": "REC-RSK-014",
+      "reason_supplemental": "Verify HIS group life status during plan delivery",
+      "match_strength": "borderline",
+      "brief_rationale": "§79 carve-out; verify HIS group life status during plan delivery"
+    },
+    {
+      "recommendation_id": "REC-RSK-015",
+      "reason_supplemental": "Evaluate during plan execution for Derek retention",
+      "match_strength": "borderline",
+      "brief_rationale": "Split-dollar with Derek as retention tool; evaluate during execution"
+    },
+    {
+      "recommendation_id": "REC-SUC-003",
+      "reason_supplemental": "Lower priority pre-transaction; secondary executives only",
+      "match_strength": "borderline",
+      "brief_rationale": "§162 plain bonus for secondary executives; lower priority pre-tx"
+    },
+    {
+      "recommendation_id": "REC-SUC-014",
+      "reason_supplemental": "Conflict-of-interest concerns pre-transaction; consider post-close",
+      "match_strength": "borderline",
+      "brief_rationale": "Financial planning benefit; CoI concerns pre-tx; revisit post-close"
+    },
+    {
+      "recommendation_id": "REC-INV-008",
+      "reason_supplemental": "Same as REC-TAX-012; post-transaction gap years",
+      "match_strength": "borderline",
+      "brief_rationale": "Roth conversion modeling; same as REC-TAX-012; post-transaction"
+    },
+    {
+      "recommendation_id": "REC-INV-011",
+      "reason_supplemental": "Post-transaction at $10M+ liquid; year-2-3 deployment",
+      "match_strength": "borderline",
+      "brief_rationale": "Private markets; post-transaction at $10M+ liquid; year-2-3 deploy"
+    },
+    {
+      "recommendation_id": "REC-RET-006",
+      "reason_supplemental": "For post-transaction 1099 consulting income",
+      "match_strength": "borderline",
+      "brief_rationale": "Solo 401k for post-transaction 1099 consulting income"
+    },
+    {
+      "recommendation_id": "REC-FAM-004",
+      "reason_supplemental": "Lower priority; ~$2-5K/yr per child if pursued",
+      "match_strength": "borderline",
+      "brief_rationale": "Cash-value life on children; ~$2-5K/yr per child if pursued"
+    },
+    {
+      "recommendation_id": "REC-FAM-009",
+      "reason_supplemental": "Activate as Olivia (or any child) approaches marriage",
+      "match_strength": "borderline",
+      "brief_rationale": "Prenup as Olivia (or any child) approaches marriage"
+    },
+    {
+      "recommendation_id": "REC-CHR-013",
+      "reason_supplemental": "Activates at 70½ (Marcus 2043); long-term IRA→charity",
+      "match_strength": "borderline",
+      "brief_rationale": "QCD activates at 70½ (Marcus 2043); long-term IRA→charity"
+    },
+    {
+      "recommendation_id": "REC-SPC-010",
+      "reason_supplemental": "Conditional on REC-TAX-008 favorable + REC-ENT-005 chosen",
+      "match_strength": "borderline",
+      "brief_rationale": "§1202 multiplication; conditional on TAX-008 favorable + ENT-005"
+    }
+  ],
+  "speculative_dropped": [
+    {
+      "recommendation_id": "REC-EST-010",
+      "drop_reason": "BDIT; no older-generation funder available (Eleanor unlikely)"
+    },
+    {
+      "recommendation_id": "REC-EST-015",
+      "drop_reason": "FLP; no multi-asset investment portfolio; brokerage too small"
+    },
+    {
+      "recommendation_id": "REC-EST-016",
+      "drop_reason": "Decanting; no existing irrevocable trusts to modify"
+    },
+    {
+      "recommendation_id": "REC-EST-018",
+      "drop_reason": "SCIN; Marcus 52 robust health; doesn't fit"
+    },
+    {
+      "recommendation_id": "REC-EST-019",
+      "drop_reason": "Private annuity; Marcus 52 robust health; doesn't fit"
+    },
+    {
+      "recommendation_id": "REC-TAX-014",
+      "drop_reason": "§139 disaster relief; no current federally-declared disaster"
+    },
+    {
+      "recommendation_id": "REC-RSK-002",
+      "drop_reason": "Redemption buy/sell; cross-purchase REC-RSK-001 chosen for basis step-up"
+    },
+    {
+      "recommendation_id": "REC-RSK-003",
+      "drop_reason": "Insurance LLC for multi-owner; only 2 owners"
+    },
+    {
+      "recommendation_id": "REC-RSK-011",
+      "drop_reason": "Standalone LTC; NW favors hybrid (REC-RSK-012) or self-fund"
+    },
+    {
+      "recommendation_id": "REC-SUC-005",
+      "drop_reason": "Phantom equity; profits interest REC-SUC-007 preferred for LLC"
+    },
+    {
+      "recommendation_id": "REC-SUC-006",
+      "drop_reason": "SARs; profits interest REC-SUC-007 preferred for LLC"
+    },
+    {
+      "recommendation_id": "REC-SUC-009",
+      "drop_reason": "ESOP §1042; LLC/S-Corp incompatible; revisit only if ENT-005 chosen"
+    },
+    {
+      "recommendation_id": "REC-INV-006",
+      "drop_reason": "Post-transaction concentration unwind; pre-exit; activates post-close"
+    },
+    {
+      "recommendation_id": "REC-FAM-010",
+      "drop_reason": "UTMA/UGMA wind-down; no UTMA/UGMA accounts in profile"
+    },
+    {
+      "recommendation_id": "REC-CHR-004",
+      "drop_reason": "CRAT; CRUT REC-CHR-003 preferred for growing-asset profile"
+    },
+    {
+      "recommendation_id": "REC-CHR-006",
+      "drop_reason": "CLUT; CLAT REC-CHR-005 preferred for lead trust structure"
+    },
+    {
+      "recommendation_id": "REC-CHR-009",
+      "drop_reason": "Bargain sale; pre-tx gifts REC-CHR-002 cleaner; fragments transaction"
+    },
+    {
+      "recommendation_id": "REC-CHR-010",
+      "drop_reason": "PIF; CRT scale appropriate at Holloway level"
+    },
+    {
+      "recommendation_id": "REC-CHR-012",
+      "drop_reason": "CGA; Marcus 52 too young; CRT covers use case at scale"
+    },
+    {
+      "recommendation_id": "REC-SPC-003",
+      "drop_reason": "Crypto planning; no crypto holdings disclosed"
+    },
+    {
+      "recommendation_id": "REC-SPC-004",
+      "drop_reason": "Cross-border; both U.S. citizens GA residents"
+    },
+    {
+      "recommendation_id": "REC-SPC-005",
+      "drop_reason": "Concentrated public stock hedging; private biz; INV-005 covers"
+    },
+    {
+      "recommendation_id": "REC-SPC-007",
+      "drop_reason": "Reverse mortgage; Marcus 52 too young; Eleanor family-funded"
+    },
+    {
+      "recommendation_id": "REC-SPC-008",
+      "drop_reason": "§1031; no investment RE sale contemplated"
+    },
+    {
+      "recommendation_id": "REC-SPC-009",
+      "drop_reason": "DST for §1031; conditional on §1031 dropped"
+    },
+    {
+      "recommendation_id": "REC-RSK-016",
+      "drop_reason": "landmine_default_excluded — captive insurance §831(b); no genuine uninsurable risk identified"
+    },
+    {
+      "recommendation_id": "REC-CHR-011",
+      "drop_reason": "landmine_default_excluded — conservation easement; no real property with conservation value"
+    }
+  ],
+  "pass_summaries": {
+    "pass_1_hard_filter": {
+      "input_universe": 130,
+      "eliminated": 27,
+      "survived": 103
+    },
+    "pass_2_calibration": {
+      "strong": 65,
+      "borderline": 16,
+      "speculative": 25
+    },
+    "pass_3_sequencing": {
+      "sequencing_relations_total": 129,
+      "landmines_marked": 2
+    }
+  },
+  "_stage_flags": {
+    "candidate_set_unusually_small": false,
+    "candidate_set_unusually_large": true,
+    "landmines_present_count": 2,
+    "mutually_exclusive_pairs_present": 0
+  },
+  "_metadata": {
+    "stage_version": "stage_2_hand_authored_holloway_phase2",
+    "model_used": "hand_authored",
+    "input_token_count": 0,
+    "output_token_count": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "attempts_made": 1,
+    "attempt_history": [],
+    "duration_ms": 0,
+    "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+    "parsed_at": "2026-05-02T19:25:51.033Z",
+    "generation_method": "hand_authored",
+    "authored_by": "Hayden Duffield + Claude (strategy chat)",
+    "authored_at": "2026-05-02T19:25:51.034Z",
+    "source_client_profile_path": "artifacts/holloway_clientprofile.json",
+    "purpose": "Stage 2 calibration fixture for synthetic Holloway; bypasses Stage 2 LLM pipeline pending v1 redesign per Phase 1 spec",
+    "v1_attempt": "manual replacement for failed monolithic Stage 2 live test"
+  }
+}

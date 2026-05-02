@@ -373,18 +373,37 @@ test("4. mock orphan sequencing reference → schema_validation_failed", async (
   );
 });
 
-test("5. mock >30 selected → selected_count_exceeds_cap", async () => {
+test("5. mock >100 selected → selected_count_exceeds_cap", async () => {
   _resetKBCacheForTesting();
   const profile = makeMinimalClientProfile("PRE");
-  // Build 31 valid registry IDs: TAX (15) + EST (16) = 31.
-  const taxIds = Array.from({ length: 15 }, (_, i) => `REC-TAX-${String(i + 1).padStart(3, "0")}`);
-  const estIds = Array.from({ length: 16 }, (_, i) => `REC-EST-${String(i + 1).padStart(3, "0")}`);
-  const thirtyOne = [...taxIds, ...estIds].map((id) =>
-    makeRec(id, {
-      category: id.startsWith("REC-EST") ? "Estate" : "Tax",
-    }),
+  // Build 101 valid registry IDs across categories. Cap loosened from 30 to
+  // 100 to support hand-authored complex-client fixtures (Holloway, etc).
+  const buildIds = (prefix: string, count: number) =>
+    Array.from({ length: count }, (_, i) => `${prefix}-${String(i + 1).padStart(3, "0")}`);
+  const ids = [
+    ...buildIds("REC-TAX", 15),
+    ...buildIds("REC-EST", 20),
+    ...buildIds("REC-ENT", 7),
+    ...buildIds("REC-RSK", 18),
+    ...buildIds("REC-SUC", 16),
+    ...buildIds("REC-INV", 11),
+    ...buildIds("REC-RET", 10),
+    ...buildIds("REC-FAM", 4),
+  ];
+  const categoryByPrefix: Record<string, SelectedRecommendation["category"]> = {
+    "REC-TAX": "Tax",
+    "REC-EST": "Estate",
+    "REC-ENT": "Entity Structure",
+    "REC-RSK": "Risk & Insurance",
+    "REC-SUC": "Succession & Continuity",
+    "REC-INV": "Investment",
+    "REC-RET": "Retirement",
+    "REC-FAM": "Family",
+  };
+  const oneOhOne = ids.map((id) =>
+    makeRec(id, { category: categoryByPrefix[id.slice(0, 7)] }),
   );
-  const body = makeValidBody({ selected: thirtyOne });
+  const body = makeValidBody({ selected: oneOhOne });
   const client = makeMockClient([
     { kind: "text", text: JSON.stringify(body) },
     { kind: "text", text: JSON.stringify(body) },

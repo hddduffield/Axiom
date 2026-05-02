@@ -132,21 +132,23 @@ const StageFlagsSchema = z.object({
 });
 
 // Body the LLM must emit (no _metadata yet — appended after).
-// Auxiliary pools capped at 10 each: they're advisor-facing signal, not an
-// exhaustive audit trail of the full Pass-1 elimination set.
+//
+// Caps loosened from initial v1 draft (30/10/10) to accommodate hand-authored
+// complex client fixtures. Stage 2's actual LLM-based discipline lives in
+// prompt engineering, not schema enforcement, per Phase 1 spec.
 export const SelectedRecommendationsBodySchema = z.object({
   selected: z.array(SelectedRecommendationSchema),
   supplemental_candidates: z
     .array(SupplementalCandidateSchema)
-    .max(10, {
+    .max(30, {
       message:
-        "supplemental_candidates exceeds 10 entries; surface only items the advisor would actually want to review.",
+        "supplemental_candidates exceeds 30 entries; surface only items the advisor would actually want to review.",
     }),
   speculative_dropped: z
     .array(SpeculativeDroppedSchema)
-    .max(10, {
+    .max(50, {
       message:
-        "speculative_dropped exceeds 10 entries; do not exhaustively list every rec eliminated in Pass 1.",
+        "speculative_dropped exceeds 50 entries; do not exhaustively list every rec eliminated in Pass 1.",
     }),
   pass_summaries: PassSummariesSchema,
   _stage_flags: StageFlagsSchema,
@@ -197,7 +199,7 @@ export interface SelectedRecommendationsFailed {
 // retry loop can fold them into the correction prompt alongside zod issues.
 // ────────────────────────────────────────────────────────────────────────
 
-export const SELECTED_COUNT_CAP = 30;
+export const SELECTED_COUNT_CAP = 100;
 export const SELECTED_COUNT_FLOOR = 5;
 
 interface CrossRefError {
