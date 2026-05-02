@@ -1,5 +1,15 @@
 # Stage 3a — Sequencer & Quantifier
 
+> **ARCHIVED 2026-05-02.** Single-call architecture exceeded Opus 4.7 input context (200K) for Holloway-scale fixtures (81 selected recs at ~320K input tokens). Replaced by Stage 3a.1 / Stage 3a.2 sub-stage decomposition, mirroring the Stage 2a/2b/2c pattern:
+>
+> - `specs/stages/stage3a_1_batch_quantifier.spec.md` — LLM batch quantifier, runs once per batch (~20 recs each)
+> - `specs/stages/stage3a_2_cross_rec_validator.spec.md` — deterministic merge + cross-rec validation, no LLM
+> - `specs/stages/stage3a_orchestration.spec.md` — harness chaining 3a.1 batches → 3a.2
+>
+> The algorithm content here (four-state quantification, ActionItem lifecycle rules, derivative reminder templates, volatile-rates handling, firm-policy resolution semantics, system-prompt structure) carries forward into Stage 3a.1 with batch-scoping additions. Preserved for architectural reference and post-mortem reasoning. Do not implement against it.
+
+---
+
 **Type:** LLM stage. Calls Anthropic API. Single-pass quantification + ActionItem extraction.
 
 **Purpose:** Given SelectedRecommendations from Stage 2 and the ClientProfile from Stage 1, produce a QuantifiedRecommendations object: every selected rec receives a QuantifiedImpact in one of four states (A: computed, B: blocked inputs, C: firm-policy pending, D: qualitative-only) AND an array of ActionItems extracted from the rec file's IMPLEMENTATION STEPS section, each populated with the full lifecycle metadata (duration class, check-in cadence, partner involvement, derivative-reminder template). Stage 3a is the bridge from "we picked these recs" to "here is what each rec is worth and what work it generates" — its output feeds Stage 3b (deterministic plan assembly), Stage 4 (prose), and the post-delivery Tracker.

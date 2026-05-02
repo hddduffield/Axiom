@@ -141,6 +141,11 @@ function makePlan(
         timing_bucket_inferred: [],
         qualitative_fallback_used: [],
         blocked_inputs_summary: [],
+        orphan_action_item_dependencies: [],
+        orphan_sequencing_references: [],
+        batch_failures_summary: [],
+        coverage_gaps: [],
+        volatile_rates_stale: [],
       },
       from_stage_3b: {
         cycles_detected: [],

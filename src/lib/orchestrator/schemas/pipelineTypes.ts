@@ -262,6 +262,77 @@ export interface SequencerFlags3a {
     blocked_inputs: string[];
     awaiting: string[];
   }>;
+
+  // Stage 3a.2 cross-batch validation flags (added by the deterministic
+  // merger after all Stage 3a.1 batches complete). Each entry preserves
+  // batch_index so a reviewer can trace which batch emitted the bad reference.
+  orphan_action_item_dependencies: Array<{
+    source_action_item_id: string;
+    source_rec_id: string;
+    missing_dependency_id: string;
+    source_batch_index: number;
+  }>;
+  orphan_sequencing_references: Array<{
+    source_rec_id: string;
+    field:
+      | "must_come_after"
+      | "must_come_before"
+      | "sequenced_with"
+      | "coordinated_with"
+      | "mutually_exclusive_with";
+    missing_rec_id: string;
+    source_batch_index: number;
+  }>;
+  batch_failures_summary: Array<{
+    batch_index: number;
+    failure_type: string;
+    failure_reason: string;
+  }>;
+  // rec_ids present in selected[] but absent from the consolidated output —
+  // typically because the batch that contained them failed.
+  coverage_gaps: string[];
+  // Volatile-rates staleness, surfaced from any batch that flagged it. Stage
+  // 3a.1 emits this per-batch; Stage 3a.2 unions the entries here.
+  volatile_rates_stale: Array<{
+    batch_index: number;
+    last_refreshed: string;
+    days_since_refresh: number;
+  }>;
+}
+
+// Per-batch metadata, surfaced inside the Stage 3a aggregate metadata so
+// downstream tooling can attribute cost / latency / failures to specific
+// batches without reaching back into the per-batch failure objects.
+export interface Stage3aPerBatchMetadata {
+  batch_index: number;
+  status: "success" | "failed";
+  failure_type: string | null;
+  attempts_made: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_creation_input_tokens: number;
+  cache_read_input_tokens: number;
+  duration_ms: number;
+}
+
+// Stage-3a-level metadata. Mirrors the StageMetadata shape from clientProfile.ts
+// (input/output tokens, attempts, attempt_history, duration, parsed_at) plus
+// Stage-3a-specific aggregates: cost in cents, total wall-clock duration, and
+// the per-batch breakdown that lets us attribute cost back to specific batches.
+export interface Stage3aMetadata {
+  stage_version: string;
+  model_used: string;
+  total_input_tokens: number;
+  total_output_tokens: number;
+  total_cache_creation_input_tokens: number;
+  total_cache_read_input_tokens: number;
+  total_attempts: number;
+  cost_cents: number;
+  total_duration_ms: number;
+  per_batch: Stage3aPerBatchMetadata[];
+  source_fr_content_hash: string;
+  source_selected_recommendations_hash: string | null;
+  parsed_at: string;
 }
 
 export interface QuantifiedRecommendations {
@@ -269,6 +340,9 @@ export interface QuantifiedRecommendations {
   _sequencer_failures?: SequencerFailure[];
   _sequencer_flags: SequencerFlags3a;
   recommendations: SequencedRecommendation[];
+  // Optional because Stage 3a.2 alone doesn't generate metadata — the harness
+  // populates it after merging per-batch results.
+  _metadata?: Stage3aMetadata;
 }
 
 // ────────────────────────────────────────────────────────────────────────

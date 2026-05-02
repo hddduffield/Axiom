@@ -229,6 +229,11 @@ function buildHollowayFixture(): {
       timing_bucket_inferred: [],
       qualitative_fallback_used: [],
       blocked_inputs_summary: [],
+      orphan_action_item_dependencies: [],
+      orphan_sequencing_references: [],
+      batch_failures_summary: [],
+      coverage_gaps: [],
+      volatile_rates_stale: [],
     },
     recommendations: recs,
   };
@@ -318,6 +323,11 @@ test("cycle detection: A↔B fails fast with cycle in failure context", () => {
       timing_bucket_inferred: [],
       qualitative_fallback_used: [],
       blocked_inputs_summary: [],
+      orphan_action_item_dependencies: [],
+      orphan_sequencing_references: [],
+      batch_failures_summary: [],
+      coverage_gaps: [],
+      volatile_rates_stale: [],
     },
     recommendations: recs,
   };
