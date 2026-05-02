@@ -15,7 +15,9 @@ import { fileURLToPath } from "node:url";
 import type Anthropic from "@anthropic-ai/sdk";
 import { ZodError } from "zod";
 import {
+  Stage3a1LlmRawOutputSchema,
   Stage3a1ResponseBodySchema,
+  harnessPostFillFields,
   type BatchContext,
   type Stage3a1Metadata,
   type Stage3a1Result,
@@ -30,11 +32,14 @@ import type { FirmPolicyQuestionId } from "../schemas/pipelineTypes";
 // Constants
 // ────────────────────────────────────────────────────────────────────────
 
-const STAGE_VERSION = "3a.1-1.0.0";
+const STAGE_VERSION = "3a.1-1.1.0";
 const MODEL = "claude-opus-4-7";
-// Per-batch output is ~6-10K tokens for a 25-rec batch. 16K leaves comfortable
-// headroom for the State C-heavy / multi-action-item case.
-const MAX_TOKENS = 16000;
+// Per-batch output empirically lands at ~1,632 tokens per rec (Holloway
+// Estate batch; lifecycle-heavy schema). Five always-null/derivable fields
+// are now post-filled by the harness, saving ~10% per rec — but a 20-rec
+// batch still needs ~30K output. 32K is the realistic ceiling for the
+// designed batch-size range.
+const MAX_TOKENS = 32000;
 const DEFAULT_KB_PATH = "kb/v1_2";
 // Conservative input-token estimate cap. Opus 4.7 context is 200K but practical
 // throughput suffers above ~150K. Fail-fast at 180K so the orchestrator can
@@ -377,12 +382,16 @@ export async function quantifyBatch(
     total_batches: batchContext.total_batches,
   });
 
-  // Step 1.1 — Load rec files for every rec in the batch
-  const recFiles: Array<{ recId: string; content: string }> = [];
+  // Step 1.1 — Load rec files for every rec in the batch. Track filePath so
+  // the harness post-fill can resolve source_file_path without the LLM
+  // having to emit it.
+  const recFiles: Array<{ recId: string; content: string; filePath: string }> = [];
+  const recIdToFilePath = new Map<string, string>();
   for (const rec of batch) {
     try {
-      const { content } = await loadRecFile(kbPath, rec.recommendation_id);
-      recFiles.push({ recId: rec.recommendation_id, content });
+      const { content, filePath } = await loadRecFile(kbPath, rec.recommendation_id);
+      recFiles.push({ recId: rec.recommendation_id, content, filePath });
+      recIdToFilePath.set(rec.recommendation_id, filePath);
     } catch (err) {
       return makeFailure(
         "kb_load_failed",
@@ -579,10 +588,11 @@ export async function quantifyBatch(
       continue;
     }
 
-    // Step 3.1 — schema validation (per-batch, scoped)
-    const validation = Stage3a1ResponseBodySchema.safeParse(parsed);
-    if (!validation.success) {
-      const errors = formatZodIssues(validation.error);
+    // Step 3.1a — narrower schema validation (LLM emits the slim shape; the
+    // 5 always-null/derivable fields are post-filled below).
+    const llmValidation = Stage3a1LlmRawOutputSchema.safeParse(parsed);
+    if (!llmValidation.success) {
+      const errors = formatZodIssues(llmValidation.error);
       lastRetryFailure = {
         type: "schema_validation_failed",
         validation_errors: errors,
@@ -603,7 +613,37 @@ export async function quantifyBatch(
       continue;
     }
 
-    // Step 3.1 — additional per-batch invariants beyond zod shape:
+    // Step 3.1b — harness post-fill: deterministically populate the 5 fields
+    // the LLM no longer emits (4 always-null/false ActionItem fields +
+    // source_file_path on each rec).
+    const postFilled = harnessPostFillFields(llmValidation.data, recIdToFilePath);
+
+    // Step 3.1c — full schema validation against the post-filled body. This
+    // is a defensive sanity check; the post-fill is deterministic and the
+    // narrower schema already enforced the LLM-side invariants. A failure
+    // here would indicate a refactor bug, not LLM output drift.
+    const validation = Stage3a1ResponseBodySchema.safeParse(postFilled);
+    if (!validation.success) {
+      const errors = formatZodIssues(validation.error);
+      lastRetryFailure = {
+        type: "schema_validation_failed",
+        validation_errors: errors,
+        parsed_response: parsed,
+        raw_response: responseText,
+      };
+      attemptHistory.push({
+        attempt_number: attempt,
+        outcome: "schema_validation_failed",
+        failure_details: `[post-fill validation] ${errors.join("; ")}`,
+        duration_ms: Date.now() - attemptStart,
+        input_tokens: attemptInputTokens,
+        output_tokens: attemptOutputTokens,
+      });
+      // Don't retry — post-fill is deterministic; retry won't help.
+      break;
+    }
+
+    // Step 3.1d — additional per-batch invariants beyond zod shape:
     // every recommendation_id MUST be in batch[].
     const batchRecIds = new Set(batch.map((b) => b.recommendation_id));
     const foreignIds = validation.data.recommendations

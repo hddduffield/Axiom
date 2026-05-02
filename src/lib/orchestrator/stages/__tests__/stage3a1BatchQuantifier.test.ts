@@ -142,10 +142,18 @@ const VALID_FLAGS = {
   volatile_rates_stale: [],
 };
 
-function makeStateARec(recId = "REC-TAX-001") {
+// Mock helpers reflect the NARROWER LLM-output shape (post-Phase-3.1c-Step-1
+// schema compression). The 5 always-null/derivable fields are NOT emitted by
+// the LLM; the harness post-fills them. Schema validation runs against the
+// narrower shape first, then against the full shape after post-fill.
+
+// `as Record<string, unknown>` cast lets fixtures be mutated in failure-path
+// tests (e.g., setting partner_type: null) without TypeScript narrowing the
+// inline type to a non-nullable union.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function makeStateARec(recId = "REC-TAX-001"): any {
   return {
     recommendation_id: recId,
-    source_file_path: `kb/v1_2/01_recommendations/tax/${recId}_x.md`,
     category: "Tax",
     status: "Active",
     position_in_sequence: 0,
@@ -166,7 +174,6 @@ function makeStateARec(recId = "REC-TAX-001") {
     scenario_range: null,
     timing_bucket: "0-30 days",
     owner: "CPA",
-    owner_name: null,
     decisions_needed: false,
     cluster_id: null,
     cluster_sequence_closer: null,
@@ -179,7 +186,6 @@ function makeStateARec(recId = "REC-TAX-001") {
         source_recommendation_id: recId,
         source_phase_or_step: "Phase 1",
         owner: "CPA",
-        owner_name: null,
         timing_bucket: "0-30 days",
         depends_on: [],
         is_decision_needed: false,
@@ -187,9 +193,6 @@ function makeStateARec(recId = "REC-TAX-001") {
         check_in_cadence: null,
         partner_required: true,
         partner_type: "CPA",
-        parent_action_item_id: null,
-        is_derivative_reminder: false,
-        source_plan_id: null,
         auto_generated_reminder_template: null,
       },
     ],
@@ -202,10 +205,10 @@ function makeStateARec(recId = "REC-TAX-001") {
   };
 }
 
-function makeStateCRec(recId = "REC-EST-006") {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function makeStateCRec(recId = "REC-EST-006"): any {
   return {
     recommendation_id: recId,
-    source_file_path: `kb/v1_2/01_recommendations/estate/${recId}_x.md`,
     category: "Estate",
     status: "Active",
     position_in_sequence: 0,
@@ -233,7 +236,6 @@ function makeStateCRec(recId = "REC-EST-006") {
     scenario_range: null,
     timing_bucket: "30-60 days",
     owner: "Attorney",
-    owner_name: null,
     decisions_needed: true,
     cluster_id: null,
     cluster_sequence_closer: null,
@@ -247,10 +249,10 @@ function makeStateCRec(recId = "REC-EST-006") {
   };
 }
 
-function makeStateDRec(recId = "REC-FAM-006") {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function makeStateDRec(recId = "REC-FAM-006"): any {
   return {
     recommendation_id: recId,
-    source_file_path: `kb/v1_2/01_recommendations/family/${recId}_x.md`,
     category: "Family",
     status: "Active",
     position_in_sequence: 0,
@@ -271,7 +273,6 @@ function makeStateDRec(recId = "REC-FAM-006") {
     scenario_range: null,
     timing_bucket: "60-120 days",
     owner: "PSA",
-    owner_name: null,
     decisions_needed: false,
     cluster_id: null,
     cluster_sequence_closer: null,
@@ -570,6 +571,50 @@ test("3a.1 — batch context is threaded into user turn", async () => {
   assert.ok(content.includes("REC-EST-001"));
   assert.ok(content.includes("REC-FAM-006"));
   assert.ok(content.includes('"batch_index": 1'));
+});
+
+test("3a.1 — post-fill populates always-null fields after parsing narrower LLM output", async () => {
+  _resetCachesForTesting();
+  const profile = makeMinimalClientProfile();
+  const batch = [makeSelectedRec("REC-TAX-001")];
+  const ctx = makeBatchContext();
+  // Mock LLM emits the narrower shape (no owner_name, parent_action_item_id,
+  // is_derivative_reminder, source_plan_id on the AI; no source_file_path on
+  // the rec). makeStateARec already returns the narrower shape.
+  const narrowRec = makeStateARec("REC-TAX-001");
+  const body = makeValidResponseBody(0, 1, [narrowRec]);
+  const client = makeMockClient([{ kind: "text", text: JSON.stringify(body) }]);
+
+  const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
+  assert.ok(!isFailure(result));
+  // Post-fill must have populated the 4 always-null AI fields.
+  const ai = result.recommendations[0].action_items[0];
+  assert.equal(ai.owner_name, null, "owner_name post-filled to null");
+  assert.equal(ai.parent_action_item_id, null, "parent_action_item_id post-filled to null");
+  assert.equal(ai.is_derivative_reminder, false, "is_derivative_reminder post-filled to false");
+  assert.equal(ai.source_plan_id, null, "source_plan_id post-filled to null");
+  // Rec-level owner_name also post-filled.
+  assert.equal(result.recommendations[0].owner_name, null, "rec.owner_name post-filled");
+});
+
+test("3a.1 — post-fill resolves source_file_path correctly from the batch context", async () => {
+  _resetCachesForTesting();
+  const profile = makeMinimalClientProfile();
+  // REC-TAX-001 lives at kb/v1_2/01_recommendations/tax/REC-TAX-001_georgia_ptet_election.md
+  const batch = [makeSelectedRec("REC-TAX-001")];
+  const ctx = makeBatchContext();
+  const narrowRec = makeStateARec("REC-TAX-001");
+  const body = makeValidResponseBody(0, 1, [narrowRec]);
+  const client = makeMockClient([{ kind: "text", text: JSON.stringify(body) }]);
+
+  const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
+  assert.ok(!isFailure(result));
+  const recPath = result.recommendations[0].source_file_path;
+  assert.match(
+    recPath,
+    /kb\/v1_2\/01_recommendations\/tax\/REC-TAX-001_.*\.md$/,
+    `source_file_path post-filled from harness KB load (got: ${recPath})`,
+  );
 });
 
 // Live API placeholder — gated on env var, deferred to Phase 3.1c
