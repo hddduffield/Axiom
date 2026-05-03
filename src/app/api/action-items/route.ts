@@ -1,11 +1,16 @@
 import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { created, err, list } from "@/lib/api/respond";
-import { LIST_ACTION_ITEMS } from "@/lib/api/_mocks";
-import type { ActionItem } from "@/lib/api/types";
+import {
+  clampLimit,
+  dbErrorMessage,
+  decodeCursor,
+  encodeCursor,
+  mapDbError,
+} from "@/lib/api/db_queries";
 
 const createSchema = z.object({
-  client_id: z.string().min(1),
+  client_id: z.string().uuid(),
   description: z.string().min(1),
   category: z.string().min(1),
   duration_class: z.enum(["one_time", "long_running"]),
@@ -13,11 +18,13 @@ const createSchema = z.object({
   owner: z.string().min(1),
   partner_required: z.boolean().optional(),
   partner_type: z.string().nullable().optional(),
-  parent_action_item_id: z.string().nullable().optional(),
+  parent_action_item_id: z.string().uuid().nullable().optional(),
 });
 
-// GET /api/action-items — global list with filters.
-// TODO: Phase 5 — supabase.from("action_items").select(...).match(filters)
+// GET /api/action-items — list with filters + cursor pagination.
+//
+// Sort: created_at desc, id desc. Cursor encodes the last row's
+// (created_at, id) pair for keyset paging.
 export async function GET(request: Request) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
@@ -28,21 +35,45 @@ export async function GET(request: Request) {
   const timingBucket = url.searchParams.get("timing_bucket");
   const clientId = url.searchParams.get("client_id");
   const partnerRequiredParam = url.searchParams.get("partner_required");
+  const limit = clampLimit(url.searchParams.get("limit"));
+  const cursor = decodeCursor(url.searchParams.get("cursor"));
 
-  let items = LIST_ACTION_ITEMS;
-  if (owner) items = items.filter((a) => a.owner === owner);
-  if (status) items = items.filter((a) => a.status === status);
-  if (timingBucket) items = items.filter((a) => a.timing_bucket === timingBucket);
-  if (clientId) items = items.filter((a) => a.client_id === clientId);
-  if (partnerRequiredParam !== null) {
-    const want = partnerRequiredParam === "true";
-    items = items.filter((a) => a.partner_required === want);
+  let q = auth.supabase
+    .from("action_items")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+
+  if (owner) q = q.eq("owner", owner);
+  if (status) {
+    const parsedStatus = z
+      .enum(["not_started", "in_progress", "pending_decision", "complete"])
+      .safeParse(status);
+    if (parsedStatus.success) q = q.eq("status", parsedStatus.data);
   }
-  return list(items);
+  if (timingBucket) q = q.eq("timing_bucket", timingBucket);
+  if (clientId) q = q.eq("client_id", clientId);
+  if (partnerRequiredParam !== null) {
+    q = q.eq("partner_required", partnerRequiredParam === "true");
+  }
+  if (cursor) {
+    const key = String(cursor.key);
+    q = q.or(`created_at.lt.${key},and(created_at.eq.${key},id.lt.${cursor.id})`);
+  }
+
+  const { data, error } = await q;
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  const rows = data ?? [];
+  const hasMore = rows.length > limit;
+  const items = hasMore ? rows.slice(0, limit) : rows;
+  const next = hasMore && items.length > 0
+    ? encodeCursor({ id: items[items.length - 1].id, key: items[items.length - 1].created_at })
+    : null;
+  return list(items, next);
 }
 
-// POST /api/action-items — create manual action item.
-// TODO: Phase 5 — supabase.from("action_items").insert(...).select().single()
+// POST /api/action-items — create a manual action item (no source_plan).
 export async function POST(request: Request) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
@@ -58,27 +89,25 @@ export async function POST(request: Request) {
     return err("validation_failed", "Invalid action item payload.", parsed.error.issues);
   }
 
-  const now = new Date().toISOString();
-  const newItem: ActionItem = {
-    id: `mock-ai-new-${Math.random().toString(36).slice(2, 8)}`,
-    client_id: parsed.data.client_id,
-    source_plan_id: null,
-    source_lens_run_id: null,
-    parent_action_item_id: parsed.data.parent_action_item_id ?? null,
-    description: parsed.data.description,
-    category: parsed.data.category,
-    duration_class: parsed.data.duration_class,
-    timing_bucket: parsed.data.timing_bucket,
-    owner: parsed.data.owner,
-    partner_required: parsed.data.partner_required ?? false,
-    partner_type: parsed.data.partner_type ?? null,
-    status: "not_started",
-    completed_at: null,
-    completed_by_advisor_id: null,
-    is_derivative_reminder: false,
-    auto_generated_reminder_template: null,
-    created_at: now,
-    updated_at: now,
-  };
-  return created(newItem);
+  const { data, error } = await auth.supabase
+    .from("action_items")
+    .insert({
+      client_id: parsed.data.client_id,
+      source_plan_id: null,
+      source_lens_run_id: null,
+      parent_action_item_id: parsed.data.parent_action_item_id ?? null,
+      description: parsed.data.description,
+      category: parsed.data.category,
+      duration_class: parsed.data.duration_class,
+      timing_bucket: parsed.data.timing_bucket,
+      owner: parsed.data.owner,
+      partner_required: parsed.data.partner_required ?? false,
+      partner_type: parsed.data.partner_type ?? null,
+      status: "not_started",
+    })
+    .select("*")
+    .single();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  // TODO: Phase 5e — audit_log insert (entity='action_item', action='created').
+  return created(data);
 }

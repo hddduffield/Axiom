@@ -1,24 +1,29 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
-import { MOCK_PLANS_BY_ID } from "@/lib/api/_mocks";
-import type { Plan } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-// POST /api/plans/[id]/archive — archive a plan.
-// TODO: Phase 5 — supabase update + audit_log insert.
+// POST /api/plans/[id]/archive — set status='archived' + archived_at=now().
+//
+// No status guard: we accept archiving from draft or approved. Re-archiving
+// an already-archived plan is a no-op (the new archived_at overwrites the
+// old, which is correct — archiving represents the most recent decision).
 export async function POST(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const plan = MOCK_PLANS_BY_ID[id];
-  if (!plan) return err("not_found", `No plan with id ${id}.`);
-  const updated: Plan = {
-    ...plan,
-    status: "archived",
-    archived_at: new Date().toISOString(),
-  };
-  return ok(updated);
+
+  const { data, error } = await auth.supabase
+    .from("plans")
+    .update({ status: "archived", archived_at: new Date().toISOString() })
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No plan with id ${id}.`);
+  // TODO: Phase 5e — audit_log insert (entity='plan', action='updated').
+  return ok(data);
 }

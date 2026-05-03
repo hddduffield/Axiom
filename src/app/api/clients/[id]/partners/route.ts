@@ -1,20 +1,30 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, list } from "@/lib/api/respond";
-import { LIST_PARTNERS, MOCK_CLIENTS_BY_ID } from "@/lib/api/_mocks";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
 // GET /api/clients/[id]/partners — list partners for a client.
-// TODO: Phase 5 — supabase.from("partners").select("*").eq("client_id", id)
 export async function GET(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  if (!MOCK_CLIENTS_BY_ID[id]) {
-    return err("not_found", `No client with id ${id}.`);
-  }
-  const items = LIST_PARTNERS.filter((p) => p.client_id === id);
-  return list(items);
+
+  const { data: clientRow, error: clientErr } = await auth.supabase
+    .from("clients")
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+  if (clientErr) return err(mapDbError(clientErr), dbErrorMessage(clientErr));
+  if (!clientRow) return err("not_found", `No client with id ${id}.`);
+
+  const { data, error } = await auth.supabase
+    .from("partners")
+    .select("*")
+    .eq("client_id", id)
+    .order("created_at", { ascending: false });
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  return list(data ?? []);
 }

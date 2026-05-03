@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, noContent, ok } from "@/lib/api/respond";
-import { MOCK_PARTNERS_BY_ID } from "@/lib/api/_mocks";
-import type { Partner } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 const updateSchema = z.object({
   partner_type: z.string().min(1).optional(),
@@ -23,8 +22,6 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const partner = MOCK_PARTNERS_BY_ID[id];
-  if (!partner) return err("not_found", `No partner with id ${id}.`);
 
   let raw: unknown;
   try {
@@ -36,8 +33,16 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   if (!parsed.success) {
     return err("validation_failed", "Invalid partner patch.", parsed.error.issues);
   }
-  const updated: Partner = { ...partner, ...parsed.data };
-  return ok(updated);
+
+  const { data, error } = await auth.supabase
+    .from("partners")
+    .update(parsed.data)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No partner with id ${id}.`);
+  return ok(data);
 }
 
 // DELETE /api/partners/[id]
@@ -45,7 +50,14 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const partner = MOCK_PARTNERS_BY_ID[id];
-  if (!partner) return err("not_found", `No partner with id ${id}.`);
+
+  const { data, error } = await auth.supabase
+    .from("partners")
+    .delete()
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No partner with id ${id}.`);
   return noContent();
 }

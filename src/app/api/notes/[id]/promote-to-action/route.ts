@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
-import { MOCK_NOTES_BY_ID } from "@/lib/api/_mocks";
-import type { ActionItem, Note } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 const promoteSchema = z.object({
   description: z.string().min(1).optional(),
@@ -18,14 +17,25 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-// POST /api/notes/[id]/promote-to-action — manual promotion to an action item.
-// TODO: Phase 5 — atomic transaction: insert action_item, update note's
-//                 promoted_to_action_item_id, audit_log row.
+// POST /api/notes/[id]/promote-to-action — create the action item AND
+// link the note's promoted_to_action_item_id in two sequential queries.
+//
+// Not a true Postgres transaction (Supabase JS doesn't expose one); on
+// the rare case where the second update fails we'd leave a stranded
+// action_item with no linked note. Phase 5e can promote this to an RPC
+// for atomicity once the audit_log + Inngest plumbing is in place.
 export async function POST(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const note = MOCK_NOTES_BY_ID[id];
+
+  // Fetch the note (also gives us client_id + the conflict signal).
+  const { data: note, error: noteErr } = await auth.supabase
+    .from("notes")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (noteErr) return err(mapDbError(noteErr), dbErrorMessage(noteErr));
   if (!note) return err("not_found", `No note with id ${id}.`);
   if (note.promoted_to_action_item_id) {
     return err(
@@ -45,28 +55,40 @@ export async function POST(request: Request, { params }: RouteContext) {
     return err("validation_failed", "Invalid promotion payload.", parsed.error.issues);
   }
 
-  const now = new Date().toISOString();
-  const newAction: ActionItem = {
-    id: `mock-ai-promo-${Math.random().toString(36).slice(2, 8)}`,
-    client_id: note.client_id,
-    source_plan_id: null,
-    source_lens_run_id: null,
-    parent_action_item_id: null,
-    description: parsed.data.description ?? note.body,
-    category: parsed.data.category,
-    duration_class: parsed.data.duration_class,
-    timing_bucket: parsed.data.timing_bucket,
-    owner: parsed.data.owner,
-    partner_required: parsed.data.partner_required ?? false,
-    partner_type: parsed.data.partner_type ?? null,
-    status: "not_started",
-    completed_at: null,
-    completed_by_advisor_id: null,
-    is_derivative_reminder: false,
-    auto_generated_reminder_template: null,
-    created_at: now,
-    updated_at: now,
-  };
-  const updatedNote: Note = { ...note, promoted_to_action_item_id: newAction.id };
-  return ok({ note: updatedNote, action_item: newAction });
+  // 1) Insert the action item.
+  const { data: action, error: actionErr } = await auth.supabase
+    .from("action_items")
+    .insert({
+      client_id: note.client_id,
+      source_plan_id: null,
+      source_lens_run_id: null,
+      parent_action_item_id: null,
+      description: parsed.data.description ?? note.body,
+      category: parsed.data.category,
+      duration_class: parsed.data.duration_class,
+      timing_bucket: parsed.data.timing_bucket,
+      owner: parsed.data.owner,
+      partner_required: parsed.data.partner_required ?? false,
+      partner_type: parsed.data.partner_type ?? null,
+      status: "not_started",
+    })
+    .select("*")
+    .single();
+  if (actionErr) return err(mapDbError(actionErr), dbErrorMessage(actionErr));
+
+  // 2) Update the note with the new action_item id.
+  const { data: updatedNote, error: noteUpdateErr } = await auth.supabase
+    .from("notes")
+    .update({ promoted_to_action_item_id: action.id })
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (noteUpdateErr) {
+    return err(
+      mapDbError(noteUpdateErr),
+      `Action item ${action.id} created but failed to link to note ${id}: ${dbErrorMessage(noteUpdateErr)}`,
+    );
+  }
+  // TODO: Phase 5e — audit_log inserts (entity='action_item', 'created' + entity='note', 'updated').
+  return ok({ note: updatedNote, action_item: action });
 }

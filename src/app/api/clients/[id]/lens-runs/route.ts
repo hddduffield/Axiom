@@ -1,25 +1,68 @@
+import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, list } from "@/lib/api/respond";
-import { LIST_LENS_RUNS, MOCK_CLIENTS_BY_ID } from "@/lib/api/_mocks";
+import {
+  clampLimit,
+  dbErrorMessage,
+  decodeCursor,
+  encodeCursor,
+  mapDbError,
+} from "@/lib/api/db_queries";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
 // GET /api/clients/[id]/lens-runs — list lens runs for a client.
-// TODO: Phase 5 — supabase.from("lens_runs").select("*").eq("client_id", id)
 export async function GET(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  if (!MOCK_CLIENTS_BY_ID[id]) {
-    return err("not_found", `No client with id ${id}.`);
-  }
+
+  const { data: clientRow, error: clientErr } = await auth.supabase
+    .from("clients")
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+  if (clientErr) return err(mapDbError(clientErr), dbErrorMessage(clientErr));
+  if (!clientRow) return err("not_found", `No client with id ${id}.`);
+
   const url = new URL(request.url);
   const lensType = url.searchParams.get("lens_type");
   const status = url.searchParams.get("status");
-  let items = LIST_LENS_RUNS.filter((l) => l.client_id === id);
-  if (lensType) items = items.filter((l) => l.lens_type === lensType);
-  if (status) items = items.filter((l) => l.status === status);
-  return list(items);
+  const limit = clampLimit(url.searchParams.get("limit"));
+  const cursor = decodeCursor(url.searchParams.get("cursor"));
+
+  let q = auth.supabase
+    .from("lens_runs")
+    .select("*")
+    .eq("client_id", id)
+    .order("generated_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(limit + 1);
+
+  if (lensType) {
+    const parsedLens = z
+      .enum(["investment", "insurance", "cash_flow"])
+      .safeParse(lensType);
+    if (parsedLens.success) q = q.eq("lens_type", parsedLens.data);
+  }
+  if (status) {
+    const parsedStatus = z.enum(["draft", "approved", "archived"]).safeParse(status);
+    if (parsedStatus.success) q = q.eq("status", parsedStatus.data);
+  }
+  if (cursor) {
+    const key = String(cursor.key);
+    q = q.or(`generated_at.lt.${key},and(generated_at.eq.${key},id.lt.${cursor.id})`);
+  }
+
+  const { data, error } = await q;
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  const rows = data ?? [];
+  const hasMore = rows.length > limit;
+  const items = hasMore ? rows.slice(0, limit) : rows;
+  const next = hasMore && items.length > 0
+    ? encodeCursor({ id: items[items.length - 1].id, key: items[items.length - 1].generated_at })
+    : null;
+  return list(items, next);
 }

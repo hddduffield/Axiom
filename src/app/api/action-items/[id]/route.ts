@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, noContent, ok } from "@/lib/api/respond";
-import { MOCK_ACTION_ITEMS_BY_ID } from "@/lib/api/_mocks";
-import type { ActionItem } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import type { Database } from "@/lib/supabase/database.types";
+
+type ActionItemUpdate = Database["public"]["Tables"]["action_items"]["Update"];
 
 const updateSchema = z.object({
   description: z.string().min(1).optional(),
@@ -24,20 +26,25 @@ export async function GET(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const item = MOCK_ACTION_ITEMS_BY_ID[id];
-  if (!item) return err("not_found", `No action item with id ${id}.`);
-  return ok(item);
+  const { data, error } = await auth.supabase
+    .from("action_items")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No action item with id ${id}.`);
+  return ok(data);
 }
 
 // PATCH /api/action-items/[id]
-// TODO: Phase 5 — supabase update; if status → complete, set completed_at + completed_by_advisor_id;
-//                 audit_log insert ('updated' or 'completed').
+//
+// When status flips to 'complete', server-side stamps completed_at +
+// completed_by_advisor_id (only on the first transition — re-PATCH to
+// 'complete' on an already-complete item is a no-op for those fields).
 export async function PATCH(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const item = MOCK_ACTION_ITEMS_BY_ID[id];
-  if (!item) return err("not_found", `No action item with id ${id}.`);
 
   let raw: unknown;
   try {
@@ -50,27 +57,47 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return err("validation_failed", "Invalid action item patch.", parsed.error.issues);
   }
 
-  const now = new Date().toISOString();
-  const wantsComplete = parsed.data.status === "complete";
-  const updated: ActionItem = {
-    ...item,
-    ...parsed.data,
-    completed_at: wantsComplete ? (item.completed_at ?? now) : item.completed_at,
-    completed_by_advisor_id: wantsComplete
-      ? (item.completed_by_advisor_id ?? auth.advisor.id)
-      : item.completed_by_advisor_id,
-    updated_at: now,
-  };
-  return ok(updated);
+  // Need the current row to decide whether to stamp completed_at.
+  const { data: current, error: fetchErr } = await auth.supabase
+    .from("action_items")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (fetchErr) return err(mapDbError(fetchErr), dbErrorMessage(fetchErr));
+  if (!current) return err("not_found", `No action item with id ${id}.`);
+
+  const patch: ActionItemUpdate = { ...parsed.data };
+  if (parsed.data.status === "complete" && current.status !== "complete") {
+    patch.completed_at = new Date().toISOString();
+    patch.completed_by_advisor_id = auth.advisor.id;
+  }
+
+  const { data, error } = await auth.supabase
+    .from("action_items")
+    .update(patch)
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  // TODO: Phase 5e — audit_log insert (action='completed' if status flipped, else 'updated').
+  return ok(data);
 }
 
-// DELETE /api/action-items/[id]
-// TODO: Phase 5 — supabase delete; cascade behavior + audit_log.
+// DELETE /api/action-items/[id] — hard delete (cascades to children via
+// parent_action_item_id ON DELETE CASCADE in the schema).
 export async function DELETE(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const item = MOCK_ACTION_ITEMS_BY_ID[id];
-  if (!item) return err("not_found", `No action item with id ${id}.`);
+
+  const { data, error } = await auth.supabase
+    .from("action_items")
+    .delete()
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No action item with id ${id}.`);
+  // TODO: Phase 5e — audit_log insert (entity='action_item', action='deleted').
   return noContent();
 }

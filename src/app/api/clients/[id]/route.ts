@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, noContent, ok } from "@/lib/api/respond";
-import { MOCK_CLIENTS_BY_ID } from "@/lib/api/_mocks";
-import type { Client } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 const updateSchema = z.object({
   lead_advisor_id: z.string().uuid().optional(),
@@ -21,19 +20,22 @@ export async function GET(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const c = MOCK_CLIENTS_BY_ID[id];
-  if (!c) return err("not_found", `No client with id ${id}.`);
-  return ok(c);
+
+  const { data, error } = await auth.supabase
+    .from("clients")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No client with id ${id}.`);
+  return ok(data);
 }
 
 // PATCH /api/clients/[id]
-// TODO: Phase 5 — supabase.from("clients").update(...).eq("id", id).select().single()
 export async function PATCH(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const c = MOCK_CLIENTS_BY_ID[id];
-  if (!c) return err("not_found", `No client with id ${id}.`);
 
   let raw: unknown;
   try {
@@ -46,21 +48,33 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return err("validation_failed", "Invalid client patch.", parsed.error.issues);
   }
 
-  const updated: Client = {
-    ...c,
-    ...parsed.data,
-    updated_at: new Date().toISOString(),
-  };
-  return ok(updated);
+  const { data, error } = await auth.supabase
+    .from("clients")
+    .update(parsed.data)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No client with id ${id}.`);
+  // TODO: Phase 5e — audit_log insert (entity='client', action='updated').
+  return ok(data);
 }
 
-// DELETE /api/clients/[id] — soft delete (status → inactive).
-// TODO: Phase 5 — soft-delete via UPDATE; full DELETE only for prospects with no plans.
+// DELETE /api/clients/[id] — soft-delete (status → inactive). Phase 5
+// keeps the row so plan / action_item history is preserved.
 export async function DELETE(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const c = MOCK_CLIENTS_BY_ID[id];
-  if (!c) return err("not_found", `No client with id ${id}.`);
+
+  const { data, error } = await auth.supabase
+    .from("clients")
+    .update({ status: "inactive" })
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  if (!data) return err("not_found", `No client with id ${id}.`);
+  // TODO: Phase 5e — audit_log insert (entity='client', action='deleted').
   return noContent();
 }

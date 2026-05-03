@@ -173,17 +173,20 @@ them now without rework.
 - Server-side helpers: `src/lib/api/auth.ts` (`requireAdvisor`),
   `src/lib/api/respond.ts` (`ok`, `list`, `created`, `noContent`, `err`).
 
-**Endpoint inventory** (all 🪛 MOCK in Step 3):
+**Endpoint inventory** (legend: 🔌 = real-wired to Supabase, 🪛 = mock):
 
-| Resource | Endpoints |
-| --- | --- |
-| Advisors | `GET /api/advisors/me`, `GET /api/advisors` |
-| Clients | `GET/POST /api/clients`, `GET/PATCH/DELETE /api/clients/[id]`, `GET /api/clients/[id]/{plans,notes,lens-runs,partners}` |
-| Plans | `GET /api/plans/[id]`, `POST /api/plans/generate` (multipart .docx), `POST /api/plans/[id]/{approve,archive}` |
-| Action items | `GET/POST /api/action-items`, `GET/PATCH/DELETE /api/action-items/[id]` |
-| Notes | `POST /api/notes`, `PATCH/DELETE /api/notes/[id]`, `POST /api/notes/[id]/promote-to-action` |
-| Lens runs | `GET /api/lens-runs/[id]`, `POST /api/lens-runs/generate` |
-| Partners | `POST /api/partners`, `PATCH/DELETE /api/partners/[id]` |
+| Resource | Endpoints | Status |
+| --- | --- | --- |
+| Advisors | `GET /api/advisors/me`, `GET /api/advisors` | 🔌 5a |
+| Clients | `GET/POST /api/clients`, `GET/PATCH/DELETE /api/clients/[id]`, `GET /api/clients/[id]/{plans,notes,lens-runs,partners}` | 🔌 5a |
+| Plans (read/transitions) | `GET /api/plans/[id]`, `POST /api/plans/[id]/{approve,archive}` | 🔌 5a |
+| Plans (generation) | `POST /api/plans/generate` (multipart .docx) | 🪛 mock — Phase 5b |
+| Action items | `GET/POST /api/action-items`, `GET/PATCH/DELETE /api/action-items/[id]` | 🔌 5a |
+| Notes | `POST /api/notes`, `PATCH/DELETE /api/notes/[id]` (author-only), `POST /api/notes/[id]/promote-to-action` | 🔌 5a |
+| Lens runs (read) | `GET /api/lens-runs/[id]` | 🔌 5a |
+| Lens runs (generation) | `POST /api/lens-runs/generate` | 🪛 mock — Phase 5c |
+| Partners | `POST /api/partners`, `PATCH/DELETE /api/partners/[id]` | 🔌 5a |
+| **Dev seed** (gated `NODE_ENV !== "production"`) | `GET/POST /api/dev/seed` | 🔌 5a |
 
 **Conventions** (mirrored in `specs/api/v1_contract.md`):
 
@@ -193,12 +196,63 @@ them now without rework.
 - Error format: `{ error: { code, message, details? } }` with
   HTTP-status mapping.
 - Pagination: cursor-based (`limit` default 50, max 200; `cursor`
-  opaque). Phase 4 mock returns `next_cursor: null` always.
+  opaque). Implemented as base64url JSON of `{ id, key }` for keyset
+  paging. See `src/lib/api/db_queries.ts`.
 - Dates: ISO 8601 UTC.
-- IDs: lowercase RFC 4122 UUID; mocks use stable `mock-*` prefixes.
+- IDs: lowercase RFC 4122 UUID. Dev seed uses stable deterministic
+  UUIDs (e.g., `11111111-1111-1111-1111-000000000001` for Holloway) so
+  re-seeding is idempotent.
 
-When wiring Phase 5: every `// TODO: Phase 5 — ...` marker in
-`src/app/api/**/route.ts` is the one-line spec for the Supabase query
-to slot in. The trigger endpoints (`POST .../generate`) need a
-background-worker enqueue (likely Inngest or a Postgres-backed queue)
-that calls into `src/lib/orchestrator/`.
+# Phase 5a: real Supabase wiring
+
+CRUD endpoints replaced their mock returns with `auth.supabase.from(...)`
+queries. Helpers live in `src/lib/api/db_queries.ts`:
+
+- `encodeCursor` / `decodeCursor` — base64url JSON cursor format.
+- `clampLimit` — enforces default 50, max 200.
+- `mapDbError` / `dbErrorMessage` — Postgres error codes →
+  `ApiErrorCode` (`PGRST116` → `not_found`, `23505` → `conflict`,
+  `42501` → `not_authorized`, etc.).
+
+Notes-specific behavior: PATCH/DELETE on `/api/notes/[id]` enforce
+author-only edit at the API layer (RLS uniformly allows any active
+advisor to UPDATE/DELETE notes; the API check ensures only the author
+can mutate). May tighten via stricter RLS in v1.5+.
+
+Action item completion behavior: PATCH `/api/action-items/[id]` with
+`status: "complete"` server-side stamps `completed_at` and
+`completed_by_advisor_id` on the *first* transition only (re-PATCH to
+"complete" on an already-complete item is idempotent for those fields).
+
+Audit logging is **deferred to Phase 5e** — every mutation handler has
+a `// TODO: Phase 5e — audit_log insert (...)` marker.
+
+## Dev seed
+
+```
+# from a signed-in browser address bar OR curl with cookies:
+GET /api/dev/seed
+```
+
+Idempotent upsert of Holloway + Burke clients, 3 partners, 6 action items,
+3 notes (one promoted). Uses the signed-in advisor as `lead_advisor_id` /
+`author_advisor_id` / `owner` so the data attaches to whoever ran the
+seed. Returns 403 in production via `NODE_ENV` guard.
+
+**Routing note:** the spec called for `/api/_dev/seed`, but Next.js 16
+treats `_folder` as a private (non-routable) folder. Lives at
+`/api/dev/seed` instead.
+
+# Generation triggers (still mocked)
+
+- `POST /api/plans/generate` — Phase 5b will upload to Supabase Storage,
+  insert a `plans` row with `status='draft'`, enqueue a background job
+  that runs Stages 0/1 → 3a → 4 → 5 from `src/lib/orchestrator/`, then
+  flip the plan to `status='ready_for_review'`.
+- `POST /api/lens-runs/generate` — Phase 5c will follow the same
+  enqueue → worker → flip-status pattern, calling the lens-specific
+  generator.
+
+Both endpoints currently validate inputs against `src/lib/api/_mocks.ts`
+fixtures and return a synthetic `mock-*-queued-…` ID. The real path
+needs a job queue (likely Inngest or a Postgres-backed queue).

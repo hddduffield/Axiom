@@ -1,30 +1,42 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
-import { MOCK_PLANS_BY_ID } from "@/lib/api/_mocks";
-import type { Plan } from "@/lib/api/types";
+import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
 // POST /api/plans/[id]/approve — transition draft → approved.
-// TODO: Phase 5 — supabase update + audit_log insert ('approved').
+//
+// Two-step: load to validate the source state, then update with status +
+// approved_at. The transition guard prevents accidental "approve again"
+// or approving an archived plan.
 export async function POST(_request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
-  const plan = MOCK_PLANS_BY_ID[id];
-  if (!plan) return err("not_found", `No plan with id ${id}.`);
-  if (plan.status !== "draft") {
+
+  const { data: existing, error: fetchErr } = await auth.supabase
+    .from("plans")
+    .select("id, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (fetchErr) return err(mapDbError(fetchErr), dbErrorMessage(fetchErr));
+  if (!existing) return err("not_found", `No plan with id ${id}.`);
+  if (existing.status !== "draft") {
     return err(
       "conflict",
-      `Plan ${id} is ${plan.status}; only draft plans can be approved.`,
+      `Plan ${id} is ${existing.status}; only draft plans can be approved.`,
     );
   }
-  const updated: Plan = {
-    ...plan,
-    status: "approved",
-    approved_at: new Date().toISOString(),
-  };
-  return ok(updated);
+
+  const { data, error } = await auth.supabase
+    .from("plans")
+    .update({ status: "approved", approved_at: new Date().toISOString() })
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) return err(mapDbError(error), dbErrorMessage(error));
+  // TODO: Phase 5e — audit_log insert (entity='plan', action='approved').
+  return ok(data);
 }
