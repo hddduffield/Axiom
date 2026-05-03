@@ -1,0 +1,38 @@
+{
+  "advisors": [
+    {
+      "advisor_id": "will-bearden",
+      "full_name": "Will Bearden",
+      "title": "Lead Advisor",
+      "firm": "PSA Wealth",
+      "supervisory_office_text": "MML Investors Services, LLC. Member SIPC. Supervisory Office: 6 Concourse Pkwy NE, Atlanta, GA 30328.",
+      "compliance_disclosure_short": "Securities and investment advisory services offered through MML Investors Services, LLC. Member SIPC.",
+      "email": null,
+      "phone": null
+    },
+    {
+      "advisor_id": "hayden-duffield",
+      "full_name": "Hayden Duffield",
+      "title": "Advisor",
+      "firm": "PSA Wealth",
+      "supervisory_office_text": "MML Investors Services, LLC. Member SIPC. Supervisory Office: 6 Concourse Pkwy NE, Atlanta, GA 30328.",
+      "compliance_disclosure_short": "Securities and investment advisory services offered through MML Investors Services, LLC. Member SIPC.",
+      "email": null,
+      "phone": null
+    },
+    {
+      "advisor_id": "third-advisor-placeholder",
+      "full_name": "TBD",
+      "title": "Advisor",
+      "firm": "PSA Wealth",
+      "supervisory_office_text": "MML Investors Services, LLC. Member SIPC. Supervisory Office: 6 Concourse Pkwy NE, Atlanta, GA 30328.",
+      "compliance_disclosure_short": "Securities and investment advisory services offered through MML Investors Services, LLC. Member SIPC.",
+      "email": null,
+      "phone": null
+    }
+  ],
+  "_metadata": {
+    "schema_version": "advisors-v1",
+    "purpose": "Resolve advisor identity for plan generation. Stage 4 looks up by ClientProfile.engagement.advisor_id."
+  }
+}
