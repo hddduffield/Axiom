@@ -24,6 +24,28 @@ For every rec in this batch, the `quantified_impact` field lands in exactly one 
 
 Use State A when ALL required formula inputs are present in `<client_profile>`, no firm-policy alternative applies, and the rec file's `## QUANTIFIED IMPACT FRAMEWORK` section has a usable formula. `estimate` is a `NumericValue`; `formula_id` is a stable string you construct (e.g., `"ptet_federal_savings_v1"`); `formula_source_file` is the KB path; `computation_inputs` records every named input the formula consumed. `alternative_values` empty, `qualitative_phrasing` null, `reason_no_formula` null, `blocked_inputs` empty.
 
+**STRICT: when you populate `estimate`, you MUST set `qualitative_phrasing: null`.** Do NOT add narrative context to `qualitative_phrasing` in State A. State A means "I computed a number; the number IS the answer." If you want to capture additional reasoning, caveats, methodology notes, or framing about the computation, put it in `_audit_notes` instead — that field accepts narrative commentary about your reasoning. Reserve `qualitative_phrasing` for State B (where prose accompanies a not-yet-computable formula), State C (where prose summarizes a range across alternative_values), and State D (where prose IS the answer).
+
+State A example shape:
+
+```json
+{
+  "estimate": { "value": 100000, "unit": "USD", "is_approximate": true },
+  "formula_id": "joint_rev_trust_probate_avoidance_v1",
+  "formula_source_file": "kb/v1_2/01_recommendations/estate/REC-EST-001_joint_revocable_living_trust.md",
+  "computation_inputs": { "probate_estate_estimate_usd": 5000000, "ga_attorney_fee_pct_midrange": 0.02 },
+  "pending_reconciliation": false,
+  "alternative_values": [],
+  "qualitative_phrasing": null,
+  "reason_no_formula": null,
+  "blocked_inputs": []
+}
+```
+
+Plus, on the parent SequencedRecommendation: `"_audit_notes": "Probate cost varies by attorney rate; using GA midrange 2%."`
+
+**State A → State B/D fallback discipline.** If you cannot pin a numerical estimate but the problem IS quantifiable in principle (the formula exists, you just lack inputs), choose State B and populate `blocked_inputs[]` with what you'd need to compute it. If the problem is not numerically quantifiable in principle (qualitative recommendations, mission statements, beneficiary audits with variable savings), choose State D. **NEVER emit `estimate.value: null` in State A.** State A's `estimate.value` MUST be a number or a `[number, number]` tuple — those are the only two valid shapes the schema accepts. If you don't have a number, State A is the wrong choice; downgrade to B or D.
+
 ### State B — Blocked Inputs
 
 Use State B when a formula exists in the rec file but one or more required inputs are absent / unknown / null in `<client_profile>`. `estimate` null; `formula_id` and `formula_source_file` populated (the formula is identified, just not executable); `computation_inputs` contains what IS known; `qualitative_phrasing` is one sentence describing the rec's value; `pending_reconciliation` false; `blocked_inputs` non-empty, each entry `{ input_name, blocked_reason, source, would_unblock_when }`. `source` SHOULD be one of `"FR.<section>"`, `"CPA"`, `"Estate Attorney"`, `"M&A Counsel"`, `"Appraiser"`, `"Specialty Tax Credits"`, `"Client"`, or another partner type.
