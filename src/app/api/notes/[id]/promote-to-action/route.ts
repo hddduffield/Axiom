@@ -2,6 +2,7 @@ import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import { spawnDerivativeReminderIfNeeded } from "@/lib/api/action_item_lifecycle";
 
 const promoteSchema = z.object({
   description: z.string().min(1).optional(),
@@ -90,5 +91,13 @@ export async function POST(request: Request, { params }: RouteContext) {
     );
   }
   // TODO: Phase 5e — audit_log inserts (entity='action_item', 'created' + entity='note', 'updated').
+
+  // Lifecycle hook for consistency. New action_item is status='not_started'
+  // so the spawn rule's "in_progress" guard short-circuits — no derivative
+  // is created here. The call documents intent: every status transition
+  // (including the implicit not_started initialization on a new row)
+  // flows through the same lifecycle gate.
+  await spawnDerivativeReminderIfNeeded(auth.supabase, action, "not_started", "not_started");
+
   return ok({ note: updatedNote, action_item: action });
 }

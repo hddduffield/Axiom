@@ -2,6 +2,10 @@ import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, noContent, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import {
+  closeDerivativeRemindersIfNeeded,
+  spawnDerivativeReminderIfNeeded,
+} from "@/lib/api/action_item_lifecycle";
 import type { Database } from "@/lib/supabase/database.types";
 
 type ActionItemUpdate = Database["public"]["Tables"]["action_items"]["Update"];
@@ -41,6 +45,14 @@ export async function GET(_request: Request, { params }: RouteContext) {
 // When status flips to 'complete', server-side stamps completed_at +
 // completed_by_advisor_id (only on the first transition — re-PATCH to
 // 'complete' on an already-complete item is a no-op for those fields).
+//
+// Phase 5d: after the UPDATE commits, two lifecycle hooks fire:
+//   - spawnDerivativeReminderIfNeeded — long_running parent kicked into
+//     in_progress for the first time spawns a follow-up reminder.
+//   - closeDerivativeRemindersIfNeeded — completing a parent auto-closes
+//     all its open derivative reminders.
+// Hook results are surfaced in the response so the UI can toast
+// "1 reminder spawned" / "2 reminders auto-closed".
 export async function PATCH(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
@@ -57,7 +69,8 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return err("validation_failed", "Invalid action item patch.", parsed.error.issues);
   }
 
-  // Need the current row to decide whether to stamp completed_at.
+  // Need the current row to decide whether to stamp completed_at AND to
+  // pass the prior status into the lifecycle hooks.
   const { data: current, error: fetchErr } = await auth.supabase
     .from("action_items")
     .select("*")
@@ -80,7 +93,38 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     .single();
   if (error) return err(mapDbError(error), dbErrorMessage(error));
   // TODO: Phase 5e — audit_log insert (action='completed' if status flipped, else 'updated').
-  return ok(data);
+
+  // Lifecycle hooks. Either may throw if a Supabase query fails; that
+  // surfaces as a 500 to the caller (the parent UPDATE already committed,
+  // so the failure is reported but not rolled back).
+  let spawned = null;
+  let autoClosedCount = 0;
+  try {
+    spawned = await spawnDerivativeReminderIfNeeded(
+      auth.supabase,
+      data,
+      current.status,
+      data.status,
+    );
+    autoClosedCount = await closeDerivativeRemindersIfNeeded(
+      auth.supabase,
+      data,
+      current.status,
+      data.status,
+      auth.advisor.id,
+    );
+  } catch (e) {
+    return err(
+      "internal_error",
+      `Lifecycle hook failed after action item update: ${(e as Error).message}`,
+    );
+  }
+
+  return ok({
+    item: data,
+    spawned_reminders: spawned ? [spawned] : null,
+    auto_closed_reminders: autoClosedCount,
+  });
 }
 
 // DELETE /api/action-items/[id] — hard delete (cascades to children via

@@ -376,3 +376,96 @@ the leading candidate; pg-boss the self-hosted alternative). The
 contract stays the same — the worker reads `status='queued'` rows from
 Postgres and calls into `src/lib/orchestrator/` exactly like the CLI
 does.
+
+# Phase 5d: action item lifecycle
+
+Two server-side hooks fire on `PATCH /api/action-items/[id]` after the
+parent UPDATE commits. Logic lives in
+`src/lib/api/action_item_lifecycle.ts`; both hooks are also called from
+`POST /api/notes/[id]/promote-to-action` for consistency (no-op there
+because the new item starts at `status='not_started'`).
+
+## Spawn rule — `spawnDerivativeReminderIfNeeded`
+
+Fires exactly when **all** these hold:
+
+1. `newStatus === 'in_progress'` AND `oldStatus !== 'in_progress'` (first
+   transition into in_progress, not idle re-PATCHes).
+2. Parent's `duration_class === 'long_running'`.
+3. Parent's `auto_generated_reminder_template` is non-null (Stage 3a
+   populates this for every long_running ActionItem).
+4. Parent is not itself a derivative (`is_derivative_reminder === false`)
+   — recursion stop.
+5. No derivative under this parent already exists (`SELECT id … WHERE
+   parent_action_item_id = parent.id AND is_derivative_reminder = true`
+   returns 0 rows). Idempotent — re-PATCHing through in_progress won't
+   double-spawn.
+
+Spawned row inherits from parent: `client_id`, `category`, `owner`,
+`partner_required`, `partner_type`, `source_plan_id`, `source_lens_run_id`.
+Set explicitly: `parent_action_item_id = parent.id`,
+`is_derivative_reminder = true`, `duration_class = 'one_time'`,
+`timing_bucket = 'next_30_days'`, `status = 'not_started'`,
+`description = parent.auto_generated_reminder_template`,
+`auto_generated_reminder_template = null`.
+
+## Auto-close rule — `closeDerivativeRemindersIfNeeded`
+
+Fires exactly when `newStatus === 'complete'` AND `oldStatus !== 'complete'`.
+Updates every row matching `parent_action_item_id = parent.id AND
+is_derivative_reminder = true AND status != 'complete'` to
+`status='complete'`, `completed_at=now()`, `completed_by_advisor_id=
+<closing advisor>`. Returns the count.
+
+## PATCH response shape (Phase 5d)
+
+```json
+{
+  "item": { /* updated ActionItem row */ },
+  "spawned_reminders": [{ /* spawned ActionItem */ }] | null,
+  "auto_closed_reminders": <integer count>
+}
+```
+
+`spawned_reminders` is `null` (not `[]`) when no spawn fires, so the UI
+can branch on truthiness. `auto_closed_reminders` is `0` for the no-op
+case. Both fields are surfaced so the UI can toast without a follow-up
+fetch ("1 reminder spawned" / "2 reminders auto-closed").
+
+This is a **breaking change** to the prior `UpdateResponse = ActionItem`
+contract; Claude Design hasn't built against the old shape yet so the
+swap is safe but worth flagging for any future contract diffing.
+
+## Manual smoke test
+
+The dev seed includes a long_running action item (`SEED_AI_REAL_ESTATE`
+isn't actually long_running — pick one whose `duration_class` is
+`long_running` and `auto_generated_reminder_template` is non-null after
+a real Stage 3a run; or hand-craft one in the DB):
+
+```bash
+# 1. Find a long_running parent with a template:
+#   select id, description, auto_generated_reminder_template
+#     from action_items where duration_class='long_running'
+#       and auto_generated_reminder_template is not null limit 1;
+
+# 2. PATCH it to in_progress (cookie from a signed-in browser session):
+curl -X PATCH 'http://localhost:3000/api/action-items/<id>' \
+  -H 'Cookie: sb-…' -H 'Content-Type: application/json' \
+  -d '{"status":"in_progress"}'
+# Response should include spawned_reminders: [{...}] with one row.
+
+# 3. Confirm the derivative exists:
+#   select id, description, is_derivative_reminder, parent_action_item_id, status
+#     from action_items where parent_action_item_id='<id>';
+
+# 4. PATCH parent to complete:
+curl -X PATCH 'http://localhost:3000/api/action-items/<id>' \
+  -H 'Cookie: sb-…' -H 'Content-Type: application/json' \
+  -d '{"status":"complete"}'
+# Response should include auto_closed_reminders: 1.
+
+# 5. Confirm the derivative also flipped to complete:
+#   select status, completed_at, completed_by_advisor_id
+#     from action_items where parent_action_item_id='<id>';
+```

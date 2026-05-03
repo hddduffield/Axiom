@@ -319,9 +319,37 @@ Create a manual action item (not derived from a plan).
 Update fields. Setting `status: "complete"` auto-fills `completed_at` and
 `completed_by_advisor_id` (the current advisor) on the server side.
 
+Two server-side lifecycle effects fire after the update commits (Phase 5d):
+
+- **Spawn**: a `long_running` parent transitioning to `in_progress` for the
+  first time spawns a derivative reminder (`is_derivative_reminder=true`,
+  `parent_action_item_id` set, description = parent's
+  `auto_generated_reminder_template`, owner/partner_type/category inherited).
+  Idempotent: if a derivative already exists under this parent, no new
+  spawn fires.
+- **Auto-close**: any parent transitioning to `complete` for the first
+  time updates every open derivative reminder under it to
+  `status='complete'` (`completed_at`/`completed_by_advisor_id` stamped
+  with the closing advisor).
+
+The response body surfaces both effects so the UI can toast without a
+follow-up fetch:
+
 - **Body:** any subset of `description`, `category`, `duration_class`,
   `timing_bucket`, `owner`, `partner_required`, `partner_type`, `status`.
-- **Response 200:** updated `ActionItem`.
+- **Response 200:**
+
+  ```json
+  {
+    "item": { /* updated ActionItem row */ },
+    "spawned_reminders": [ /* ActionItem[] — null when no spawn fired */ ],
+    "auto_closed_reminders": 0
+  }
+  ```
+
+  `spawned_reminders` is `null` (not `[]`) when no spawn happened — clients
+  can branch on truthiness. `auto_closed_reminders` is the integer count
+  of derivative reminders the auto-close updated; `0` is the no-op case.
 
 #### 🪛 DELETE `/api/action-items/[id]`
 

@@ -192,7 +192,21 @@ export namespace ActionItemsApi {
     partner_type?: string | null;
     status?: ActionItemStatus;
   }
-  export type UpdateResponse = ActionItem;
+  // Phase 5d response shape — `item` carries the updated row; the two
+  // additional fields surface lifecycle effects so the UI can toast
+  // ("1 reminder spawned", "2 reminders auto-closed") without a follow-up
+  // fetch.
+  //   - spawned_reminders: array (one entry today; future-proofed) of any
+  //     derivative reminders spawned by this update, or null when no
+  //     spawn happened.
+  //   - auto_closed_reminders: count of derivative reminders auto-closed
+  //     because the parent transitioned to `complete`. Zero when the
+  //     parent didn't complete or had no open reminders.
+  export interface UpdateResponse {
+    item: ActionItem;
+    spawned_reminders: ActionItem[] | null;
+    auto_closed_reminders: number;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────
