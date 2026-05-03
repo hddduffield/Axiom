@@ -98,14 +98,25 @@ export function _resetCachesForTesting(): void {
 
 // ────────────────────────────────────────────────────────────────────────
 // Stage3a1ApiClient — structural interface satisfied by both the real
-// Anthropic SDK and test mocks. Mirrors Stage 1's pattern.
+// Anthropic SDK and test mocks. Mirrors Stage 2's streaming pattern.
+//
+// Stage 3a.1 uses streaming because per-batch output at MAX_TOKENS=32K trips
+// the SDK's "streaming required for >10 minute requests" pre-flight gate.
+// `messages.stream()` returns a MessageStream object whose `finalMessage()`
+// resolves to the same `Anthropic.Message` shape as non-streaming `create()`
+// would have produced — so the rest of the pipeline (token usage, stop_reason,
+// retry logic) works unchanged.
 // ────────────────────────────────────────────────────────────────────────
+
+export interface Stage3a1MessageStream {
+  finalMessage: () => Promise<Anthropic.Message>;
+}
 
 export interface Stage3a1ApiClient {
   messages: {
-    create: (
+    stream: (
       params: Anthropic.MessageCreateParamsNonStreaming,
-    ) => Promise<Anthropic.Message>;
+    ) => Stage3a1MessageStream;
   };
 }
 
@@ -525,7 +536,8 @@ export async function quantifyBatch(
 
     let response: Anthropic.Message;
     try {
-      response = await options.apiClient.messages.create(params);
+      const stream = options.apiClient.messages.stream(params);
+      response = await stream.finalMessage();
     } catch (err) {
       const apiErr = (err as Error).message;
       attemptHistory.push({

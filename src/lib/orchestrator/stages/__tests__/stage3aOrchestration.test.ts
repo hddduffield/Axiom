@@ -51,7 +51,7 @@ function makeBatchAwareClient(opts: {
     callCount: () => i,
     callsByBatch: () => callsByBatch,
     messages: {
-      create: async (params) => {
+      stream: (params) => {
         i += 1;
         const userMsg = params.messages[0];
         const content =
@@ -64,16 +64,22 @@ function makeBatchAwareClient(opts: {
         const totalBatches = tm ? parseInt(tm[1], 10) : 1;
         callsByBatch.set(batchIndex, (callsByBatch.get(batchIndex) ?? 0) + 1);
 
-        if (opts.failBatchIndices?.includes(batchIndex)) {
-          throw new Error(`mock failure for batch ${batchIndex}`);
-        }
         // Extract rec_ids from <batch> JSON.
         const batchMatch = content.match(/<batch>\n([\s\S]*?)\n<\/batch>/);
         const batchJson = batchMatch ? JSON.parse(batchMatch[1]) : [];
         const recIds = (batchJson as Array<{ recommendation_id: string }>).map(
           (r) => r.recommendation_id,
         );
-        return makeMockMessage(opts.buildResponseForBatch(batchIndex, recIds, totalBatches));
+        return {
+          finalMessage: async () => {
+            if (opts.failBatchIndices?.includes(batchIndex)) {
+              throw new Error(`mock failure for batch ${batchIndex}`);
+            }
+            return makeMockMessage(
+              opts.buildResponseForBatch(batchIndex, recIds, totalBatches),
+            );
+          },
+        };
       },
     },
   };
@@ -339,7 +345,7 @@ test("runStage3a — BatchContext correctly carries sibling-batch rec_ids", asyn
 
   const client: Stage3a1ApiClient = {
     messages: {
-      create: async (params) => {
+      stream: (params) => {
         const userMsg = params.messages[0];
         const content =
           typeof userMsg.content === "string"
@@ -363,7 +369,10 @@ test("runStage3a — BatchContext correctly carries sibling-batch rec_ids", asyn
         const totalBatches = tm ? parseInt(tm[1], 10) : 1;
         const bm = content.match(/"batch_index":\s*(\d+)/);
         const batchIndex = bm ? parseInt(bm[1], 10) : 0;
-        return makeMockMessage(buildResponseForBatch(batchIndex, recIds, totalBatches));
+        return {
+          finalMessage: async () =>
+            makeMockMessage(buildResponseForBatch(batchIndex, recIds, totalBatches)),
+        };
       },
     },
   };

@@ -59,12 +59,16 @@ function makeMockClient(responses: MockResponse[]): Stage3a1ApiClient & {
     callCount: () => i,
     lastCall: () => last,
     messages: {
-      create: async (params) => {
+      stream: (params) => {
         last = params;
         const r = responses[i] ?? responses[responses.length - 1];
         i += 1;
-        if (r.kind === "throw") throw r.error;
-        return makeMockMessage(r.text, r.inputTokens, r.outputTokens);
+        return {
+          finalMessage: async () => {
+            if (r.kind === "throw") throw r.error;
+            return makeMockMessage(r.text, r.inputTokens, r.outputTokens);
+          },
+        };
       },
     },
   };
