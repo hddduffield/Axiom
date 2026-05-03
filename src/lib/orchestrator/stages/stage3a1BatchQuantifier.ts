@@ -17,6 +17,9 @@ import { ZodError } from "zod";
 import {
   Stage3a1LlmRawOutputSchema,
   Stage3a1ResponseBodySchema,
+  STAGE3A1_TOOL_INPUT_SCHEMA,
+  STAGE3A1_TOOL_NAME,
+  STAGE3A1_TOOL_DESCRIPTION,
   harnessPostFillFields,
   type BatchContext,
   type Stage3a1Metadata,
@@ -292,6 +295,27 @@ function extractResponseText(message: Anthropic.Message): string {
     .join("");
 }
 
+// Stage 3a.1 forces tool_choice to submit_quantified_batch, so the model
+// MUST emit exactly one tool_use block with that name. If for any reason the
+// content array doesn't contain such a block (e.g., model refusal, malformed
+// SDK response), we fall through to the schema-validation retry path with a
+// raw text dump for diagnosis.
+function extractToolUseInput(
+  message: Anthropic.Message,
+): { input: unknown; rawText: string } | null {
+  const toolUseBlock = message.content.find(
+    (block): block is Anthropic.ToolUseBlock =>
+      block.type === "tool_use" && block.name === STAGE3A1_TOOL_NAME,
+  );
+  if (!toolUseBlock) return null;
+  // The SDK already JSON-parsed the tool input. We keep `rawText` as a
+  // serialized dump so the failure path's raw_response field stays useful.
+  return {
+    input: toolUseBlock.input,
+    rawText: JSON.stringify(toolUseBlock.input),
+  };
+}
+
 function formatZodIssues(error: ZodError): string[] {
   return error.issues.map((issue) => {
     const at = issue.path.length > 0 ? issue.path.join(".") : "<root>";
@@ -299,16 +323,12 @@ function formatZodIssues(error: ZodError): string[] {
   });
 }
 
-function buildJsonRetryUserTurn(parseError: string): string {
-  return `Your previous response was not valid JSON. The error was: ${parseError}. Output ONLY a JSON object now — no preamble, no commentary, no markdown code fences.`;
-}
-
 function buildSchemaRetryUserTurn(errors: string[]): string {
   return [
-    "Your previous response did not match the Stage3a1Result schema. Errors:",
+    "Your previous submit_quantified_batch tool call did not satisfy the schema. Errors:",
     ...errors.map((e) => `- ${e}`),
     "",
-    "Output a corrected JSON object now — no preamble, no commentary, no markdown code fences.",
+    "Call submit_quantified_batch again with corrected input.",
   ].join("\n");
 }
 
@@ -509,14 +529,16 @@ export async function quantifyBatch(
   let totalCacheCreation = 0;
   let totalCacheRead = 0;
 
-  type LastRetryFailure =
-    | { type: "json_parse_failed"; parse_error: string; raw_response: string }
-    | {
-        type: "schema_validation_failed";
-        validation_errors: string[];
-        parsed_response: unknown;
-        raw_response: string;
-      };
+  // Tool-use mode: the SDK guarantees the response is structurally valid
+  // JSON (or throws). The only retry-class failure mode left is post-parse
+  // schema validation — either a missing tool_use block (model refusal) or
+  // a zod superRefine violation that survived the JSON Schema gate.
+  type LastRetryFailure = {
+    type: "schema_validation_failed";
+    validation_errors: string[];
+    parsed_response: unknown;
+    raw_response: string;
+  };
   let lastRetryFailure: LastRetryFailure | null = null;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
@@ -532,6 +554,15 @@ export async function quantifyBatch(
         },
       ],
       messages: conversation,
+      tools: [
+        {
+          name: STAGE3A1_TOOL_NAME,
+          description: STAGE3A1_TOOL_DESCRIPTION,
+          input_schema:
+            STAGE3A1_TOOL_INPUT_SCHEMA as Anthropic.Tool.InputSchema,
+        },
+      ],
+      tool_choice: { type: "tool", name: STAGE3A1_TOOL_NAME },
     };
 
     let response: Anthropic.Message;
@@ -573,32 +604,38 @@ export async function quantifyBatch(
     totalCacheCreation += response.usage?.cache_creation_input_tokens ?? 0;
     totalCacheRead += response.usage?.cache_read_input_tokens ?? 0;
 
-    const responseText = extractResponseText(response);
-
-    // Step 2.3 — JSON parse
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(responseText);
-    } catch (err) {
-      const parseError = (err as Error).message;
+    // Step 2.3 — extract tool_use input. Tool-use mode replaces JSON.parse:
+    // the SDK has already validated the input against STAGE3A1_TOOL_INPUT_SCHEMA
+    // and returned a parsed object. If no tool_use block is present (model
+    // refusal, malformed response), we route through the schema-validation
+    // failure path with a fallback raw text dump for diagnosis.
+    const extracted = extractToolUseInput(response);
+    if (!extracted) {
+      const fallbackText = extractResponseText(response);
+      const errMsg = `No tool_use block named '${STAGE3A1_TOOL_NAME}' in model response (content blocks: ${response.content
+        .map((b) => b.type)
+        .join(", ")})`;
       lastRetryFailure = {
-        type: "json_parse_failed",
-        parse_error: parseError,
-        raw_response: responseText,
+        type: "schema_validation_failed",
+        validation_errors: [errMsg],
+        parsed_response: null,
+        raw_response: fallbackText,
       };
       attemptHistory.push({
         attempt_number: attempt,
-        outcome: "json_parse_failed",
-        failure_details: parseError,
+        outcome: "schema_validation_failed",
+        failure_details: errMsg,
         duration_ms: Date.now() - attemptStart,
         input_tokens: attemptInputTokens,
         output_tokens: attemptOutputTokens,
       });
       if (attempt === maxAttempts) break;
-      conversation.push({ role: "assistant", content: responseText });
-      conversation.push({ role: "user", content: buildJsonRetryUserTurn(parseError) });
+      conversation.push({ role: "assistant", content: fallbackText });
+      conversation.push({ role: "user", content: buildSchemaRetryUserTurn([errMsg]) });
       continue;
     }
+    const parsed: unknown = extracted.input;
+    const responseText = extracted.rawText;
 
     // Step 3.1a — narrower schema validation (LLM emits the slim shape; the
     // 5 always-null/derivable fields are post-filled below).
@@ -754,30 +791,13 @@ export async function quantifyBatch(
         attempts_made: maxAttempts,
         last_failure_type: lastRetryFailure.type,
         raw_response: lastRetryFailure.raw_response,
+        validation_errors: lastRetryFailure.validation_errors,
+        parsed_response: lastRetryFailure.parsed_response,
       };
-      if (lastRetryFailure.type === "json_parse_failed") {
-        baseContext.parse_error = lastRetryFailure.parse_error;
-      } else {
-        baseContext.validation_errors = lastRetryFailure.validation_errors;
-        baseContext.parsed_response = lastRetryFailure.parsed_response;
-      }
       return makeFailure(
         "max_retries_exceeded",
         `All ${maxAttempts} attempts failed; last failure was ${lastRetryFailure.type}.`,
         baseContext,
-        partial,
-      );
-    }
-    if (lastRetryFailure.type === "json_parse_failed") {
-      return makeFailure(
-        "json_parse_failed",
-        "Model response was not valid JSON.",
-        {
-          batch_index: batchContext.batch_index,
-          parse_error: lastRetryFailure.parse_error,
-          raw_response: lastRetryFailure.raw_response,
-          attempts_made: maxAttempts,
-        },
         partial,
       );
     }

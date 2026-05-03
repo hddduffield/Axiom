@@ -22,23 +22,48 @@ const KB_PATH = path.resolve("kb/v1_2");
 // Mock Anthropic client (mirror Stage 1 test pattern)
 // ────────────────────────────────────────────────────────────────────────
 
+// Mock response shapes:
+// - "text": passthrough — if `text` parses as JSON, mock emits a tool_use
+//   content block with that object as `input`; otherwise a text block (which
+//   exercises the "no tool_use block" → schema_validation_failed path).
+//   This preserves backward compat with fixtures that previously used text
+//   responses for both happy and failure paths.
+// - "tool_use_explicit": emit a tool_use block with the given input directly,
+//   bypassing the JSON.parse heuristic. Use when the test asserts on tool_use
+//   wiring specifically.
+// - "text_only": emit a text-only response (no tool_use block). Use when the
+//   test asserts the module's behavior under model refusal.
+// - "throw": SDK rejection (api_error path).
 type MockResponse =
   | { kind: "text"; text: string; inputTokens?: number; outputTokens?: number }
+  | {
+      kind: "tool_use_explicit";
+      input: unknown;
+      inputTokens?: number;
+      outputTokens?: number;
+    }
+  | {
+      kind: "text_only";
+      text: string;
+      inputTokens?: number;
+      outputTokens?: number;
+    }
   | { kind: "throw"; error: Error };
 
-function makeMockMessage(
-  text: string,
-  inputTokens = 5000,
-  outputTokens = 3000,
+function buildMockMessage(
+  content: Anthropic.ContentBlock[],
+  stopReason: Anthropic.Message["stop_reason"],
+  inputTokens: number,
+  outputTokens: number,
 ): Anthropic.Message {
   return {
     id: "msg_mock",
     type: "message",
     role: "assistant",
     model: "claude-opus-4-7",
-    stop_reason: "end_turn",
+    stop_reason: stopReason,
     stop_sequence: null,
-    content: [{ type: "text", text, citations: [] } as unknown as Anthropic.TextBlock],
+    content,
     usage: {
       input_tokens: inputTokens,
       output_tokens: outputTokens,
@@ -47,6 +72,65 @@ function makeMockMessage(
       service_tier: "standard",
     },
   } as unknown as Anthropic.Message;
+}
+
+function makeToolUseBlock(input: unknown): Anthropic.ContentBlock {
+  return {
+    type: "tool_use",
+    id: "toolu_mock",
+    name: "submit_quantified_batch",
+    input,
+  } as unknown as Anthropic.ContentBlock;
+}
+
+function makeTextBlock(text: string): Anthropic.ContentBlock {
+  return { type: "text", text, citations: [] } as unknown as Anthropic.ContentBlock;
+}
+
+// Resolves a MockResponse into an Anthropic.Message.
+function resolveMockResponse(
+  r: Exclude<MockResponse, { kind: "throw" }>,
+): Anthropic.Message {
+  const inputTokens = r.inputTokens ?? 5000;
+  const outputTokens = r.outputTokens ?? 3000;
+  if (r.kind === "tool_use_explicit") {
+    return buildMockMessage(
+      [makeToolUseBlock(r.input)],
+      "tool_use",
+      inputTokens,
+      outputTokens,
+    );
+  }
+  if (r.kind === "text_only") {
+    return buildMockMessage(
+      [makeTextBlock(r.text)],
+      "end_turn",
+      inputTokens,
+      outputTokens,
+    );
+  }
+  // kind === "text" — JSON.parse heuristic preserves the old happy/failure
+  // dual-purpose fixture style.
+  let parsed: unknown | undefined;
+  try {
+    parsed = JSON.parse(r.text);
+  } catch {
+    parsed = undefined;
+  }
+  if (parsed !== undefined) {
+    return buildMockMessage(
+      [makeToolUseBlock(parsed)],
+      "tool_use",
+      inputTokens,
+      outputTokens,
+    );
+  }
+  return buildMockMessage(
+    [makeTextBlock(r.text)],
+    "end_turn",
+    inputTokens,
+    outputTokens,
+  );
 }
 
 function makeMockClient(responses: MockResponse[]): Stage3a1ApiClient & {
@@ -66,7 +150,7 @@ function makeMockClient(responses: MockResponse[]): Stage3a1ApiClient & {
         return {
           finalMessage: async () => {
             if (r.kind === "throw") throw r.error;
-            return makeMockMessage(r.text, r.inputTokens, r.outputTokens);
+            return resolveMockResponse(r);
           },
         };
       },
@@ -338,7 +422,11 @@ test("3a.1 — mock success: small batch, 1 State A rec → valid Stage3a1Result
   assert.equal(client.callCount(), 1);
 });
 
-test("3a.1 — invalid JSON → max_retries_exceeded after 2 attempts", async () => {
+test("3a.1 — model emits text-only (no tool_use block) on both attempts → max_retries_exceeded (schema_validation_failed)", async () => {
+  // Tool-use mode: an unparseable text response means no tool_use block was
+  // emitted. The module routes that through schema_validation_failed (the
+  // separate "json_parse_failed" path is gone — the SDK enforces JSON parse
+  // at the protocol layer for tool inputs).
   _resetCachesForTesting();
   const profile = makeMinimalClientProfile();
   const batch = [makeSelectedRec("REC-TAX-001")];
@@ -351,9 +439,18 @@ test("3a.1 — invalid JSON → max_retries_exceeded after 2 attempts", async ()
   const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
   assert.ok(isFailure(result));
   assert.equal(result._failure_type, "max_retries_exceeded");
-  assert.equal(result._failure_context.last_failure_type, "json_parse_failed");
+  assert.equal(
+    result._failure_context.last_failure_type,
+    "schema_validation_failed",
+  );
   assert.equal(result._failure_context.attempts_made, 2);
   assert.equal(client.callCount(), 2);
+  // Verify the validation_errors mention the missing tool_use block.
+  const errs = result._failure_context.validation_errors ?? [];
+  assert.ok(
+    errs.some((e) => e.includes("tool_use")),
+    `expected tool_use error message, got: ${errs.join(" | ")}`,
+  );
 });
 
 test("3a.1 — schema-invalid (State C with empty alternative_values) → max_retries_exceeded", async () => {
@@ -618,6 +715,72 @@ test("3a.1 — post-fill resolves source_file_path correctly from the batch cont
     recPath,
     /kb\/v1_2\/01_recommendations\/tax\/REC-TAX-001_.*\.md$/,
     `source_file_path post-filled from harness KB load (got: ${recPath})`,
+  );
+});
+
+// ────────────────────────────────────────────────────────────────────────
+// Tool-use plumbing tests (Phase 3.1c)
+// ────────────────────────────────────────────────────────────────────────
+
+test("3a.1 — tool_use response is correctly extracted and validated (happy path uses tool_use block, not text)", async () => {
+  _resetCachesForTesting();
+  const profile = makeMinimalClientProfile();
+  const batch = [makeSelectedRec("REC-TAX-001")];
+  const ctx = makeBatchContext(0, 1);
+  const body = makeValidResponseBody(0, 1, [makeStateARec("REC-TAX-001")]);
+  // Use the explicit tool_use kind so this test asserts on the tool_use
+  // wiring directly rather than relying on the JSON.parse heuristic.
+  const client = makeMockClient([{ kind: "tool_use_explicit", input: body }]);
+
+  const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
+  assert.ok(
+    !isFailure(result),
+    `expected success from tool_use input, got: ${JSON.stringify(result).slice(0, 200)}`,
+  );
+  assert.equal(result.recommendations.length, 1);
+  assert.equal(result.recommendations[0].recommendation_id, "REC-TAX-001");
+  assert.equal(result._metadata.attempts_made, 1);
+
+  // Verify the request was framed with tool + tool_choice.
+  const params = client.lastCall();
+  assert.ok(params, "expected at least one API call");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sent = params as any;
+  assert.ok(Array.isArray(sent.tools), "tools array should be on the request");
+  assert.equal(sent.tools.length, 1);
+  assert.equal(sent.tools[0].name, "submit_quantified_batch");
+  assert.ok(sent.tools[0].input_schema, "tool input_schema should be present");
+  assert.deepEqual(sent.tool_choice, {
+    type: "tool",
+    name: "submit_quantified_batch",
+  });
+});
+
+test("3a.1 — no tool_use block in response → schema_validation_failed (defensive)", async () => {
+  _resetCachesForTesting();
+  const profile = makeMinimalClientProfile();
+  const batch = [makeSelectedRec("REC-TAX-001")];
+  const ctx = makeBatchContext();
+  // Both attempts return text-only (no tool_use). With tool_choice forced,
+  // this shouldn't happen in practice — but the module must fail gracefully
+  // with schema_validation_failed if it ever does (model refusal, SDK shape
+  // change, etc.).
+  const client = makeMockClient([
+    { kind: "text_only", text: "I'd rather not call that tool." },
+    { kind: "text_only", text: "Still declining." },
+  ]);
+
+  const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
+  assert.ok(isFailure(result));
+  assert.equal(result._failure_type, "max_retries_exceeded");
+  assert.equal(
+    result._failure_context.last_failure_type,
+    "schema_validation_failed",
+  );
+  const errs = result._failure_context.validation_errors ?? [];
+  assert.ok(
+    errs.some((e) => e.includes("submit_quantified_batch") && e.includes("tool_use")),
+    `expected error message naming the missing tool_use block, got: ${errs.join(" | ")}`,
   );
 });
 

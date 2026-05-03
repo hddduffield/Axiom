@@ -626,6 +626,163 @@ export type Stage3a1LlmRecommendation = z.infer<typeof Stage3a1LlmRecommendation
 export type Stage3a1LlmActionItem = z.infer<typeof Stage3a1LlmActionItemSchema>;
 
 // ────────────────────────────────────────────────────────────────────────
+// JSON Schema for Anthropic tool use.
+//
+// Phase 3.1c moves Stage 3a.1 from text-output JSON to tool-use schema
+// enforcement. The Anthropic SDK validates the model's output against this
+// JSON Schema BEFORE the response returns; the model literally cannot emit
+// extra keys (additionalProperties: false at every level), wrong enum values,
+// or wrong-shape sub-objects. This solves the dominant Step 2 failure modes:
+// _stage_flags sub-shape inventions, scenario_range field errors, and
+// invalid timing_bucket / partner_type / duration_class enum values.
+//
+// Zod 4's native `toJSONSchema()` handles structural fields cleanly but
+// silently drops `superRefine` constraints. We restore those as JSON Schema
+// `allOf` + `if/then` rules so QuantifiedImpact State invariants and
+// ActionItem lifecycle invariants are enforced at the protocol layer too.
+// The zod superRefine validation in Stage3a1ResponseBodySchema remains as a
+// safety net; in practice tool use should make schema-validation retries
+// extremely rare.
+// ────────────────────────────────────────────────────────────────────────
+
+// State invariants for QuantifiedImpact. Mirror the four `superRefine` rules
+// in QuantifiedImpactSchema above. The four states are NOT a clean partition
+// (a record can satisfy multiple states' base predicates simultaneously, e.g.
+// estimate===null applies to both B and D), so we express each rule as an
+// independent if/then constraint inside an `allOf` rather than a discriminator.
+const QUANTIFIED_IMPACT_STATE_INVARIANTS = [
+  {
+    // State A: estimate populated → no blocked_inputs, no alternative_values, no qualitative_phrasing.
+    if: { properties: { estimate: { type: "object" } }, required: ["estimate"] },
+    then: {
+      properties: {
+        blocked_inputs: { maxItems: 0 },
+        alternative_values: { maxItems: 0 },
+        qualitative_phrasing: { type: "null" },
+      },
+    },
+  },
+  {
+    // State B: blocked_inputs populated → estimate must be null.
+    if: { properties: { blocked_inputs: { minItems: 1 } } },
+    then: { properties: { estimate: { type: "null" } } },
+  },
+  {
+    // State C: alternative_values populated ⇔ pending_reconciliation === true. Biconditional needs both directions.
+    allOf: [
+      {
+        if: { properties: { alternative_values: { minItems: 1 } } },
+        then: { properties: { pending_reconciliation: { const: true } } },
+      },
+      {
+        if: { properties: { pending_reconciliation: { const: true } } },
+        then: { properties: { alternative_values: { minItems: 1 } } },
+      },
+    ],
+  },
+  {
+    // State D: reason_no_formula populated → estimate=null, formula_id=null, qualitative_phrasing must be a string.
+    if: {
+      properties: { reason_no_formula: { type: "string" } },
+      required: ["reason_no_formula"],
+    },
+    then: {
+      properties: {
+        estimate: { type: "null" },
+        formula_id: { type: "null" },
+        qualitative_phrasing: { type: "string" },
+      },
+    },
+  },
+];
+
+// ActionItem lifecycle invariants. Mirror the superRefine rules in
+// Stage3a1LlmActionItemSchema. Cadence-to-trigger_threshold_days mapping is
+// kept zod-only — encoding all five enum→number mappings in JSON Schema is
+// possible but verbose; the mapping is deterministic and the model has
+// little incentive to fabricate a wrong number when the cadence enum is
+// already protocol-pinned.
+const ACTION_ITEM_LIFECYCLE_INVARIANTS = [
+  {
+    // long_running ⇔ check_in_cadence !== null AND auto_generated_reminder_template !== null.
+    allOf: [
+      {
+        if: { properties: { duration_class: { const: "long_running" } } },
+        then: {
+          properties: {
+            check_in_cadence: { type: "string" },
+            auto_generated_reminder_template: { type: "object" },
+          },
+        },
+      },
+      {
+        if: { properties: { duration_class: { not: { const: "long_running" } } } },
+        then: {
+          properties: {
+            check_in_cadence: { type: "null" },
+            auto_generated_reminder_template: { type: "null" },
+          },
+        },
+      },
+    ],
+  },
+  {
+    // partner_required ⇔ partner_type !== null.
+    allOf: [
+      {
+        if: { properties: { partner_required: { const: true } } },
+        then: { properties: { partner_type: { type: "string" } } },
+      },
+      {
+        if: { properties: { partner_required: { const: false } } },
+        then: { properties: { partner_type: { type: "null" } } },
+      },
+    ],
+  },
+];
+
+type JsonSchemaObject = {
+  type?: string;
+  properties?: Record<string, JsonSchemaObject>;
+  items?: JsonSchemaObject;
+  allOf?: unknown[];
+  [k: string]: unknown;
+};
+
+function buildToolInputSchema(): Record<string, unknown> {
+  // Drop the $schema declaration — Anthropic's tool input_schema field
+  // doesn't expect it (it's not a top-level JSON Schema document, it's an
+  // input shape the model produces).
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { $schema, ...base } = z.toJSONSchema(Stage3a1LlmRawOutputSchema) as Record<
+    string,
+    unknown
+  > & { $schema?: string };
+  const root = base as JsonSchemaObject;
+
+  // Inject QuantifiedImpact State invariants.
+  const recItems = root.properties?.recommendations?.items;
+  const qi = recItems?.properties?.quantified_impact;
+  if (qi) {
+    qi.allOf = [...(qi.allOf ?? []), ...QUANTIFIED_IMPACT_STATE_INVARIANTS];
+  }
+
+  // Inject ActionItem lifecycle invariants.
+  const ai = recItems?.properties?.action_items?.items;
+  if (ai) {
+    ai.allOf = [...(ai.allOf ?? []), ...ACTION_ITEM_LIFECYCLE_INVARIANTS];
+  }
+
+  return root as Record<string, unknown>;
+}
+
+export const STAGE3A1_TOOL_INPUT_SCHEMA: Record<string, unknown> = buildToolInputSchema();
+
+export const STAGE3A1_TOOL_NAME = "submit_quantified_batch";
+export const STAGE3A1_TOOL_DESCRIPTION =
+  "Submit the per-batch quantified recommendations. Call this tool exactly once with the full batch result. The schema enforces State A/B/C/D invariants, ActionItem lifecycle invariants, and SequencerFlags3a sub-object shapes — your input must satisfy all of them.";
+
+// ────────────────────────────────────────────────────────────────────────
 // Post-fill: deterministic transform from the narrower LLM output to the
 // full Stage3a1ResponseBody shape. The harness calls this after parsing
 // the LLM response, then re-validates the result against the full schema.

@@ -16,15 +16,28 @@ const KB_PATH = path.resolve("kb/v1_2");
 // Mock client — programmable per-call response based on which batch is asked
 // ────────────────────────────────────────────────────────────────────────
 
+// Stage 3a.1 uses tool-use schema enforcement (Phase 3.1c). Mock LLM
+// responses must therefore deliver the structured payload via a tool_use
+// content block named "submit_quantified_batch". The orchestration tests
+// always supply a JSON-stringified body via `text`; we parse it and emit
+// the corresponding tool_use block.
 function makeMockMessage(text: string, inputTokens = 4000, outputTokens = 2000): Anthropic.Message {
+  const input: unknown = JSON.parse(text);
   return {
     id: "msg_mock",
     type: "message",
     role: "assistant",
     model: "claude-opus-4-7",
-    stop_reason: "end_turn",
+    stop_reason: "tool_use",
     stop_sequence: null,
-    content: [{ type: "text", text, citations: [] } as unknown as Anthropic.TextBlock],
+    content: [
+      {
+        type: "tool_use",
+        id: "toolu_mock",
+        name: "submit_quantified_batch",
+        input,
+      } as unknown as Anthropic.ToolUseBlock,
+    ],
     usage: {
       input_tokens: inputTokens,
       output_tokens: outputTokens,
