@@ -56,14 +56,8 @@ import {
   isStage5ResultFailed,
   type Stage5Result,
 } from "../src/lib/orchestrator/schemas/stage5.types";
-import {
-  ClientProfileSchema,
-  type ClientProfile,
-} from "../src/lib/orchestrator/schemas/clientProfile";
-import {
-  SelectedRecommendationsSchema,
-  type SelectedRecommendations,
-} from "../src/lib/orchestrator/schemas/selectedRecommendations";
+import type { ClientProfile } from "../src/lib/orchestrator/schemas/clientProfile";
+import type { SelectedRecommendations } from "../src/lib/orchestrator/schemas/selectedRecommendations";
 import type { Database } from "../src/lib/supabase/database.types";
 import type { QuantifiedRecommendations } from "../src/lib/orchestrator/schemas/pipelineTypes";
 
@@ -225,23 +219,32 @@ async function claimNextPlan(admin: SupabaseAdmin): Promise<PlanRow | null> {
   return claimed;
 }
 
-async function downloadJson<T>(
+// Match scripts/runIntegrationStage3a4_5.ts pattern — Zod's default
+// .strip() mode silently drops fields the orchestrator's deterministic
+// builders read (e.g., ClientProfile.* paths Stage 4 walks). Trust the
+// uploaded bytes; structural validation already happens server-side at
+// POST /api/plans/generate ingestion. The dev seed uploads raw artifact
+// bytes without Zod, and any future POST upload is Zod-validated by the
+// route handler before storage write — so the bytes the CLI sees are
+// either pristine (seed path) or already shaped to the schema (POST
+// path). Re-parsing here only loses fields.
+//
+// JSON parse errors still surface as a thrown SyntaxError, which gets
+// caught by the top-level main() handler and recorded on the plan row.
+async function downloadJsonRaw<T>(
   admin: SupabaseAdmin,
   fullPath: string,
-  schema: { safeParse: (x: unknown) => { success: boolean; data?: T; error?: { message: string } } },
   label: string,
 ): Promise<T> {
   const objectPath = stripBucketPrefix(fullPath);
   const { data, error } = await admin.storage.from(STORAGE_BUCKET).download(objectPath);
   if (error) throw new Error(`Storage download failed for ${label} (${objectPath}): ${error.message}`);
   const text = await data.text();
-  const parsed = schema.safeParse(JSON.parse(text));
-  if (!parsed.success) {
-    throw new Error(
-      `Schema validation failed for ${label}: ${parsed.error?.message ?? "(no detail)"}`,
-    );
+  try {
+    return JSON.parse(text) as T;
+  } catch (e) {
+    throw new Error(`JSON parse failed for ${label}: ${(e as Error).message}`);
   }
-  return parsed.data as T;
 }
 
 async function markFailed(
@@ -274,18 +277,16 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
     throw new Error(reason);
   }
 
-  // Inputs
-  console.log("Downloading + validating inputs from Storage...");
-  const clientProfile = await downloadJson<ClientProfile>(
+  // Inputs — raw JSON.parse + cast (no Zod). See downloadJsonRaw comment.
+  console.log("Downloading inputs from Storage...");
+  const clientProfile = await downloadJsonRaw<ClientProfile>(
     admin,
     plan.input_clientprofile_path,
-    ClientProfileSchema,
     "clientprofile",
   );
-  const selectedRecs = await downloadJson<SelectedRecommendations>(
+  const selectedRecs = await downloadJsonRaw<SelectedRecommendations>(
     admin,
     plan.input_selected_recs_path,
-    SelectedRecommendationsSchema,
     "selected_recommendations",
   );
   console.log(
@@ -294,38 +295,63 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
   console.log(`  SelectedRecommendations loaded (${selectedRecs.selected.length} recs)`);
 
   const real = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  let cumulativeCost = 0;
-  let stage3a: QuantifiedRecommendations | undefined;
+  // Cumulative cost spans attempts: when a plan is re-claimed after a
+  // prior attempt failed mid-pipeline, we honour the previously-spent
+  // dollars against the $40 cap so a single plan can't accidentally
+  // burn $80 across two attempts. cost_cents on the row reflects whatever
+  // was last committed (Stage 3a alone, or Stage 3a + a failed Stage 4
+  // attempt).
+  let cumulativeCost = plan.cost_cents ?? 0;
+  let stage3a: QuantifiedRecommendations;
   let stage4: Stage4Result | undefined;
 
-  // Stage 3a
-  console.log("\n--- Stage 3a (live) ---");
-  if (cumulativeCost >= HARD_COST_CAP_CENTS) {
-    const reason = `Stage 3a aborted: cumulative cost ${fmtCost(cumulativeCost)} already at cap ${fmtCost(HARD_COST_CAP_CENTS)}.`;
-    await markFailed(admin, plan.id, reason, cumulativeCost, {});
-    throw new Error(reason);
-  }
-  stage3a = await runStage3a(clientProfile, selectedRecs, {
-    apiClient: makeStage3aLoggingClient(real),
-    kbPath: "kb/v1_2",
-    referenceDate: new Date(),
-    maxRetriesPerBatch: 1,
-  });
-  cumulativeCost += stage3a._metadata?.cost_cents ?? 0;
-  console.log(
-    `Stage 3a done: ${stage3a.recommendations.length} recs, ${fmtCost(stage3a._metadata?.cost_cents ?? 0)} (cumulative ${fmtCost(cumulativeCost)})`,
-  );
-  await admin
-    .from("plans")
-    .update({
-      stage3a_output: stage3a as unknown as Database["public"]["Tables"]["plans"]["Update"]["stage3a_output"],
-      cost_cents: cumulativeCost,
-    })
-    .eq("id", plan.id);
-  if (stage3a._sequencer_status === "FAILED") {
-    const reason = `Stage 3a sequencer FAILED: ${(stage3a._sequencer_failures ?? []).map((f) => f.reason).join("; ")}`;
-    await markFailed(admin, plan.id, reason, cumulativeCost, { stage3a });
-    throw new Error(reason);
+  // Stage 3a — skipped when stage3a_output is already populated from a
+  // prior attempt. Stage 3a is the most expensive and most stochastic
+  // stage; re-running it after a Stage 4 failure would (a) waste $8-12
+  // and (b) produce a different QR shape than the one Stage 4 already
+  // tried, blurring the diagnosis of why Stage 4 schema-validated.
+  if (plan.stage3a_output !== null) {
+    console.log(
+      `\n--- Stage 3a (cached from prior attempt; cumulativeCost=${fmtCost(cumulativeCost)}) ---`,
+    );
+    // Raw cast — same pattern as downloadJsonRaw. Stage 3a wrote the
+    // QuantifiedRecommendations shape directly to JSONB, so the bytes
+    // round-trip lossless.
+    stage3a = plan.stage3a_output as unknown as QuantifiedRecommendations;
+    console.log(
+      `  Loaded ${stage3a.recommendations.length} recs from plan.stage3a_output (no new LLM cost incurred)`,
+    );
+  } else {
+    console.log("\n--- Stage 3a (live) ---");
+    if (cumulativeCost >= HARD_COST_CAP_CENTS) {
+      const reason = `Stage 3a aborted: cumulative cost ${fmtCost(cumulativeCost)} already at cap ${fmtCost(HARD_COST_CAP_CENTS)}.`;
+      await markFailed(admin, plan.id, reason, cumulativeCost, {});
+      throw new Error(reason);
+    }
+    stage3a = await runStage3a(clientProfile, selectedRecs, {
+      apiClient: makeStage3aLoggingClient(real),
+      kbPath: "kb/v1_2",
+      referenceDate: new Date(),
+      firmPolicyResolutions: [],
+      landmineAuthorizations: [],
+      maxRetriesPerBatch: 1,
+    });
+    cumulativeCost += stage3a._metadata?.cost_cents ?? 0;
+    console.log(
+      `Stage 3a done: ${stage3a.recommendations.length} recs, ${fmtCost(stage3a._metadata?.cost_cents ?? 0)} (cumulative ${fmtCost(cumulativeCost)})`,
+    );
+    await admin
+      .from("plans")
+      .update({
+        stage3a_output: stage3a as unknown as Database["public"]["Tables"]["plans"]["Update"]["stage3a_output"],
+        cost_cents: cumulativeCost,
+      })
+      .eq("id", plan.id);
+    if (stage3a._sequencer_status === "FAILED") {
+      const reason = `Stage 3a sequencer FAILED: ${(stage3a._sequencer_failures ?? []).map((f) => f.reason).join("; ")}`;
+      await markFailed(admin, plan.id, reason, cumulativeCost, { stage3a });
+      throw new Error(reason);
+    }
   }
 
   // Stage 4
@@ -346,6 +372,17 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
   if (isStage4ResultFailed(stage4Result)) {
     cumulativeCost += stage4Result._metadata?.cost_cents ?? 0;
     const reason = `Stage 4 FAILED: ${stage4Result._failure_type} — ${stage4Result._failure_reason}`;
+    // Persist the full Stage4ResultFailed envelope (including
+    // _failure_context.validation_errors / raw_response / parsed_response
+    // and _metadata.attempt_history) into stage4_output JSONB. Without
+    // this, `failure_reason` is the only diagnostic record and we cannot
+    // tell which Zod path the LLM violated.
+    await admin
+      .from("plans")
+      .update({
+        stage4_output: stage4Result as unknown as Database["public"]["Tables"]["plans"]["Update"]["stage4_output"],
+      })
+      .eq("id", plan.id);
     await markFailed(admin, plan.id, reason, cumulativeCost, { stage3a });
     throw new Error(reason);
   }
@@ -380,6 +417,14 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
   if (isStage5ResultFailed(stage5Result)) {
     cumulativeCost += stage5Result._metadata?.cost_cents ?? 0;
     const reason = `Stage 5 FAILED: ${stage5Result._failure_type} — ${stage5Result._failure_reason}`;
+    // Persist the full Stage5ResultFailed envelope into stage5_output for
+    // the same diagnostic reason as Stage 4 above.
+    await admin
+      .from("plans")
+      .update({
+        stage5_output: stage5Result as unknown as Database["public"]["Tables"]["plans"]["Update"]["stage5_output"],
+      })
+      .eq("id", plan.id);
     await markFailed(admin, plan.id, reason, cumulativeCost, { stage3a, stage4 });
     throw new Error(reason);
   }

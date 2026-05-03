@@ -310,7 +310,33 @@ Behavior:
 **Hard cost cap:** $40 per plan. If exceeded mid-run, the next stage is
 skipped and the plan is marked `failed`. If a single stage's actual cost
 exceeds the cap, the plan still reaches `ready_for_review` (the cap is
-checked *before* firing each stage, not after).
+checked *before* firing each stage, not after). Cumulative cost is
+seeded from `plan.cost_cents` at claim time, so re-claimed plans honour
+prior spend against the cap (a single plan can never burn $80 across
+two attempts).
+
+**Stage 3a is skipped on re-claim** when `plan.stage3a_output` is
+already populated. Stage 3a is the most expensive stage and produces
+stochastically-different output each run; re-running it after a Stage 4
+failure would (a) waste $8-12 and (b) blur the Stage 4 diagnosis by
+feeding it a different QR than the one that just failed. The cached
+JSONB is cast back to `QuantifiedRecommendations` raw (no Zod, same
+pattern as `downloadJsonRaw`).
+
+**Failed envelopes are persisted to JSONB.** When Stage 4 or Stage 5
+fails, the full `Stage4ResultFailed` / `Stage5ResultFailed` is written
+to `plans.stage4_output` / `plans.stage5_output` *before* `markFailed`
+flips status. Without this, `_failure_context.validation_errors`,
+`raw_response`, `parsed_response`, and `_metadata.attempt_history` are
+lost — and the only diagnostic record is the short `failure_reason`
+text, which doesn't name which Zod path the LLM violated. Inspect the
+detail via:
+
+```sql
+select jsonb_pretty(stage4_output -> '_failure_context')
+from plans
+where status = 'failed' and id = '<plan_id>';
+```
 
 If two CLI invocations race, the second sees `RETURNING *` come back
 empty and exits "No pending plans" — no double-processing risk.
