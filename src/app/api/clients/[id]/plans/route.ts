@@ -41,7 +41,9 @@ export async function GET(request: Request, { params }: RouteContext) {
     .limit(limit + 1);
 
   if (status) {
-    const parsedStatus = z.enum(["draft", "approved", "archived"]).safeParse(status);
+    const parsedStatus = z
+      .enum(["queued", "processing", "ready_for_review", "approved", "archived", "failed"])
+      .safeParse(status);
     if (parsedStatus.success) q = q.eq("status", parsedStatus.data);
   }
   if (cursor) {

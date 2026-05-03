@@ -119,15 +119,25 @@ export const api = {
       request<PlansApi.ListByClientResponse>(`/api/clients/${clientId}/plans`, { query: q }),
     get: (id: string) =>
       request<PlansApi.GetResponse>(`/api/plans/${id}`),
-    generate: (clientId: string, factReview: File) => {
+    // Phase 5b: v1 skips Stages 0/1/2 — the advisor uploads the already-
+    // prepared ClientProfile + SelectedRecommendations JSON blobs.
+    generate: (args: {
+      clientId: string;
+      factReviewFilename: string;
+      clientprofile: File | Blob;
+      selectedRecommendations: File | Blob;
+    }) => {
       const fd = new FormData();
-      fd.set("client_id", clientId);
-      fd.set("fact_review", factReview);
+      fd.set("client_id", args.clientId);
+      fd.set("fact_review_filename", args.factReviewFilename);
+      fd.set("clientprofile", args.clientprofile);
+      fd.set("selected_recommendations", args.selectedRecommendations);
       return request<PlansApi.GenerateAcceptedResponse>("/api/plans/generate", {
         method: "POST",
         formData: fd,
       });
     },
+    queued: () => request<PlansApi.QueuedListResponse>("/api/plans/queued"),
     approve: (id: string) =>
       request<PlansApi.ApproveResponse>(`/api/plans/${id}/approve`, { method: "POST" }),
     archive: (id: string) =>

@@ -13,6 +13,8 @@
 //
 // All upserts key on a stable deterministic id so re-running is a no-op.
 
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
@@ -34,6 +36,15 @@ const SEED_AI_BURKE_LETTER = "33333333-3333-3333-3333-000000000006";
 const SEED_NOTE_MEP_INBOUND = "44444444-4444-4444-4444-000000000001";
 const SEED_NOTE_PTET_DEADLINE = "44444444-4444-4444-4444-000000000002";
 const SEED_NOTE_BURKE_INTRO = "44444444-4444-4444-4444-000000000003";
+
+// Stable plan id for the seeded queued Holloway plan (Phase 5b). The CLI
+// will claim this row on first run and process Stage 3a → 4 → 5 against
+// the uploaded Holloway artifacts.
+const SEED_PLAN_HOLLOWAY_QUEUED = "55555555-5555-5555-5555-000000000001";
+
+const STORAGE_BUCKET = "plan-inputs";
+const HOLLOWAY_CP_DISK = "artifacts/holloway_clientprofile.json";
+const HOLLOWAY_RECS_DISK = "artifacts/holloway_selected_recommendations.json";
 
 async function seed() {
   const auth = await requireAdvisor();
@@ -222,13 +233,72 @@ async function seed() {
   );
   if (notesRes.error) return err(mapDbError(notesRes.error), dbErrorMessage(notesRes.error));
 
+  // 5) Phase 5b — upload Holloway artifacts to Storage and insert a queued
+  //    plan row so Hayden can immediately test the CLI. Idempotent via
+  //    upsert on the Storage path AND the plans row id.
+  let queuedPlanSeeded = false;
+  let queuedPlanSkipReason: string | null = null;
+  try {
+    const cpBytes = await readFile(resolve(HOLLOWAY_CP_DISK), "utf-8");
+    const recsBytes = await readFile(resolve(HOLLOWAY_RECS_DISK), "utf-8");
+
+    const cpPath = `${SEED_PLAN_HOLLOWAY_QUEUED}/clientprofile.json`;
+    const recsPath = `${SEED_PLAN_HOLLOWAY_QUEUED}/selected_recs.json`;
+
+    const cpUpload = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(cpPath, cpBytes, { contentType: "application/json", upsert: true });
+    if (cpUpload.error) {
+      queuedPlanSkipReason = `clientprofile upload: ${cpUpload.error.message}`;
+    } else {
+      const recsUpload = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(recsPath, recsBytes, { contentType: "application/json", upsert: true });
+      if (recsUpload.error) {
+        queuedPlanSkipReason = `selected_recs upload: ${recsUpload.error.message}`;
+      } else {
+        const planRes = await supabase.from("plans").upsert(
+          [
+            {
+              id: SEED_PLAN_HOLLOWAY_QUEUED,
+              client_id: SEED_CLIENT_HOLLOWAY,
+              generated_by_advisor_id: advisor.id,
+              status: "queued",
+              fact_review_filename: "Holloway_FactReview_seed.docx",
+              input_clientprofile_path: `${STORAGE_BUCKET}/${cpPath}`,
+              input_selected_recs_path: `${STORAGE_BUCKET}/${recsPath}`,
+              processing_started_at: null,
+              processing_completed_at: null,
+              cost_cents: null,
+              stage1_output: null,
+              stage3a_output: null,
+              stage4_output: null,
+              stage5_output: null,
+              failure_reason: null,
+            },
+          ],
+          { onConflict: "id" },
+        );
+        if (planRes.error) {
+          queuedPlanSkipReason = `plans upsert: ${planRes.error.message}`;
+        } else {
+          queuedPlanSeeded = true;
+        }
+      }
+    }
+  } catch (e) {
+    queuedPlanSkipReason = `local artifact read: ${(e as Error).message}`;
+  }
+
   return ok({
     seeded: {
       clients: 2,
       partners: 3,
       action_items: 6,
       notes: 3,
+      queued_plans: queuedPlanSeeded ? 1 : 0,
     },
+    queued_plan_skip_reason: queuedPlanSkipReason,
     note: "Idempotent — re-running this endpoint is safe and resets each row to the seed values.",
   });
 }

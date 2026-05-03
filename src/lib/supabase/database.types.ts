@@ -20,7 +20,20 @@ export type Json =
 // Status / enum aliases — match CHECK constraints in the SQL migration.
 export type ClientStatus = "active" | "inactive" | "prospect";
 export type ClientArchetype = "PRE" | "MID" | "POST" | "NONE";
-export type PlanStatus = "draft" | "approved" | "archived";
+// PlanStatus state machine (Phase 5b):
+//   queued (created via POST /api/plans/generate)
+//     → processing (CLI claims the row)
+//       → ready_for_review (CLI completes Stage 3a → 4 → 5)
+//       → failed (CLI errors or cost cap exceeded)
+//     ready_for_review → approved (advisor approves)
+//   any non-archived → archived (advisor archives)
+export type PlanStatus =
+  | "queued"
+  | "processing"
+  | "ready_for_review"
+  | "approved"
+  | "archived"
+  | "failed";
 export type LensRunLensType = "investment" | "insurance" | "cash_flow";
 export type LensRunStatus = "draft" | "approved" | "archived";
 export type ActionItemDurationClass = "one_time" | "long_running";
@@ -156,6 +169,12 @@ export interface Database {
           stage5_output: Json | null;
           cost_cents: number | null;
           compliance_tracking_id: string | null;
+          // Phase 5b additions:
+          input_clientprofile_path: string | null;
+          input_selected_recs_path: string | null;
+          processing_started_at: string | null;
+          processing_completed_at: string | null;
+          failure_reason: string | null;
         };
         Insert: {
           id?: string;
@@ -172,6 +191,11 @@ export interface Database {
           stage5_output?: Json | null;
           cost_cents?: number | null;
           compliance_tracking_id?: string | null;
+          input_clientprofile_path?: string | null;
+          input_selected_recs_path?: string | null;
+          processing_started_at?: string | null;
+          processing_completed_at?: string | null;
+          failure_reason?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["plans"]["Insert"]>;
         Relationships: [

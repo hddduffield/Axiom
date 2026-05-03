@@ -117,18 +117,37 @@ export namespace PlansApi {
 
   export type GetResponse = Plan;
 
-  // Generation request is multipart/form-data (NOT JSON):
-  //   client_id: string (form field)
-  //   fact_review: File   (the .docx upload)
+  // Phase 5b generation request is multipart/form-data (NOT JSON). v1
+  // skips Stages 0/1/2 — the advisor uploads the already-prepared
+  // ClientProfile + SelectedRecommendations JSON blobs, which the CLI
+  // (`scripts/generatePending.ts`) feeds into Stage 3a → 4 → 5.
   //
-  // Phase 5 will store the file via Supabase Storage and kick off the
-  // AI engine pipeline. This is a "queue" semantic — returns 202 Accepted
-  // with the new draft plan id so the UI can poll status.
+  //   client_id (form field, string UUID, required)
+  //   fact_review_filename (form field, string, required, for record-keeping)
+  //   clientprofile (File, JSON, required) — matches ClientProfileSchema
+  //   selected_recommendations (File, JSON, required) — matches SelectedRecommendationsSchema
+  //
+  // Returns 202 Accepted with the new plan id so the UI can poll status.
+  // The plan starts in `queued` and is claimed by the next CLI run.
   export interface GenerateAcceptedResponse {
-    plan_id: string;
-    status: PlanStatus; // always "draft" on initial accept
+    id: string;
+    status: PlanStatus; // always "queued" on initial accept
     queued_at: string; // ISO 8601
   }
+
+  // Dashboard-friendly slim view: queued + processing plans with the
+  // joined client household name and submitting advisor's email.
+  export interface QueuedPlanRow {
+    id: string;
+    client_id: string;
+    client_household_name: string;
+    generated_by_advisor_id: string;
+    generated_by_advisor_email: string;
+    status: Extract<PlanStatus, "queued" | "processing">;
+    generated_at: string;
+    processing_started_at: string | null;
+  }
+  export type QueuedListResponse = CursorList<QueuedPlanRow>;
 
   export type ApproveResponse = Plan;
   export type ArchiveResponse = Plan;

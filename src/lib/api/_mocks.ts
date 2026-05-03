@@ -143,13 +143,18 @@ export const MOCK_PLAN_HOLLOWAY_V1: Plan = {
   stage5_output: null,
   cost_cents: 999,
   compliance_tracking_id: "PSA-2026-HOLL-Q1-A1B2",
+  input_clientprofile_path: null,
+  input_selected_recs_path: null,
+  processing_started_at: ISO(-30),
+  processing_completed_at: ISO(-30),
+  failure_reason: null,
 };
 
-export const MOCK_PLAN_HOLLOWAY_DRAFT: Plan = {
+export const MOCK_PLAN_HOLLOWAY_QUEUED: Plan = {
   id: "mock-plan-holloway-2026-Q2",
   client_id: MOCK_CLIENT_HOLLOWAY.id,
   generated_by_advisor_id: MOCK_ADVISOR_HAYDEN.id,
-  status: "draft",
+  status: "queued",
   generated_at: ISO(-2),
   approved_at: null,
   archived_at: null,
@@ -160,9 +165,14 @@ export const MOCK_PLAN_HOLLOWAY_DRAFT: Plan = {
   stage5_output: null,
   cost_cents: null,
   compliance_tracking_id: null,
+  input_clientprofile_path: "plan-inputs/mock-plan-holloway-2026-Q2/clientprofile.json",
+  input_selected_recs_path: "plan-inputs/mock-plan-holloway-2026-Q2/selected_recs.json",
+  processing_started_at: null,
+  processing_completed_at: null,
+  failure_reason: null,
 };
 
-export const LIST_PLANS: Plan[] = [MOCK_PLAN_HOLLOWAY_V1, MOCK_PLAN_HOLLOWAY_DRAFT];
+export const LIST_PLANS: Plan[] = [MOCK_PLAN_HOLLOWAY_V1, MOCK_PLAN_HOLLOWAY_QUEUED];
 
 export const MOCK_PLANS_BY_ID: Record<string, Plan> = Object.fromEntries(
   LIST_PLANS.map((p) => [p.id, p]),
