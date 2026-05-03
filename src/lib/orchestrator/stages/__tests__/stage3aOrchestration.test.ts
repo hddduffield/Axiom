@@ -223,7 +223,10 @@ function buildResponseForBatch(batchIndex: number, recIds: string[], totalBatche
 // Tests
 // ────────────────────────────────────────────────────────────────────────
 
-test("runStage3a — Holloway-shape (20 recs default batch size 20) → 1 batch, all recs in output", async () => {
+test("runStage3a — 20 recs at batchSize: 20 → 1 batch, all recs in output", async () => {
+  // Pin batchSize: 20 explicitly so this test keeps validating single-batch
+  // behavior independent of the orchestrator default (which lowered to 12 to
+  // preserve output-token headroom under the 32K Stage 3a.1 cap).
   _resetCachesForTesting();
   const profile = makeMinimalClientProfile();
   const sel = makeSelected(20);
@@ -232,6 +235,7 @@ test("runStage3a — Holloway-shape (20 recs default batch size 20) → 1 batch,
   const result = await runStage3a(profile, sel, {
     apiClient: client,
     kbPath: KB_PATH,
+    batchSize: 20,
   });
   assert.equal(result.recommendations.length, 20);
   assert.equal(result._sequencer_status, undefined);

@@ -34,7 +34,15 @@ import type { SelectedRecommendations } from "../schemas/selectedRecommendations
 
 const STAGE_VERSION = "3a-orchestration-1.0.0";
 const MODEL = "claude-opus-4-7";
-const DEFAULT_BATCH_SIZE = 20;
+// Empirical cross-category per-rec output ≈ 2,434 tokens (Holloway non-Estate
+// 12-rec sample, commit pending). 8 recs × 2,434 ≈ 19,472 output tokens,
+// leaving 12,528 token headroom under the 32K MAX_TOKENS cap. Prior 12-rec
+// setting hit 91% of the cap on the same sample (output 29,206; only ~2,800
+// headroom). The 20-rec default before that truncated every Holloway batch
+// at 32K and burned $33.50 on doomed retries. 8 protects against high-density
+// outliers like REC-ENT-002 (11 ActionItems alone ≈ 16% of a batch's output)
+// while keeping batch count tractable for typical 60–100-rec engagements.
+const DEFAULT_BATCH_SIZE = 8;
 
 // ────────────────────────────────────────────────────────────────────────
 // Options

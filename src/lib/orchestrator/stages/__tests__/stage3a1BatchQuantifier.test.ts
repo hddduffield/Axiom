@@ -784,6 +784,42 @@ test("3a.1 — no tool_use block in response → schema_validation_failed (defen
   );
 });
 
+test("3a.1 — truncation (output_tokens === MAX_TOKENS) aborts retry loop with context_overflow failure_type", async () => {
+  // Phase 3.1c recovery fix. When the SDK returns output_tokens === 32000
+  // the response is structurally truncated; retrying with the same input +
+  // same cap can only reproduce the same truncation. The module must
+  // short-circuit the retry loop immediately with context_overflow so the
+  // orchestrator can surface "batch too large" rather than burning a second
+  // doomed attempt.
+  _resetCachesForTesting();
+  const profile = makeMinimalClientProfile();
+  const batch = [makeSelectedRec("REC-TAX-001")];
+  const ctx = makeBatchContext(0, 1);
+  const body = makeValidResponseBody(0, 1, [makeStateARec("REC-TAX-001")]);
+  // Even though the body is structurally valid, output_tokens === 32000
+  // forces the truncation guard to abort.
+  const client = makeMockClient([
+    { kind: "tool_use_explicit", input: body, outputTokens: 32000 },
+    // Second response would be used if retry fired — assert it does NOT.
+    { kind: "tool_use_explicit", input: body, outputTokens: 5000 },
+  ]);
+
+  const result = await quantifyBatch(profile, batch, ctx, baseOptions(client));
+  assert.ok(isFailure(result));
+  assert.equal(result._failure_type, "context_overflow");
+  assert.match(
+    result._failure_reason,
+    /MAX_TOKENS|truncat/i,
+    `expected truncation reason, got: ${result._failure_reason}`,
+  );
+  assert.equal(
+    client.callCount(),
+    1,
+    "retry must NOT fire on truncation — second call would reproduce the same truncation",
+  );
+  assert.equal(result._failure_context.attempts_made, 1);
+});
+
 // Live API placeholder — gated on env var, deferred to Phase 3.1c
 test(
   "3a.1 — LIVE: small batch from Holloway fixture",

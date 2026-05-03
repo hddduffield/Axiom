@@ -604,6 +604,44 @@ export async function quantifyBatch(
     totalCacheCreation += response.usage?.cache_creation_input_tokens ?? 0;
     totalCacheRead += response.usage?.cache_read_input_tokens ?? 0;
 
+    // Truncation-abort guard. When output_tokens equals MAX_TOKENS, the model
+    // hit the cap mid-output and the tool_use payload is partial. Retrying
+    // with the same input + same cap can only reproduce the truncation —
+    // pure waste. Abort the retry loop immediately with context_overflow so
+    // the orchestrator can surface a "batch too large" signal and a human
+    // (or upstream caller) can reduce batch size.
+    //
+    // Backstory: Holloway full-pipeline test (commit ae431d8 era) hit this
+    // pattern on 5 of 5 batches at batchSize=20; every retry truncated again
+    // and burned $33.50. Default batchSize is now 12, but this guard catches
+    // any future config that pushes per-batch output past the 32K ceiling.
+    if (attemptOutputTokens >= MAX_TOKENS) {
+      const errMsg = `Output truncated at MAX_TOKENS=${MAX_TOKENS}; batch size too large for per-rec output volume. Reduce batch size or split this batch.`;
+      attemptHistory.push({
+        attempt_number: attempt,
+        outcome: "schema_validation_failed",
+        failure_details: errMsg,
+        duration_ms: Date.now() - attemptStart,
+        input_tokens: attemptInputTokens,
+        output_tokens: attemptOutputTokens,
+      });
+      return makeFailure(
+        "context_overflow",
+        errMsg,
+        {
+          batch_index: batchContext.batch_index,
+          attempts_made: attempt,
+        },
+        partialMetadata(
+          attempt,
+          totalInputTokens,
+          totalOutputTokens,
+          totalCacheCreation,
+          totalCacheRead,
+        ),
+      );
+    }
+
     // Step 2.3 — extract tool_use input. Tool-use mode replaces JSON.parse:
     // the SDK has already validated the input against STAGE3A1_TOOL_INPUT_SCHEMA
     // and returned a parsed object. If no tool_use block is present (model
