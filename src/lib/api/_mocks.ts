@@ -88,33 +88,12 @@ export const MOCK_CLIENT_HOLLOWAY: Client = {
   updated_at: ISO(-2),
 };
 
-export const MOCK_CLIENT_PROSPECT: Client = {
-  id: "mock-client-burke",
-  lead_advisor_id: MOCK_ADVISOR_HAYDEN.id,
-  household_name: "Burke Family",
-  status: "prospect",
-  archetype: null,
-  notes: "Intro call scheduled.",
-  created_at: ISO(-7),
-  updated_at: ISO(-7),
-};
+// Phase 9.22: removed MOCK_CLIENT_PROSPECT (Burke) + MOCK_CLIENT_INACTIVE
+// (Vance) — Holloway is the sole production household. Only the lens-runs
+// generate mock route consumes MOCK_CLIENTS_BY_ID for client_id existence
+// validation; removing the extras leaves Holloway as the only valid mock id.
 
-export const MOCK_CLIENT_INACTIVE: Client = {
-  id: "mock-client-vance",
-  lead_advisor_id: MOCK_ADVISOR_WILL.id,
-  household_name: "Vance Family",
-  status: "inactive",
-  archetype: "POST",
-  notes: "Closed engagement 2025; archived for reference.",
-  created_at: ISO(-540),
-  updated_at: ISO(-180),
-};
-
-export const LIST_CLIENTS: Client[] = [
-  MOCK_CLIENT_HOLLOWAY,
-  MOCK_CLIENT_PROSPECT,
-  MOCK_CLIENT_INACTIVE,
-];
+export const LIST_CLIENTS: Client[] = [MOCK_CLIENT_HOLLOWAY];
 
 export const MOCK_CLIENTS_BY_ID: Record<string, Client> = Object.fromEntries(
   LIST_CLIENTS.map((c) => [c.id, c]),
@@ -180,7 +159,7 @@ export const MOCK_PLANS_BY_ID: Record<string, Plan> = Object.fromEntries(
 
 // ────────────────────────────────────────────────────────────────────────
 // Action Items — the spine. Realistic mix of categories, statuses, owners.
-// 30 entries: ~25 from Holloway plan, ~5 from Burke prospect notes.
+// 18 entries (post-Phase-9.22): all Holloway plan items.
 // ────────────────────────────────────────────────────────────────────────
 
 const ai = (
@@ -371,25 +350,8 @@ export const LIST_ACTION_ITEMS: ActionItem[] = [
     completed_at: ISO(-29),
     completed_by_advisor_id: MOCK_ADVISOR_WILL.id,
   }),
-  // Burke prospect notes-promoted items
-  ai(19, {
-    description: "Send Burke initial engagement letter + fee schedule.",
-    client_id: MOCK_CLIENT_PROSPECT.id,
-    source_plan_id: null,
-    category: "ENGAGEMENT",
-    timing_bucket: "next_30_days",
-    owner: MOCK_ADVISOR_HAYDEN.email,
-    status: "in_progress",
-  }),
-  ai(20, {
-    description: "Burke — review existing 401(k) at Fidelity before discovery meeting.",
-    client_id: MOCK_CLIENT_PROSPECT.id,
-    source_plan_id: null,
-    category: "RETIREMENT",
-    timing_bucket: "next_30_days",
-    owner: MOCK_ADVISOR_HAYDEN.email,
-    status: "not_started",
-  }),
+  // Phase 9.22: removed Burke prospect items (mock-ai-019, mock-ai-020)
+  // alongside the MOCK_CLIENT_PROSPECT removal.
 ];
 
 export const MOCK_ACTION_ITEMS_BY_ID: Record<string, ActionItem> = Object.fromEntries(
@@ -397,7 +359,7 @@ export const MOCK_ACTION_ITEMS_BY_ID: Record<string, ActionItem> = Object.fromEn
 );
 
 // ────────────────────────────────────────────────────────────────────────
-// Notes — Notes Hub. Mostly Holloway, plus Burke prospect notes.
+// Notes — Notes Hub. Holloway only (post-Phase-9.22).
 // ────────────────────────────────────────────────────────────────────────
 
 const note = (
@@ -431,22 +393,8 @@ export const LIST_NOTES: Note[] = [
     tag: "email",
     created_at: ISO(-1),
   }),
-  note(4, {
-    client_id: MOCK_CLIENT_PROSPECT.id,
-    author_advisor_id: MOCK_ADVISOR_HAYDEN.id,
-    body: "Burke intro call — they currently work with Northwestern Mutual; want a fee-only second opinion.",
-    tag: "call",
-    created_at: ISO(-7),
-    promoted_to_action_item_id: "mock-ai-019",
-  }),
-  note(5, {
-    client_id: MOCK_CLIENT_PROSPECT.id,
-    author_advisor_id: MOCK_ADVISOR_HAYDEN.id,
-    body: "Burke 401(k) value approx $620K, balanced fund. Will need rollover analysis.",
-    tag: null,
-    created_at: ISO(-2),
-    promoted_to_action_item_id: "mock-ai-020",
-  }),
+  // Phase 9.22: removed Burke prospect notes (mock-note-004, mock-note-005)
+  // alongside the MOCK_CLIENT_PROSPECT removal.
 ];
 
 export const MOCK_NOTES_BY_ID: Record<string, Note> = Object.fromEntries(

@@ -19,8 +19,9 @@ import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 
+// Phase 9.22: Burke seed removed. Holloway is the sole production demo
+// household; Will + Jake will create their own demo data via the UI.
 const SEED_CLIENT_HOLLOWAY = "11111111-1111-1111-1111-000000000001";
-const SEED_CLIENT_BURKE = "11111111-1111-1111-1111-000000000002";
 
 const SEED_PARTNER_CPA = "22222222-2222-2222-2222-000000000001";
 const SEED_PARTNER_ESTATE_ATTY = "22222222-2222-2222-2222-000000000002";
@@ -31,11 +32,9 @@ const SEED_AI_BROKER_OPINION = "33333333-3333-3333-3333-000000000002";
 const SEED_AI_TRUIST_CONSENT = "33333333-3333-3333-3333-000000000003";
 const SEED_AI_WILLS_UPDATE = "33333333-3333-3333-3333-000000000004";
 const SEED_AI_PTET_FILING = "33333333-3333-3333-3333-000000000005";
-const SEED_AI_BURKE_LETTER = "33333333-3333-3333-3333-000000000006";
 
 const SEED_NOTE_MEP_INBOUND = "44444444-4444-4444-4444-000000000001";
 const SEED_NOTE_PTET_DEADLINE = "44444444-4444-4444-4444-000000000002";
-const SEED_NOTE_BURKE_INTRO = "44444444-4444-4444-4444-000000000003";
 
 // Stable plan id for the seeded queued Holloway plan (Phase 5b). The CLI
 // will claim this row on first run and process Stage 3a → 4 → 5 against
@@ -62,14 +61,6 @@ async function seed() {
         archetype: "PRE",
         notes:
           "Marcus + Catherine; HIS owner-operator with $32–$48M valuation; transaction window 3–5 yrs.",
-      },
-      {
-        id: SEED_CLIENT_BURKE,
-        lead_advisor_id: advisor.id,
-        household_name: "Burke Family",
-        status: "prospect",
-        archetype: null,
-        notes: "Intro call scheduled.",
       },
     ],
     { onConflict: "id" },
@@ -180,18 +171,6 @@ async function seed() {
         partner_type: "CPA",
         status: "not_started",
       },
-      {
-        id: SEED_AI_BURKE_LETTER,
-        client_id: SEED_CLIENT_BURKE,
-        description: "Send Burke initial engagement letter + fee schedule.",
-        category: "ENGAGEMENT",
-        duration_class: "one_time",
-        timing_bucket: "next_30_days",
-        owner: advisor.email,
-        partner_required: false,
-        partner_type: null,
-        status: "in_progress",
-      },
     ],
     { onConflict: "id" },
   );
@@ -218,15 +197,6 @@ async function seed() {
         body: "CPA confirmed PTET election deadline is March 15. Move action item up.",
         tag: "email",
         promoted_to_action_item_id: SEED_AI_PTET_FILING,
-      },
-      {
-        id: SEED_NOTE_BURKE_INTRO,
-        client_id: SEED_CLIENT_BURKE,
-        author_advisor_id: advisor.id,
-        body:
-          "Burke intro call — they currently work with Northwestern Mutual; want a fee-only second opinion.",
-        tag: "call",
-        promoted_to_action_item_id: SEED_AI_BURKE_LETTER,
       },
     ],
     { onConflict: "id" },
@@ -292,10 +262,10 @@ async function seed() {
 
   return ok({
     seeded: {
-      clients: 2,
+      clients: 1,
       partners: 3,
-      action_items: 6,
-      notes: 3,
+      action_items: 5,
+      notes: 2,
       queued_plans: queuedPlanSeeded ? 1 : 0,
     },
     queued_plan_skip_reason: queuedPlanSkipReason,

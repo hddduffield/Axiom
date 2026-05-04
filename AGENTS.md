@@ -1067,3 +1067,53 @@ Phase 9.x diff against `view-notes-signin.jsx` stays readable.
 
 Smoke: `tsc --noEmit` clean, `npm run build` clean (36 routes,
 including `/sign-in`). Vercel auto-deploys on push to main.
+
+# Phase 9.22: mock data cleanup
+
+Production state pre-cleanup (queried via service role): 2 clients
+(Holloway + Burke), 7 action items, 3 notes, 3 partners, 1 plan, 1
+advisor. The "7 mock households" assumption from the brief was
+wrong — Vance / Okonkwo / Sterling / Mireles never lived in the DB;
+"Vance Family" was a static fixture in `src/lib/api/_mocks.ts` from
+Phase 4 Step 3.
+
+What landed:
+
+- **`scripts/cleanupMockData.ts`** — idempotent, re-runnable cleanup.
+  Default mode is dry-run (SELECT only); `--apply` flag executes
+  DELETEs. Connects via service-role key (bypasses RLS), takes a
+  pre-snapshot, lists each client and its cascading child counts,
+  and deletes every household whose name doesn't start with
+  "Holloway". Safety guard: aborts if zero clients match the keep
+  prefix.
+
+- **Cleanup applied** — Burke Family (`11111111-1111-1111-1111-000000000002`)
+  deleted along with the 2 cascading rows (1 action item, 1 note).
+  Cascade configured by migration 0001 (`clients` → all child tables
+  ON DELETE CASCADE). Total destructive scope: 3 rows.
+
+- **`src/app/api/dev/seed/route.ts`** — Burke removed entirely
+  (constants, clients upsert row, action item, note). `/api/dev/seed`
+  now only seeds Holloway. Re-running it post-cleanup will not
+  reintroduce Burke. Counts in the response updated (clients 2→1,
+  action_items 6→5, notes 3→2).
+
+- **`src/lib/api/_mocks.ts`** — `MOCK_CLIENT_PROSPECT` (Burke) and
+  `MOCK_CLIENT_INACTIVE` (Vance) constants removed; `LIST_CLIENTS`
+  now contains only `MOCK_CLIENT_HOLLOWAY`. The 2 Burke action items
+  (mock-ai-019, mock-ai-020) and 2 Burke notes (mock-note-004,
+  mock-note-005) referencing the removed constant were also pruned.
+  Only consumer outside the file is `lens-runs/generate/route.ts`,
+  which validates `client_id` against `MOCK_CLIENTS_BY_ID` — that
+  endpoint is "🪛 mock — Phase 5c" deferred and uses Holloway's
+  string-id ("mock-client-holloway") rather than the real UUID, so
+  it was already a stub against production callers.
+
+Production state post-cleanup: 1 client (Holloway), 6 action items,
+2 notes, 3 partners, 1 plan, 1 advisor. Idempotency confirmed by a
+2nd dry-run reporting "Nothing to delete — already clean".
+
+Hayden's advisor record untouched. `auth.users` untouched. Audit-log
+rows referencing deleted Burke entity_ids remain (audit_log uses a
+polymorphic `entity_id` with no FK; intentional — history outlives
+data).
