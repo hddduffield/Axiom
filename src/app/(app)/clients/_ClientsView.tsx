@@ -315,12 +315,6 @@ function ClientRowEl({ c }: { c: ClientRow }) {
         <div className="font-medium" style={{ color: "var(--text)" }}>
           {c.household_name}
         </div>
-        <div
-          className="mt-0.5 text-[11px]"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-        >
-          {c.id.slice(0, 12)}…
-        </div>
       </td>
       <td className="px-3 py-2.5">{statusBadge(c.status)}</td>
       <td className="px-3 py-2.5" style={{ color: "var(--text-2)" }}>

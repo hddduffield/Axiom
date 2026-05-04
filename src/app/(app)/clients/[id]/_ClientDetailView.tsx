@@ -227,10 +227,6 @@ export function ClientDetailView({
               {client.household_name}
             </h1>
             <p className="mt-1 text-sm" style={{ color: "var(--text-2)" }}>
-              <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-                {client.id.slice(0, 12)}…
-              </span>
-              {" · "}
               Lead:{" "}
               {client.advisors
                 ? `${client.advisors.first_name} ${client.advisors.last_name[0]}.`
@@ -558,12 +554,6 @@ function PlanRowEl({ p }: { p: PlanRow }) {
         <div className="font-medium" style={{ color: "var(--text)" }}>
           {p.fact_review_filename ?? "Plan"}
         </div>
-        <div
-          className="mt-0.5 text-[11px]"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-        >
-          {p.id.slice(0, 12)}…
-        </div>
       </td>
       <td className="px-3 py-2.5">
         <PlanStatusBadge status={p.status} />
@@ -692,21 +682,21 @@ function NotesTab({ notes }: { notes: NoteWithAuthor[] }) {
                   <Tag>{n.tag}</Tag>
                 </>
               ) : null}
-              {" · "}
-              <span style={{ fontFamily: "var(--font-mono)" }}>
-                {n.id.slice(0, 12)}…
-              </span>
             </div>
             <p className="mt-1 text-[13px]" style={{ color: "var(--text)" }}>
               {n.body}
             </p>
             {n.promoted_to_action_item_id ? (
-              <div
-                className="mt-1 text-[11px]"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+              <span
+                className="mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase"
+                style={{
+                  background: "var(--s-green-bg)",
+                  color: "var(--s-green)",
+                  letterSpacing: "0.06em",
+                }}
               >
-                → {n.promoted_to_action_item_id.slice(0, 12)}…
-              </div>
+                Promoted
+              </span>
             ) : null}
           </li>
         ))}
@@ -749,12 +739,6 @@ function LensesTab({ lenses }: { lenses: LensRunRow[] }) {
               <td className="px-3 py-2.5">
                 <div style={{ color: "var(--text)" }}>
                   {l.context_input ?? "—"}
-                </div>
-                <div
-                  className="mt-0.5 text-[11px]"
-                  style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-                >
-                  {l.id.slice(0, 12)}…
                 </div>
               </td>
               <td className="px-3 py-2.5">
@@ -891,10 +875,10 @@ function ItemRow({
           {a.description}
         </div>
         <div
-          className="mt-0.5 text-[11px]"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+          className="mt-0.5 text-[11px] uppercase"
+          style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
         >
-          {a.id.slice(0, 12)}… · {a.category.toLowerCase()}
+          {a.category.toLowerCase()}
         </div>
       </td>
       <td className="px-3 py-2.5" style={{ color: "var(--text-2)" }}>

@@ -161,13 +161,15 @@ export function ActionItemDrawer({
           style={{ borderColor: "var(--border)" }}
         >
           <SheetTitle
-            className="text-sm font-medium"
-            style={{ color: "var(--text)" }}
+            className="text-sm font-medium uppercase"
+            style={{
+              color: "var(--text-2)",
+              fontFamily: "var(--font-mono)",
+              letterSpacing: "0.06em",
+              fontSize: 12,
+            }}
           >
-            Action item ·{" "}
-            <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-              {item.id.slice(0, 12)}…
-            </span>
+            Action item
           </SheetTitle>
         </SheetHeader>
 
@@ -298,19 +300,13 @@ export function ActionItemDrawer({
           {/* Origin note card */}
           {linkedNote ? (
             <Card>
-              <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
+              <CardHeader className="pb-2">
                 <CardTitle
                   className="text-[11px] font-medium uppercase tracking-wide"
                   style={{ color: "var(--text-3)", fontFamily: "var(--font-mono)" }}
                 >
                   Origin note
                 </CardTitle>
-                <span
-                  className="text-[10px]"
-                  style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-                >
-                  {linkedNote.id.slice(0, 12)}…
-                </span>
               </CardHeader>
               <CardContent className="space-y-2 pt-0">
                 <div

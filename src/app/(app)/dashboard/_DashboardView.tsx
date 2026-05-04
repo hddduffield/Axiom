@@ -177,11 +177,8 @@ export function DashboardView({
         ts: a.completed_at,
         label: (
           <>
-            Marked{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>
-              {a.id.slice(0, 12)}…
-            </span>{" "}
-            complete · {withoutFamily(clientById.get(a.client_id)?.household_name ?? "—")}
+            Completed action ·{" "}
+            {withoutFamily(clientById.get(a.client_id)?.household_name ?? "—")}
           </>
         ),
         sub: a.description,
@@ -194,14 +191,8 @@ export function DashboardView({
         ts: n.created_at,
         label: (
           <>
-            Promoted note{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>
-              {n.id.slice(0, 12)}…
-            </span>{" "}
-            →{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>
-              {n.promoted_to_action_item_id.slice(0, 12)}…
-            </span>
+            Promoted note to action item ·{" "}
+            {withoutFamily(clientById.get(n.client_id)?.household_name ?? "—")}
           </>
         ),
         sub: clientById.get(n.client_id)?.household_name ?? null,
@@ -213,11 +204,7 @@ export function DashboardView({
         ts: r.generated_at ?? "",
         label: (
           <>
-            Lens run{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>
-              {r.id.slice(0, 12)}…
-            </span>{" "}
-            ({r.lens_type.replace(/_/g, " ")}) ·{" "}
+            Lens run ({r.lens_type.replace(/_/g, " ")}) ·{" "}
             {withoutFamily(clientById.get(r.client_id)?.household_name ?? "—")}
           </>
         ),
@@ -382,13 +369,13 @@ export function DashboardView({
                               {a.description}
                             </Link>
                             <div
-                              className="mt-0.5 text-[11px]"
+                              className="mt-0.5 text-[11px] uppercase"
                               style={{
-                                fontFamily: "var(--font-mono)",
                                 color: "var(--text-3)",
+                                letterSpacing: "0.04em",
                               }}
                             >
-                              {a.id.slice(0, 12)}… · {a.category.toLowerCase()}
+                              {a.category.toLowerCase()}
                               {a.partner_required
                                 ? ` · ${a.partner_type?.toLowerCase()}-blocked`
                                 : ""}
@@ -467,14 +454,6 @@ export function DashboardView({
                       >
                         <span style={{ color: "var(--text-2)" }}>
                           {c ? withoutFamily(c.household_name) : "—"}
-                        </span>
-                        <span
-                          style={{
-                            fontFamily: "var(--font-mono)",
-                            color: "var(--text-3)",
-                          }}
-                        >
-                          {p.id.slice(0, 8)}…
                         </span>
                       </Link>
                       <p
@@ -1089,10 +1068,10 @@ function PriorityCard({
           {item.description}
         </p>
         <div
-          className="mt-0.5 text-[11px]"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+          className="mt-0.5 text-[11px] uppercase"
+          style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
         >
-          {item.id.slice(0, 12)}… · {item.category.toLowerCase()}
+          {item.category.toLowerCase()}
         </div>
         <div className="mt-2 flex items-center gap-2">
           {item.partner_required ? (

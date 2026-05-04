@@ -148,10 +148,6 @@ export default async function PlanPage({ params }: RouteContext) {
               className="mt-1 flex flex-wrap items-center gap-2 text-sm"
               style={{ color: "var(--text-2)" }}
             >
-              <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-                {plan.id.slice(0, 12)}…
-              </span>
-              <span style={{ color: "var(--text-3)" }}>·</span>
               <PlanStatusBadge status={status} />
               <span style={{ color: "var(--text-3)" }}>·</span>
               <span>Generated {fmtDate(plan.generated_at)}</span>

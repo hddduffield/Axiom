@@ -595,17 +595,9 @@ function NoteCard({
               </>
             ) : null}
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className="text-[10px]"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-            >
-              {note.id.slice(0, 12)}…
-            </span>
-            <span className="text-[11px]" style={{ color: "var(--text-3)" }}>
-              {fmtRelative(note.created_at)}
-            </span>
-          </div>
+          <span className="text-[11px]" style={{ color: "var(--text-3)" }}>
+            {fmtRelative(note.created_at)}
+          </span>
         </div>
         <blockquote
           className="mt-2 text-[13px]"
@@ -616,14 +608,15 @@ function NoteCard({
         <div className="mt-2.5 flex items-center gap-2">
           {isPromoted ? (
             <span
-              className="inline-flex items-center gap-1.5 text-[11px]"
-              style={{ color: "var(--s-green)" }}
+              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase"
+              style={{
+                background: "var(--s-green-bg)",
+                color: "var(--s-green)",
+                letterSpacing: "0.06em",
+              }}
             >
               <Check className="h-3 w-3" />
-              Promoted to{" "}
-              <span style={{ fontFamily: "var(--font-mono)" }}>
-                {note.promoted_to_action_item_id?.slice(0, 12)}…
-              </span>
+              Promoted
             </span>
           ) : (
             <Button variant="outline" size="sm" onClick={onPromote}>
@@ -826,13 +819,9 @@ function PromoteDialog({
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Promote note to action item</DialogTitle>
-          {note ? (
+          {note && client ? (
             <p className="text-xs" style={{ color: "var(--text-3)" }}>
-              From note{" "}
-              <span style={{ fontFamily: "var(--font-mono)" }}>
-                {note.id.slice(0, 12)}…
-              </span>
-              {client ? ` · ${client.household_name}` : ""}
+              From a note on {client.household_name}
             </p>
           ) : null}
         </DialogHeader>
@@ -846,13 +835,10 @@ function PromoteDialog({
             }}
           >
             <div
-              className="flex items-center justify-between text-[10px] uppercase"
+              className="text-[10px] uppercase"
               style={{ color: "var(--text-3)", letterSpacing: "0.06em" }}
             >
-              <span>Source note</span>
-              <span style={{ fontFamily: "var(--font-mono)" }}>
-                {note.id.slice(0, 12)}…
-              </span>
+              Source note
             </div>
             <blockquote
               className="mt-1.5 text-[13px]"
