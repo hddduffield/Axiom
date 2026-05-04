@@ -857,3 +857,55 @@ done as part of this phase; production parity is implicit via Vercel
 auto-deploy on each conversion's push to `main`. If a runtime issue
 surfaces in browser, it lives in the per-conversion commit (granular
 revert is safe).
+
+# Phase 9 Tier 1 polish (9.12-9.16) — diagnosis-driven gap closure
+
+After 9.11 a visual-gap diagnosis pass surfaced 5 root causes accounting
+for ~70% of the perceived divergence from Claude Design. Each fix
+landed as its own commit so individual reverts stay safe.
+
+| Commit | Fix | Surfaces touched |
+| --- | --- | --- |
+| 9.12 | Dashboard hero → full-bleed navy with 38px Cormorant greeting + radial gradient overlay + dark composer | `_DashboardView.tsx` (Hero + QuickCompose) |
+| 9.13 | Chip primitive `--accent` → `--n-900` per cascade-winning `.chip.is-active` (styles.css line 511) | `src/components/axiom/Chip.tsx` (new) + 3 surfaces |
+| 9.14 | Stat tile sizes 92px hero / 38px satellites + alert linear-gradient bg (line 1228-1287) | `_DashboardView.tsx` (StatTile) |
+| 9.15 | Tabs underline navy + baseline-aligned (replaces shadcn variant=line `after:bottom-[-5px]`) | `src/components/axiom/Tabs.tsx` (new) + client detail |
+| 9.16 | PanelCard title eyebrow 12px mono uppercase letter-spacing 0.06em (cascade rule line 343 inheriting mono from line 112) | `src/components/axiom/PanelCard.tsx` (new) + 4 surfaces |
+
+## New `src/components/axiom/` primitives
+
+- `Chip.tsx` — filter / saved-view chip with `--n-900` active state and
+  optional white/20% count-pill via `<Count onActive>`.
+- `Tabs.tsx` — Base UI Tabs with design-correct `border-bottom` underline
+  on the trigger itself (not pseudo-element 5px below baseline).
+- `PanelCard.tsx` — unified panel card with eyebrow title, optional
+  count badge, action cluster, flush mode for tables.
+
+These replace per-surface duplicate definitions; future cross-cutting
+visual changes are now single-file edits.
+
+## Root-cause patterns surfaced by the diagnosis
+
+1. **Design source has internally contradictory CSS**: Multiple
+   `.chip.is-active` rules with different colors (line 138 `--accent`,
+   line 511 `--n-900`); same for `.card__head h2` (line 112 + 343).
+   Only the cascade-winner is the design intent. Always grep for the
+   selector in full and trust the LATER rule.
+
+2. **shadcn primitive defaults read as "tasteful but quiet"**:
+   `Tabs variant="line"` underlines via pseudo-element 5px below
+   baseline; `Card` semantic = "card has a heading" with mid-weight
+   sans title vs design's eyebrow-style mono uppercase. Override by
+   isolated wrapper component (per "wrap not edit" rule when fix has
+   wider implications).
+
+3. **Tailwind shorthand is approximate**: `text-5xl` ≈ 48px when design
+   wants 92px (Cormorant editorial). Always use explicit pixel values
+   when sources cite specific sizes; reach for shorthand only for the
+   typical/sans range.
+
+4. **Cascade-winner != most-recently-imported rule**: Phase 9 read
+   styles.css selectively to convert each surface; reading partial
+   rules without scanning the full file for selector overrides
+   produced 5+ divergences. Diagnosis pass corrected this with a full
+   grep-then-read sweep.
