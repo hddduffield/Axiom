@@ -103,3 +103,43 @@ clean path in `stage3aOrchestration.ts`, or (b) document the field as
 "FAILED-only sentinel" and update the schema doc + downstream consumers.
 Option (a) is the lower-risk change; option (b) preserves the current shape
 but requires more downstream awareness.
+
+---
+
+## Phase 6 PDF — page numbers
+
+**Surfaced:** Phase 6 (React-PDF integration), 2026-05-03.
+
+`@react-pdf/renderer` 4.5.1's `<Text render={({ pageNumber, totalPages }) => …}>`
+callback throws `unsupported number: -8.987253937891275e+21` from
+`pdfkit`'s `clipBorderTop` whenever paired with a body that exceeds one
+page. Reproduced via 8-test bisection (smoke script preserved in
+`baf60b7..HEAD` if/when reverted from the Phase 6 commit).
+
+The failure is independent of:
+- whether `totalPages` is requested or just `pageNumber`
+- where the page-number `Text` is positioned (split fixed View, inlined
+  in same `Text render`, separate fixed View at right edge)
+- whether borders are present on the footer
+- which body content triggers it (RB lens alone, IR table alone, full
+  PlanDocument — all multi-page bodies fail)
+
+Without `Text render`, every variant renders cleanly. v1 ships with no
+per-page numbering — footer shows firm + "Confidential" + compliance ID
++ plan-ID slug + disclosure line.
+
+**Why:** "Page 12 of 38" is nice-to-have on a 30-page client-emailed PDF;
+it's load-bearing on a 200-page printed binder, which v1 doesn't ship.
+Compliance ID + plan-ID slug are already on every page; auditors care
+about those.
+
+**How to apply:** Three paths, in order of preference:
+1. Monitor `@react-pdf/renderer` 4.x patch releases for a fix; restore
+   the page-number `Text render` in `src/lib/pdf/components/PageChrome.tsx`
+   when the upstream bug is closed.
+2. Migrate to `@react-pdf/renderer` 5.x if it ships and the regression
+   is gone.
+3. Workaround: render the document twice — first pass to count pages,
+   second pass with a hardcoded `Page N of TOTAL` per page. Hacky;
+   doubles render cost; not robust if React-PDF computes a different
+   page split on the second pass. Last resort.

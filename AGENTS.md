@@ -469,3 +469,79 @@ curl -X PATCH 'http://localhost:3000/api/action-items/<id>' \
 #   select status, completed_at, completed_by_advisor_id
 #     from action_items where parent_action_item_id='<id>';
 ```
+
+# Phase 6: PDF export
+
+`@react-pdf/renderer` 4.5.1. Vercel-friendly (no headless browser
+dependencies). Two endpoints, two Document components.
+
+## Endpoints
+
+| Endpoint | Renderer | Notes |
+| --- | --- | --- |
+| `GET /api/plans/[id]/pdf` | `PlanDocument` (14 sections) | Status-gated to `ready_for_review` / `approved` / `archived` |
+| `GET /api/lens-runs/[id]/pdf` | `LensRunDocument` (placeholder) | Status-gated to `draft` / `approved` / `archived`; full per-lens-type rendering lands in Phase 5c |
+
+Both stream `application/pdf` with
+`Content-Disposition: attachment; filename="…"`. Browser-side wrappers
+`api.plans.exportPdf(id)` and `api.lensRuns.exportPdf(id)` return
+`Promise<Blob>` (Phase 6 added a `requestBlob` helper alongside the
+existing JSON `request` in `src/lib/api/client.ts`).
+
+## Renderer modules
+
+```
+src/lib/pdf/
+├── PlanDocument.tsx          14-section plan body
+├── LensRunDocument.tsx       lens-run placeholder (Phase 5c expands)
+├── styles.ts                 StyleSheet tokens (colors, sizes, spacing)
+├── components/
+│   ├── PageChrome.tsx        PageHeader, PageFooter, TitlePageFooter
+│   ├── Atoms.tsx             H1/H2/H3, Paragraph, SectionLabel, Bullet
+│   └── Tables.tsx            generic Table<T> + GroupBand
+└── index.ts                  barrel
+```
+
+Typography: Helvetica family throughout (PDFKit-built-in; no font
+registration). Body 10.5pt, h1 16pt navy, h2 13pt navy, h3 11.5pt
+mid-navy. Letter page size, 0.75″/1″ margins. Holloway-scale plan
+renders to ~64 pages / ~290 KB / ~4s wall-clock.
+
+## v1 footer (no page numbers)
+
+The footer on every body page:
+
+```
+PSA Wealth | Confidential | Compliance ID: <tracking_id>
+Plan ID <plan_id_first_8_chars>… · For informational purposes only. …
+```
+
+**Page numbers are deferred to v1.5.** `@react-pdf/renderer` 4.5.1's
+`<Text render={({ pageNumber, totalPages }) => …}>` callback throws
+`unsupported number: -8.987253937891275e+21` from PDFKit's
+`clipBorderTop` whenever paired with a multi-page body. Eight-test
+bisection isolated the bug to the `render` callback path itself
+(independent of position, layout, or whether `totalPages` is requested).
+See `specs/v1_5_backlog.md` for the full diagnosis + recovery paths.
+
+## Markdown formatting
+
+Stage 4 prose is rendered as plain text — no markdown parsing in v1.
+The only "bold" rendering is the `bold_imperative` prefix on
+recommendation bullets, which is its own field and is wrapped in a
+`<Text style={bold}>` directly. If Stage 4 ever starts emitting inline
+emphasis (`**bold**`, `*italic*`, etc.), add a tiny markdown→React-PDF
+bridge in `src/lib/pdf/components/Atoms.tsx`'s `Paragraph`.
+
+## Local test
+
+```
+1. npm run dev
+2. Sign in via /sign-in (magic link).
+3. Navigate to http://localhost:3000/api/plans/<plan_id>/pdf
+4. Browser downloads the PDF.
+```
+
+For the seeded Holloway plan (status=ready_for_review after running
+`npm run generate-pending`), the URL is
+`http://localhost:3000/api/plans/55555555-5555-5555-5555-000000000001/pdf`.

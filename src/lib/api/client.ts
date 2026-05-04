@@ -97,6 +97,36 @@ async function request<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   return parsed as T;
 }
 
+// Blob fetcher for binary downloads (Phase 6 PDF exports). Same auth +
+// 401-redirect semantics as `request`, but the success path returns a
+// Blob instead of parsed JSON. The error path still expects JSON, since
+// the API contract guarantees JSON error envelopes even for endpoints
+// whose 200 body is binary.
+async function requestBlob(path: string): Promise<Blob> {
+  const url = new URL(path, typeof window !== "undefined" ? window.location.origin : "http://localhost");
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    credentials: "same-origin",
+  });
+
+  if (!res.ok) {
+    const contentType = res.headers.get("content-type") ?? "";
+    const apiErr = contentType.includes("application/json")
+      ? ((await res.json()) as ApiError | null)
+      : null;
+    const code = apiErr?.error?.code ?? "internal_error";
+    const message = apiErr?.error?.message ?? `HTTP ${res.status}`;
+
+    if (res.status === 401 && typeof window !== "undefined") {
+      const next = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/sign-in?redirect=${next}`;
+    }
+    throw new ApiClientError(res.status, code, message, apiErr?.error?.details);
+  }
+
+  return res.blob();
+}
+
 // ────────────────────────────────────────────────────────────────────────
 // Resource clients — group endpoints by resource for ergonomic call sites.
 // ────────────────────────────────────────────────────────────────────────
@@ -142,6 +172,10 @@ export const api = {
       request<PlansApi.ApproveResponse>(`/api/plans/${id}/approve`, { method: "POST" }),
     archive: (id: string) =>
       request<PlansApi.ArchiveResponse>(`/api/plans/${id}/archive`, { method: "POST" }),
+    // Phase 6: returns a PDF Blob. Caller can pipe to a download with
+    // URL.createObjectURL + an <a download> element, or trigger
+    // window.open against the URL directly.
+    exportPdf: (id: string) => requestBlob(`/api/plans/${id}/pdf`),
   },
   actionItems: {
     list: (q: ActionItemsApi.ListQuery = {}) =>
@@ -180,6 +214,7 @@ export const api = {
         method: "POST",
         body,
       }),
+    exportPdf: (id: string) => requestBlob(`/api/lens-runs/${id}/pdf`),
   },
   partners: {
     listByClient: (clientId: string, q: PartnersApi.ListByClientQuery = {}) =>

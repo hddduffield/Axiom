@@ -264,6 +264,26 @@ Archive a plan.
 - **Response 200:** updated `Plan` (status=archived, archived_at set).
 - **Errors:** `not_found`.
 
+#### 🔌 GET `/api/plans/[id]/pdf`
+
+Render the plan's `stage4_output` to PDF and stream it as a download.
+
+- **Auth:** required.
+- **Status guard:** plan must be `ready_for_review`, `approved`, or
+  `archived`. `queued` / `processing` / `failed` plans return `422
+  validation_failed`.
+- **Response 200:** `application/pdf` (Letter, ~60-70pp for Holloway-scale
+  plans — most of the bulk is the ~380-row Implementation Roadmap)
+  with `Content-Disposition: attachment; filename="PSA-Plan-<client>-<date>.pdf"`.
+- **Errors:** `not_found`, `validation_failed` (status guard or missing
+  `stage4_output`), `internal_error` (PDF render failed).
+- **Wrapper:** `api.plans.exportPdf(id)` returns `Promise<Blob>`.
+- **v1 caveat:** no per-page numbering. `@react-pdf/renderer` 4.5.1's
+  `Text render` callback fails on multi-page bodies (see
+  `specs/v1_5_backlog.md`). The footer shows firm name, "Confidential",
+  compliance ID, plan-ID slug, and a one-line disclosure on every page;
+  page 1-of-N is deferred to v1.5.
+
 ---
 
 ### 2.4 Action Items — THE SPINE
@@ -458,6 +478,20 @@ Kick off a lens run.
 
 - **Phase 5 plan:** background worker fires the lens-specific generator;
   client polls `GET /api/lens-runs/[id]` for status.
+
+#### 🔌 GET `/api/lens-runs/[id]/pdf`
+
+Render the lens run as a PDF and stream it as a download.
+
+- **Auth:** required.
+- **Status guard:** lens run must be `draft`, `approved`, or `archived`.
+  (Unlike plans, lens-run `draft` IS exportable — the lens flow is
+  "advisor reviews then approves" and the body is populated at the draft
+  stage.)
+- **Response 200:** `application/pdf` (currently a minimal placeholder
+  layout — full per-lens-type rendering lands in Phase 5c).
+- **Errors:** `not_found`, `validation_failed`, `internal_error`.
+- **Wrapper:** `api.lensRuns.exportPdf(id)` returns `Promise<Blob>`.
 
 ---
 
