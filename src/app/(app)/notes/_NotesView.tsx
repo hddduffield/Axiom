@@ -655,7 +655,15 @@ function ComposerCard({ form, clients, onSave, onCancel }: ComposerProps) {
         className="flex items-baseline justify-between border-b px-4 py-2.5"
         style={{ borderColor: "var(--border)" }}
       >
-        <h2 className="text-[13px] font-medium" style={{ color: "var(--text)" }}>
+        <h2
+          className="text-[12px] font-medium uppercase"
+          style={{
+            color: "var(--text-2)",
+            fontFamily: "var(--font-mono)",
+            letterSpacing: "0.06em",
+            margin: 0,
+          }}
+        >
           New note
         </h2>
         <span className="text-[11px]" style={{ color: "var(--text-3)" }}>

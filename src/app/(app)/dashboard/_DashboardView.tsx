@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { PanelCard } from "@/components/axiom/PanelCard";
 import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
@@ -301,7 +302,7 @@ export function DashboardView({
         {/* Triage */}
         <PanelCard
           title="Your triage queue"
-          right={
+          action={
             <div className="flex items-center gap-3">
               <span className="text-[11px]" style={{ color: "var(--text-3)" }}>
                 Sorted by due date
@@ -433,7 +434,7 @@ export function DashboardView({
         <div className="flex flex-col gap-4">
           <PanelCard
             title="Needs your decision"
-            right={
+            action={
               <span
                 className="text-[11px]"
                 style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
@@ -506,7 +507,7 @@ export function DashboardView({
 
           <PanelCard
             title="Recent notes"
-            right={
+            action={
               <Link
                 href="/notes"
                 className="inline-flex items-center gap-1 text-xs hover:underline"
@@ -576,7 +577,7 @@ export function DashboardView({
           {activity.length > 0 ? (
             <PanelCard
               title="Recent activity"
-              right={
+              action={
                 <span
                   className="text-[11px]"
                   style={{ color: "var(--text-3)" }}
@@ -1128,38 +1129,7 @@ function PriorityCard({
 
 // ─────────── Shared primitives ───────────
 
-function PanelCard({
-  title,
-  right,
-  children,
-  flush = false,
-}: {
-  title: string;
-  right?: React.ReactNode;
-  children: React.ReactNode;
-  flush?: boolean;
-}) {
-  return (
-    <div
-      className="overflow-hidden rounded-md border"
-      style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-    >
-      <div
-        className="flex items-center justify-between border-b px-4 py-2.5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h2
-          className="text-[13px] font-medium"
-          style={{ color: "var(--text)" }}
-        >
-          {title}
-        </h2>
-        {right}
-      </div>
-      <div className={flush ? "" : "p-4"}>{children}</div>
-    </div>
-  );
-}
+// PanelCard primitive moved to src/components/axiom/PanelCard.tsx (Phase 9.16).
 
 function ColHead({
   children,

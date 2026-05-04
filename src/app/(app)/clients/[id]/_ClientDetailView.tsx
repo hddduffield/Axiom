@@ -23,6 +23,7 @@ import { ChevronRight, FileText, Plus } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tabs";
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
+import { PanelCard } from "@/components/axiom/PanelCard";
 import type {
   ActionItem,
   Client,
@@ -169,56 +170,7 @@ function Tag({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─────────────── Card primitive (uses tokens directly) ───────────────
-
-function PanelCard({
-  title,
-  count,
-  action,
-  children,
-  flush = false,
-}: {
-  title?: string;
-  count?: number | string;
-  action?: React.ReactNode;
-  children: React.ReactNode;
-  flush?: boolean;
-}) {
-  return (
-    <div
-      className="overflow-hidden rounded-md border"
-      style={{ borderColor: "var(--border)", background: "var(--surface)" }}
-    >
-      {title || action ? (
-        <div
-          className="flex items-center justify-between border-b px-4 py-2.5"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <div className="flex items-center gap-2">
-            {title ? (
-              <h2
-                className="text-[13px] font-medium"
-                style={{ color: "var(--text)" }}
-              >
-                {title}
-              </h2>
-            ) : null}
-            {count != null ? (
-              <span
-                className="text-[11px]"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
-              >
-                {count}
-              </span>
-            ) : null}
-          </div>
-          {action}
-        </div>
-      ) : null}
-      <div className={flush ? "" : "p-4"}>{children}</div>
-    </div>
-  );
-}
+// PanelCard primitive moved to src/components/axiom/PanelCard.tsx (Phase 9.16).
 
 // ─────────────── Main component ───────────────
 

@@ -307,8 +307,8 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
       <Card className="mb-4">
         <CardHeader>
           <CardTitle
-            className="text-[11px] font-medium uppercase"
-            style={{ color: "var(--text-3)", fontFamily: "var(--font-mono)", letterSpacing: "0.12em" }}
+            className="text-[12px] font-medium uppercase"
+            style={{ color: "var(--text-2)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}
           >
             1 · Client &amp; fact review
           </CardTitle>
@@ -373,8 +373,8 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
       <Card className="mb-4">
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle
-            className="text-[11px] font-medium uppercase"
-            style={{ color: "var(--text-3)", fontFamily: "var(--font-mono)", letterSpacing: "0.12em" }}
+            className="text-[12px] font-medium uppercase"
+            style={{ color: "var(--text-2)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}
           >
             2 · Upload payload JSON
           </CardTitle>
