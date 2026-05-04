@@ -1,48 +1,81 @@
-/* Axiom design tokens — populated as Claude Design's HTML references
- * surface specific palette, typography, and spacing choices.
+/* Axiom design tokens — verbatim from Claude Design's polished prototype
+ * (specs/design/claude-design-source/styles.css). Token names match the
+ * source 1:1 so JSX-to-TSX conversions in Phase 9.2+ can reference
+ * `var(--accent)`, `var(--bg)`, `var(--n-100)` etc. without rename hops.
  *
- * v1 starts with shadcn/ui's `base-nova` neutral defaults (defined in
- * globals.css). When a Claude Design reference introduces a custom
- * value (e.g., a specific brand navy, a custom accent, a display
- * typeface), centralize it here rather than scattering hardcoded
- * values across components.
+ * Aesthetic system: warm ivory paper + deep navy chrome + thin hairlines.
+ * Type pair: Geist Sans (body) + Cormorant Garamond display (h1, stat
+ * values) + Geist Mono (data, eyebrows). Loaded by `src/app/layout.tsx`
+ * via next/font/google, exposed as `--font-sans`, `--font-mono`,
+ * `--font-display` on `<html>` so the values below are SSR fallbacks.
  *
- * Convention:
- *   - Color tokens use the `--axiom-color-*` prefix to avoid colliding
- *     with shadcn's `--color-*` and Tailwind's theme variables.
- *   - Typography tokens use `--axiom-font-*`.
- *   - All tokens are defined on `:root` and may be overridden inside
- *     `[data-theme="dark"]` if dark-mode polish lands in v1.5.
- *   - When a token is promoted from "Claude Design's mockup uses #x"
- *     to "Axiom's brand palette is #x", move it to globals.css's
- *     `@theme inline` block so it becomes a Tailwind class
- *     (`bg-axiom-primary`, etc.). This file is the staging ground.
+ * Shadcn primitives are reskinned in `globals.css` `:root` by mapping
+ * shadcn's tokens (--background, --primary, --card, --border, etc.) to
+ * the Axiom palette below. Effect: every Button / Card / Dialog picks
+ * up Axiom's brand without primitive source edits.
  */
 
 :root {
-  /* Color tokens — populated per page conversion. Empty stubs below
-   * document the slots Claude Design is expected to fill; uncomment
-   * + assign as references arrive. */
+  /* ── Neutral scale — warm ivory paper ── */
+  --n-0:   #ffffff;
+  --n-25:  #faf8f3;          /* page bg */
+  --n-50:  #f4efe6;          /* surface-2 */
+  --n-75:  #ede7da;
+  --n-100: #e3dccd;          /* hairline border */
+  --n-150: #d4cab6;
+  --n-200: #bdb19a;
+  --n-300: #a89c84;
+  --n-400: #8a8071;          /* text-3 */
+  --n-500: #6f6557;
+  --n-600: #5b5246;          /* text-2 */
+  --n-700: #3a342b;
+  --n-800: #221f1a;
+  --n-900: #1a1a1a;          /* text */
 
-  /* --axiom-color-primary: ;            brand color used on key CTAs */
-  /* --axiom-color-primary-hover: ; */
-  /* --axiom-color-primary-foreground: ; text color on primary fills */
-  /* --axiom-color-accent: ;             secondary callout color */
-  /* --axiom-color-text-primary: ;       body text in main surface */
-  /* --axiom-color-text-muted: ;         labels, metadata */
-  /* --axiom-color-text-inverse: ;       text on dark surfaces */
-  /* --axiom-color-surface-raised: ;     card / panel background */
-  /* --axiom-color-surface-sunk: ;       muted background, e.g. table zebra */
-  /* --axiom-color-border-subtle: ;      hairline rules */
-  /* --axiom-color-border-strong: ;      emphasized borders */
+  /* ── PSA brand ── */
+  --psa-navy:       #1f3a5f;
+  --psa-navy-deep:  #142844;
+  --psa-navy-soft:  #335277;
+  --psa-navy-bg:    #eef2f7;
 
-  /* Typography tokens — populated when Claude Design picks display +
-   * body fonts. Until then, falls through to shadcn's Geist defaults. */
+  /* ── Status — desaturated, calm ── */
+  --s-amber:   #b07d2a;       /* pending_decision */
+  --s-amber-bg:#fbf3e3;
+  --s-blue:    #2f5b8a;       /* in_progress */
+  --s-blue-bg: #ecf1f8;
+  --s-green:   #2c6a4a;       /* complete */
+  --s-green-bg:#e8f1ec;
+  --s-red:     #92322a;       /* overdue */
+  --s-red-bg:  #f6e7e5;
+  --s-slate:   #4f4f4f;       /* not_started */
+  --s-slate-bg:#efefef;
 
-  /* --axiom-font-display: ;     headings, plan titles */
-  /* --axiom-font-body: ;        prose, table cells */
-  /* --axiom-font-mono: ;        code, IDs, compliance tracking */
+  /* Status palette tokens for plan-error / banner surfaces (added late
+   * in Claude Design's styles.css; keep here for parity). */
+  --status-red-bg:     #fdf3f3;
+  --status-red-border: #f0c9c9;
 
-  /* Spacing scale lives in Tailwind; tokens added here only if Claude
-   * Design needs values outside Tailwind's defaults (rare). */
+  /* ── Semantic surface + text tokens ── */
+  --bg:            #f6f3ec;   /* warm ivory page */
+  --surface:       #fbf9f4;   /* card paper */
+  --surface-2:     #f0ece2;   /* sunken / hover */
+  --border:        #e3dccd;   /* hairline */
+  --border-strong: #cbc0a8;
+  --text:          #1a1a1a;
+  --text-2:        #5b5246;
+  --text-3:        #8a8071;
+  --accent:        var(--psa-navy);
+  --accent-deep:   var(--psa-navy-deep);
+  --gold:          #c9a46a;   /* nav active underline */
+
+  /* ── Geometry ── */
+  --radius:    6px;
+  --radius-lg: 8px;
+  --topbar-h:  56px;
+
+  /* ── Type stacks (SSR fallbacks; next/font sets the loaded variable
+   *    on <html> at runtime, which wins via cascade specificity) ── */
+  --font-sans:    'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'Geist Mono', ui-monospace, 'SF Mono', 'Menlo', monospace;
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Source Serif Pro', Georgia, serif;
 }

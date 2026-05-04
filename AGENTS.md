@@ -777,13 +777,37 @@ When the per-page conversion prompt arrives, the work is:
    include visual spot-checks).
 6. Commit with message `Phase 9.<n>: <page> polish — converted Claude Design reference; …`.
 
-## Token migration ladder
+## Tokens — verbatim from Claude Design (Phase 9.1)
 
-```
-hardcoded value in component
-  ↓ used twice → move to design-tokens.css as --axiom-color-*
-hardcoded value in design-tokens.css
-  ↓ recurring across 3+ surfaces → promote to globals.css @theme inline
-@theme inline registration
-  ↓ usable as Tailwind class (bg-axiom-primary, text-axiom-text-muted)
-```
+`src/styles/design-tokens.css` mirrors Claude Design's source 1:1 — token
+names match (`--bg`, `--surface`, `--accent`, `--n-100`, `--psa-navy`,
+`--s-amber-bg`, `--text-2`, `--gold`, `--font-display`, etc.). The
+JSX-to-TSX conversions in 9.2+ reference these directly (`var(--bg)`,
+`var(--accent)`) without any `--axiom-*` rename hop. **Don't re-namespace
+to `--axiom-*`** — the prior Phase 9.0 convention was a stub assumption
+overridden once Claude Design's source landed.
+
+`src/app/globals.css` then maps shadcn's primitive tokens
+(`--background`, `--primary`, `--card`, `--border`, `--muted`,
+`--muted-foreground`, etc.) to Axiom's palette (`var(--bg)`,
+`var(--psa-navy)`, `var(--surface)`, `var(--border)`, `var(--surface-2)`,
+`var(--text-3)`, …). Net effect: every shadcn primitive (Button, Card,
+Dialog, Badge, Tabs, Select, Table, Input, Skeleton, Alert, Sonner)
+picks up Axiom's brand without primitive source edits.
+
+### Usage rules
+
+- **Inside `axiom/` components or page-level JSX**: reference Axiom
+  tokens directly via `style={{ color: 'var(--text-2)' }}` or by adding
+  Tailwind utility classes that resolve through the @theme inline
+  bridge (`text-foreground`, `bg-card`, `border-border`,
+  `text-muted-foreground` all already work).
+- **Inside `ui/` shadcn primitives**: don't edit. They consume the
+  shadcn-named tokens which globals.css already remapped.
+- **Promote a token to a Tailwind utility** only when 3+ surfaces use
+  it AND no shadcn-named token already covers it. Add to globals.css's
+  `@theme inline` block and the Tailwind class (`text-axiom-gold`,
+  etc.) becomes available.
+- **Type families**: `font-sans` (Geist), `font-mono` (Geist Mono),
+  `font-display` and `font-heading` (both Cormorant Garamond) are
+  Tailwind utilities. Reach for them directly.
