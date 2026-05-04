@@ -4,16 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -30,8 +21,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { api, isApiError } from "@/lib/api/client";
-import type { ActionItem, ActionItemStatus, Advisor, Client } from "@/lib/api/types";
+import type { ActionItem, ActionItemStatus, Advisor, Client, Note } from "@/lib/api/types";
 
 const STATUS_CYCLE: ActionItemStatus[] = [
   "not_started",
@@ -108,10 +100,7 @@ export function ActionItemsView({ advisors, clients }: Props) {
     const target = nextStatus(item.status);
     try {
       const res = await api.actionItems.update(item.id, { status: target });
-      setItems((prev) =>
-        (prev ?? []).map((it) => (it.id === item.id ? res.item : it)),
-      );
-      if (detail?.id === item.id) setDetail(res.item);
+      handleChanged(res.item);
       if (res.spawned_reminders && res.spawned_reminders.length > 0) {
         toast.success(`${res.spawned_reminders.length} reminder spawned`);
       }
@@ -122,6 +111,42 @@ export function ActionItemsView({ advisors, clients }: Props) {
       toast.error(isApiError(e) ? e.message : "Could not update item");
     }
   }
+
+  // Drawer's onChanged hand-back: drawer toasts lifecycle effects itself,
+  // we just merge the updated item into local state and the drawer view.
+  function handleChanged(updated: ActionItem) {
+    setItems((prev) =>
+      (prev ?? []).map((it) => (it.id === updated.id ? updated : it)),
+    );
+    if (detail?.id === updated.id) setDetail(updated);
+  }
+
+  // Origin-note lookup for the drawer. We don't preload notes because the
+  // global action-items list can be large; on drawer open, fetch the one
+  // note (if any) that has promoted_to_action_item_id === detail.id.
+  const [linkedNote, setLinkedNote] = useState<Note | null>(null);
+  useEffect(() => {
+    if (!detail) {
+      setLinkedNote(null);
+      return;
+    }
+    let cancelled = false;
+    // Reverse lookup via the per-client notes endpoint. Cheap because
+    // a single client's notes list is small.
+    api.notes
+      .listByClient(detail.client_id)
+      .then(({ items }) => {
+        if (cancelled) return;
+        const match = items.find((n) => n.promoted_to_action_item_id === detail.id);
+        setLinkedNote(match ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setLinkedNote(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -248,63 +273,13 @@ export function ActionItemsView({ advisors, clients }: Props) {
         </CardContent>
       </Card>
 
-      {/* Detail dialog */}
-      <Dialog open={detail !== null} onOpenChange={(o) => !o && setDetail(null)}>
-        <DialogContent className="max-w-2xl">
-          {detail ? (
-            <>
-              <DialogHeader>
-                <DialogTitle>Action item</DialogTitle>
-                <DialogDescription>
-                  {clientById.get(detail.client_id)?.household_name ?? "—"} ·{" "}
-                  {detail.category}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-3 text-sm">
-                <p>{detail.description}</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <Field label="Owner" value={detail.owner} />
-                  <Field label="Timing" value={detail.timing_bucket} />
-                  <Field label="Duration" value={detail.duration_class} />
-                  <Field
-                    label="Partner"
-                    value={
-                      detail.partner_required
-                        ? detail.partner_type ?? "yes"
-                        : "no"
-                    }
-                  />
-                  <Field
-                    label="Status"
-                    value={detail.status.replace("_", " ")}
-                  />
-                  <Field
-                    label="Derivative?"
-                    value={detail.is_derivative_reminder ? "yes" : "no"}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => toggleStatus(detail)}
-                >
-                  Advance to “{nextStatus(detail.status).replace("_", " ")}”
-                </Button>
-              </DialogFooter>
-            </>
-          ) : null}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-muted-foreground">{label}</p>
-      <p className="font-medium">{value}</p>
+      <ActionItemDrawer
+        item={detail}
+        linkedNote={linkedNote}
+        clientHouseholdName={detail ? clientById.get(detail.client_id)?.household_name ?? null : null}
+        onClose={() => setDetail(null)}
+        onChanged={handleChanged}
+      />
     </div>
   );
 }
