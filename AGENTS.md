@@ -20,6 +20,13 @@ rename, or refactor `src/lib/orchestrator/` while building the app shell —
 its behavior is locked by live-validation artifacts and the v1.5 backlog
 (see `specs/v1_5_backlog.md`).
 
+# v1 ship state
+
+Production deployed at **https://axiom-zeta-flax.vercel.app**. Full
+snapshot of what runs where, what works, what's pending, and the demo
+runbook lives at **`specs/v1_ship_state.md`** — read that first if you're
+returning to the project after a gap.
+
 # Phase 4: App Shell
 
 **Stack** (versions as installed; check `package.json` for current):
