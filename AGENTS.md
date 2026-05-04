@@ -545,3 +545,65 @@ bridge in `src/lib/pdf/components/Atoms.tsx`'s `Paragraph`.
 For the seeded Holloway plan (status=ready_for_review after running
 `npm run generate-pending`), the URL is
 `http://localhost:3000/api/plans/55555555-5555-5555-5555-000000000001/pdf`.
+
+# Phase 5e: functional UI
+
+7 pages live, all routed through the existing `(app)` route group. Visual
+polish is **not** in scope here — Phase 9 will swap in the Claude Design
+HTML references. Default shadcn styling throughout.
+
+| Route | Component split |
+| --- | --- |
+| `/dashboard` | Server (greeting, 4 stat cards, triage queue, recent notes) + client island for "+ New note" dialog |
+| `/clients` | Server (table + status filter) + client island for "+ New Client" dialog and filter chips |
+| `/clients/[id]` | Server (5-tab Tabs with all data parallel-loaded server-side) |
+| `/action-items` | Server shell loads advisor + client lookup, rest is one big Client Component (filter state + status toggle + detail dialog) |
+| `/notes` | Server pre-loads notes + advisor + client lookup, Client Component handles filters + new-note dialog + promote-to-action dialog |
+| `/plans/[id]` | Server-renders the 14-section plan body from `plans.stage4_output`; client island for Approve / Archive / Export PDF |
+| `/plans/generate` | Server pre-loads client list, Client Component handles multipart upload (ClientProfile + SelectedRecommendations + fact_review_filename) |
+
+## Server vs Client component pattern
+
+Server Components read **directly via Supabase server client** (`@/lib/supabase/server`). The
+typed API client at `@/lib/api/client` is **browser-only** — it constructs URLs from
+`window.location.origin` — so calling `api.*` from a server context would
+hit `http://localhost/...` and fail. Client Components import `api` from
+`@/lib/api/client` and use it normally; Server Components import the
+**typed shapes** from `@/lib/api/types` for prop typing but do their fetches
+through Supabase.
+
+This is the same pattern used by the dashboard widget in Phase 5b. It
+trades "single source of fetch logic" for "no internal HTTP hop on SSR".
+
+## shadcn quirks (base-nova preset)
+
+The `base-nova` preset uses Base UI primitives, **not** Radix. Two
+consequences:
+
+- **No `asChild` prop** on `Button` or trigger components. Use
+  `buttonVariants()` directly on a `<Link>` for nav buttons; put the
+  styled className directly on `DialogTrigger` / `DropdownMenuTrigger`
+  for trigger buttons.
+- `Select.onValueChange` is `(value: string | null, eventDetails) => void`.
+  Wrap the callback to coerce: `onValueChange={(v) => onChange(v ?? "")}`.
+
+## Layout
+
+`src/app/(app)/layout.tsx` is now a Server Component that loads the
+current advisor and renders the top nav. The avatar dropdown (sign-out)
+is a Client island at `src/app/(app)/_layout/TopNavRight.tsx`.
+
+The `_layout/` folder is a private folder (Next.js excludes underscore-
+prefixed dirs from routing) so the client island doesn't accidentally
+become a route.
+
+## Deferred to Phase 9
+
+- Visual polish to match Claude Design HTML references
+- Search input (placeholder in nav today)
+- "+ New" dropdown menu (separate dialogs today, one per resource)
+- Loading skeletons in places where Server Components render synchronously
+- Empty-state illustrations
+- Mobile responsive layouts (current is laptop-first)
+- Pagination UI for the action-items table (cursor pagination is wired in
+  the API but the UI loads up to the default limit and stops)

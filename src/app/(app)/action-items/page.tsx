@@ -1,10 +1,19 @@
-export default function ActionItemsPage() {
+import { createClient } from "@/lib/supabase/server";
+import { ActionItemsView } from "./_ActionItemsView";
+
+// Server-load the lookup data (advisors + clients) once; the view itself
+// is a Client Component because filters + status toggles + the detail
+// dialog are all interactive.
+export default async function ActionItemsPage() {
+  const supabase = await createClient();
+  const [advisorsRes, clientsRes] = await Promise.all([
+    supabase.from("advisors").select("id, email, first_name, last_name").order("first_name"),
+    supabase.from("clients").select("id, household_name").order("household_name"),
+  ]);
   return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-3xl font-semibold tracking-tight">Action Items</h1>
-      <p className="text-muted-foreground">
-        Skeleton placeholder. Cross-client action item view arrives in Phase 4 Step 5.
-      </p>
-    </div>
+    <ActionItemsView
+      advisors={advisorsRes.data ?? []}
+      clients={clientsRes.data ?? []}
+    />
   );
 }

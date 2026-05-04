@@ -83,7 +83,9 @@ export namespace ClientsApi {
   export type ListResponse = CursorList<Client>;
 
   export interface CreateRequest {
-    lead_advisor_id: string;
+    // Defaults to the current signed-in advisor when omitted (route handler
+    // populates from session — see /api/clients POST).
+    lead_advisor_id?: string;
     household_name: string;
     status?: ClientStatus;
     archetype?: ClientArchetype | null;
