@@ -40,22 +40,6 @@ import {
 } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
@@ -682,44 +666,63 @@ function Hero({
     day: "numeric",
     year: "numeric",
   });
+  // Full-bleed navy lobby per styles.css §dash-hero (line 1114).
+  // Negative margins escape (app)/layout.tsx's `max-w-6xl px-6 py-10`
+  // wrapper so the hero touches the constrained content edges.
   return (
     <div
-      className="rounded-md border p-5"
+      className="relative -mx-6 -mt-10 overflow-hidden"
       style={{
-        background: "var(--surface)",
-        borderColor: "var(--border)",
+        padding: "36px 40px 32px",
+        background: "var(--accent-deep)",
+        color: "#fff",
+        backgroundImage:
+          "radial-gradient(circle at 18% 100%, rgba(255,255,255,0.05), transparent 50%), radial-gradient(circle at 100% 0%, rgba(201,164,106,0.06), transparent 45%)",
       }}
     >
-      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+      <div className="relative z-[1] flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <div
             className="text-[11px] uppercase"
-            style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "rgba(255,255,255,0.55)",
+              letterSpacing: "0.14em",
+              marginBottom: 10,
+            }}
           >
             {dateLine}
           </div>
           <h1
-            className="mt-1 text-3xl font-medium"
             style={{
               fontFamily: "var(--font-display)",
-              letterSpacing: "-0.01em",
-              color: "var(--text)",
+              fontSize: 38,
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+              color: "#fff",
+              margin: "0 0 18px",
             }}
           >
             {greetForHour(now)}, {advisor.first_name}.
           </h1>
-          <p className="mt-1.5 text-sm" style={{ color: "var(--text-2)" }}>
+          <p
+            className="text-[13px]"
+            style={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.5 }}
+          >
             {openCount === 0 ? (
               <>You&rsquo;re caught up. Take a breath.</>
             ) : (
               <>
-                <span style={{ fontFamily: "var(--font-mono)" }}>{openCount}</span>{" "}
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--gold)" }}>
+                  {openCount}
+                </span>{" "}
                 open across{" "}
-                <span style={{ fontFamily: "var(--font-mono)" }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--gold)" }}>
                   {clientCount}
                 </span>{" "}
                 clients ·{" "}
-                <span style={{ fontFamily: "var(--font-mono)" }}>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--gold)" }}>
                   {completedThisWeek}
                 </span>{" "}
                 completed this week
@@ -727,16 +730,30 @@ function Hero({
             )}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={onToggleCompose}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
+        <div className="flex gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={onToggleCompose}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              borderColor: "rgba(255,255,255,0.18)",
+              color: "#fff",
+            }}
+          >
+            <Plus className="h-3.5 w-3.5" />
             {composing ? "Close" : "Quick note"}
-          </Button>
+          </button>
           <Link
             href="/plans/generate"
-            className={buttonVariants({ size: "sm" })}
+            className="inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-colors"
+            style={{
+              background: "var(--gold)",
+              color: "var(--accent-deep)",
+              fontWeight: 600,
+            }}
           >
-            <FileText className="mr-1.5 h-3.5 w-3.5" />
+            <FileText className="h-3.5 w-3.5" />
             Generate plan
           </Link>
         </div>
@@ -790,112 +807,87 @@ function QuickCompose({
       toast.error(isApiError(e) ? e.message : "Could not save note");
     }
   }
+  // Dark-on-navy overlay per styles.css §dash-capture (line 1186).
+  // Uses raw <select>/<textarea> (matching design source's native form
+  // elements) instead of shadcn primitives — avoids per-class
+  // specificity battles to override Light theme defaults.
+  const inputStyle: React.CSSProperties = {
+    background: "rgba(255,255,255,0.04)",
+    borderColor: "rgba(255,255,255,0.16)",
+    color: "#fff",
+  };
   return (
     <div
-      className="mt-4 rounded-md border p-3"
+      className="relative z-[1] mt-[22px] rounded-md p-[14px]"
       style={{
-        background: "var(--surface-2)",
-        borderColor: "var(--border)",
+        background: "rgba(255,255,255,0.06)",
+        border: "1px solid rgba(255,255,255,0.14)",
       }}
       data-api="POST /api/notes"
     >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-end gap-2">
-            <FormField
-              control={form.control}
-              name="client_id"
-              render={({ field }) => (
-                <FormItem className="flex-1 min-w-[180px]">
-                  <FormLabel
-                    className="text-[10px] uppercase"
-                    style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
-                  >
-                    Client
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value || undefined}
-                      onValueChange={(v) => field.onChange(v ?? "")}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Pick a client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.household_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="tag"
-              render={({ field }) => (
-                <FormItem className="w-[180px]">
-                  <FormLabel
-                    className="text-[10px] uppercase"
-                    style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
-                  >
-                    Tag
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => field.onChange(v ?? "")}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {NOTE_TAGS.map((t) => (
-                          <SelectItem key={t.id} value={t.id}>
-                            {t.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="body"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    rows={3}
-                    autoFocus
-                    placeholder="What just happened? Decisions, asks, partner needs…"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end gap-2">
-            <Button
-              type="submit"
-              size="sm"
-              disabled={form.formState.isSubmitting}
-            >
-              <Check className="mr-1.5 h-3.5 w-3.5" />
-              {form.formState.isSubmitting ? "Saving…" : "Save note"}
-            </Button>
-          </div>
-        </form>
-      </Form>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            {...form.register("client_id")}
+            className="h-[30px] rounded-md border px-2.5 text-xs outline-none"
+            style={inputStyle}
+          >
+            {clients.map((c) => (
+              <option
+                key={c.id}
+                value={c.id}
+                style={{ background: "var(--accent-deep)", color: "#fff" }}
+              >
+                {c.household_name}
+              </option>
+            ))}
+          </select>
+          <select
+            {...form.register("tag")}
+            className="h-[30px] rounded-md border px-2.5 text-xs outline-none"
+            style={inputStyle}
+          >
+            {NOTE_TAGS.map((t) => (
+              <option
+                key={t.id}
+                value={t.id}
+                style={{ background: "var(--accent-deep)", color: "#fff" }}
+              >
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <span
+            className="text-[11px]"
+            style={{ color: "rgba(255,255,255,0.5)" }}
+          >
+            Tip: ⌘↵ to save
+          </span>
+        </div>
+        <textarea
+          rows={3}
+          autoFocus
+          placeholder="What just happened? Decisions, asks, partner needs…"
+          {...form.register("body")}
+          className="w-full rounded-md border px-3 py-2 text-sm outline-none placeholder:text-white/40"
+          style={inputStyle}
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="inline-flex h-7 items-center gap-1.5 rounded-md px-3 text-xs disabled:opacity-50"
+            style={{
+              background: "var(--gold)",
+              color: "var(--accent-deep)",
+              fontWeight: 600,
+            }}
+          >
+            <Check className="h-3.5 w-3.5" />
+            {form.formState.isSubmitting ? "Saving…" : "Save note"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
