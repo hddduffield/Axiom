@@ -1,10 +1,18 @@
-// Action items server entry — loads advisors + clients lookup + the
-// current advisor's id/email for "Me" + "My open" / "My overdue"
-// saved views. The view component owns the in-memory filter pipeline.
+// Action items kanban server entry — fetches the universe needed for
+// the kanban + backlog view: active advisors (column headers), clients
+// (filter dropdown + card join), and all action items in scope.
+//
+// Owner-shape note (Phase 9.18): action_items.owner is a free-form
+// string. Stage 3a writes advisor email addresses ("hayden@psawealth.com")
+// for advisor-owned items, and literals like "client" / "cpa" /
+// "attorney" for non-advisor-owned items. The kanban matches by email
+// so existing data continues to work; advisor.id is used only as the
+// React key. Migrating owner to a UUID FK is a separate task with
+// schema + Stage 3a prompt implications.
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ActionItemsView } from "./_ActionItemsView";
+import { KanbanView } from "./_KanbanView";
 
 export default async function ActionItemsPage() {
   const supabase = await createClient();
@@ -13,24 +21,27 @@ export default async function ActionItemsPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/sign-in");
 
-  const [advisorsRes, clientsRes, meRes] = await Promise.all([
+  const [advisorsRes, clientsRes, itemsRes] = await Promise.all([
     supabase
       .from("advisors")
       .select("id, email, first_name, last_name")
+      .eq("active", true)
       .order("first_name"),
-    supabase.from("clients").select("id, household_name").order("household_name"),
     supabase
-      .from("advisors")
-      .select("id, email")
-      .eq("id", user.id)
-      .maybeSingle(),
+      .from("clients")
+      .select("id, household_name")
+      .order("household_name"),
+    supabase
+      .from("action_items")
+      .select("*")
+      .order("created_at", { ascending: false }),
   ]);
 
   return (
-    <ActionItemsView
+    <KanbanView
       advisors={advisorsRes.data ?? []}
       clients={clientsRes.data ?? []}
-      meEmail={meRes.data?.email ?? null}
+      initialItems={itemsRes.data ?? []}
     />
   );
 }
