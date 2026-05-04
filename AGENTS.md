@@ -909,3 +909,62 @@ visual changes are now single-file edits.
    rules without scanning the full file for selector overrides
    produced 5+ divergences. Diagnosis pass corrected this with a full
    grep-then-read sweep.
+
+# Phase 9.17-9.19: action items kanban + UUID cleanup + DnD
+
+After Tier 1 polish landed, three structural changes shipped together:
+
+| Commit | Change |
+| --- | --- |
+| 9.17 | Stripped visible UUID rendering from cards / dashboard / notes / drawer / clients / plan view. URL routing + API + DB unchanged. `→ promoted to <id>` indicators replaced by green `PROMOTED` pills. |
+| 9.18 | Replaced action items list-with-saved-views (1037 lines) with kanban + filterable backlog: top row is one column per active advisor (active=true) keyed by `advisor.id`, populated by `item.owner === advisor.email`; backlog list filterable by Timeline + Client; "Show completed" toggle reveals a 4th read-only column. |
+| 9.19 | Added @dnd-kit drag-and-drop. Cards draggable from kanban or backlog; sticky bottom bar slides up with two drop zones (Complete + Backlog). Optimistic UI with snapshot rollback on error. Pointer sensor distance:5 preserves onClick. Lifecycle hooks (Phase 5d spawn / auto-close) toasts unchanged. |
+
+## Action items architecture (post-9.19)
+
+```
+src/app/(app)/action-items/
+├── page.tsx              Server: fetches advisors (active=true), clients, all action_items
+├── _KanbanView.tsx       Client: DndContext root, owns items state + filters + drawer
+├── _ActionCard.tsx       Visual card (forwardRef so DnD wrapper can attach)
+└── _DropZoneBar.tsx      Sticky bottom bar with two useDroppable zones
+```
+
+### Owner-shape decision (kept email matching)
+
+`action_items.owner` is a non-nullable string. Stage 3a writes
+**advisor email** for advisor-owned items and literals like `client` /
+`cpa` / `attorney` for non-advisor owners. The kanban matches columns
+by `item.owner === advisor.email`; advisor.id is only the React key.
+Drag onto an advisor column PATCHes `{ owner: advisor.email, status:
+'in_progress' }`.
+
+The brief originally specified `owner: advisor_id`. Switching would
+require a schema migration plus a Stage 3a system-prompt update so
+prior plan items stay aligned with the new column. Deferred to v1.5
+unless a multi-advisor dataset surfaces a need.
+
+### Backlog drop semantics (status only, owner unchanged)
+
+The brief specified `PATCH owner: null` on the backlog drop. The
+schema doesn't permit null `owner`, so the implementation PATCHes
+**status: 'not_started' only** — the item leaves any in_progress
+kanban column and joins the backlog list, but its assignment is
+preserved as historical context. To support a true "unassign" on
+drop, make `owner` nullable in the migration.
+
+### Optimistic-UI pattern
+
+Drag end:
+1. Snapshot current `items` array.
+2. Apply optimistic patch locally (status, owner if assigning, stamp
+   `completed_at` if completing).
+3. PATCH `/api/action-items/[id]`.
+4. On success: replace the local row with the server's authoritative
+   response (covers `updated_at`, definitive `completed_at`, etc.).
+   Append any `spawned_reminders` so they appear in the kanban
+   immediately; toast `auto_closed_reminders` count.
+5. On error: restore the snapshot + toast the error.
+
+No-op detection short-circuits before any state change when dropping
+onto a target whose patch matches the item's current state.
