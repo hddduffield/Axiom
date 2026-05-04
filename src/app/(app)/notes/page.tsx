@@ -29,7 +29,7 @@ export default async function NotesPage() {
       .limit(200),
     supabase
       .from("advisors")
-      .select("id, first_name")
+      .select("id, email, first_name")
       .eq("id", user.id)
       .maybeSingle(),
   ]);
@@ -40,6 +40,7 @@ export default async function NotesPage() {
       clients={clientsRes.data ?? []}
       initialNotes={notesRes.data ?? []}
       meId={meRes.data?.id ?? null}
+      meEmail={meRes.data?.email ?? null}
     />
   );
 }

@@ -37,7 +37,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Check, Plus, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -67,6 +67,7 @@ import {
 import { Chip, Count } from "@/components/axiom/Chip";
 import { api, isApiError } from "@/lib/api/client";
 import type { Advisor, Client, Note } from "@/lib/api/types";
+import { NoteComposer } from "./_NoteComposer";
 
 // ─────────── Curated tag set ───────────
 const NOTE_TAGS = [
@@ -95,12 +96,7 @@ function fmtRelative(iso: string | null): string {
 }
 
 // ─────────── Schemas ───────────
-const noteSchema = z.object({
-  client_id: z.string().uuid("Pick a client"),
-  body: z.string().min(1, "Required"),
-  tag: z.string().min(1, "Pick a tag"),
-});
-type NoteValues = z.infer<typeof noteSchema>;
+// noteSchema/NoteValues moved to ./_NoteComposer.tsx (Phase 9.20).
 
 const promoteSchema = z.object({
   description: z.string().min(1, "Required"),
@@ -118,11 +114,20 @@ interface Props {
   clients: Pick<Client, "id" | "household_name">[];
   initialNotes: Note[];
   meId: string | null;
+  /** Current advisor's email — passed through to the composer's
+   *  Convert-to-action-item toggle for the owner default. */
+  meEmail: string | null;
 }
 
 type Scope = "all" | "promotable" | "promoted";
 
-export function NotesView({ advisors, clients, initialNotes, meId }: Props) {
+export function NotesView({
+  advisors,
+  clients,
+  initialNotes,
+  meId,
+  meEmail,
+}: Props) {
   const router = useRouter();
   const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [scope, setScope] = useState<Scope>("all");
@@ -130,8 +135,11 @@ export function NotesView({ advisors, clients, initialNotes, meId }: Props) {
   const [filterAuthor, setFilterAuthor] = useState<string>("all");
   const [filterTag, setFilterTag] = useState<string>("all");
   const [search, setSearch] = useState("");
-  const [composing, setComposing] = useState(false);
   const [promoting, setPromoting] = useState<Note | null>(null);
+  // Notes saved within the last second get a slide-in animation on
+  // first render. The id leaves this set after a 1s timer so re-renders
+  // don't loop the animation.
+  const [freshIds, setFreshIds] = useState<Set<string>>(() => new Set());
 
   const clientById = useMemo(() => new Map(clients.map((c) => [c.id, c])), [clients]);
   const advisorById = useMemo(() => new Map(advisors.map((a) => [a.id, a])), [advisors]);
@@ -212,25 +220,58 @@ export function NotesView({ advisors, clients, initialNotes, meId }: Props) {
     filterTag !== "all" ||
     search !== "";
 
-  // ─────────── Compose form ───────────
-  const composeForm = useForm<NoteValues>({
-    resolver: zodResolver(noteSchema),
-    defaultValues: { client_id: "", body: "", tag: "client_meeting" },
-  });
-  async function saveNote(values: NoteValues) {
-    try {
-      const created = await api.notes.create({
-        client_id: values.client_id,
-        body: values.body,
-        tag: values.tag,
+  // ─────────── Composer handlers (Phase 9.20) ───────────
+  // The composer owns its own form state; this view manages the feed.
+  function handleOptimisticNote(temp: Note) {
+    setNotes((cur) => [temp, ...cur]);
+    setFreshIds((cur) => {
+      const next = new Set(cur);
+      next.add(temp.id);
+      return next;
+    });
+    // Clear the freshness flag after 1s so a re-render doesn't loop
+    // the slide-in animation.
+    setTimeout(() => {
+      setFreshIds((cur) => {
+        const next = new Set(cur);
+        next.delete(temp.id);
+        return next;
       });
-      setNotes([created, ...notes]);
-      toast.success("Note saved");
-      composeForm.reset({ client_id: "", body: "", tag: "client_meeting" });
-      setComposing(false);
-    } catch (e) {
-      toast.error(isApiError(e) ? e.message : "Could not save note");
+    }, 1000);
+  }
+  function handleResolvedNote(tempId: string, real: Note | null) {
+    if (real) {
+      // Swap in the server's authoritative row + carry the freshness
+      // flag over to the new id so animation keeps running through the
+      // swap.
+      setNotes((cur) => cur.map((n) => (n.id === tempId ? real : n)));
+      setFreshIds((cur) => {
+        if (!cur.has(tempId)) return cur;
+        const next = new Set(cur);
+        next.delete(tempId);
+        next.add(real.id);
+        setTimeout(() => {
+          setFreshIds((c) => {
+            const n = new Set(c);
+            n.delete(real.id);
+            return n;
+          });
+        }, 1000);
+        return next;
+      });
+    } else {
+      // API failed — drop the optimistic placeholder.
+      setNotes((cur) => cur.filter((n) => n.id !== tempId));
+      setFreshIds((cur) => {
+        const next = new Set(cur);
+        next.delete(tempId);
+        return next;
+      });
     }
+  }
+  function handlePromotedFromComposer(updated: Note) {
+    setNotes((cur) => cur.map((n) => (n.id === updated.id ? updated : n)));
+    router.refresh();
   }
 
   // ─────────── Promote form ───────────
@@ -284,46 +325,35 @@ export function NotesView({ advisors, clients, initialNotes, meId }: Props) {
   return (
     <div className="flex flex-col gap-5">
       {/* ── PageHead ── */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1
-            className="text-3xl font-medium"
-            style={{
-              fontFamily: "var(--font-display)",
-              letterSpacing: "-0.01em",
-              color: "var(--text)",
-            }}
-          >
-            Notes
-          </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-2)" }}>
-            {notes.length} notes across{" "}
-            {new Set(notes.map((n) => n.client_id)).size} clients ·{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>{promotable}</span>{" "}
-            promotable ·{" "}
-            <span style={{ fontFamily: "var(--font-mono)" }}>{promoted}</span>{" "}
-            promoted
-          </p>
-        </div>
-        <Button
-          size="sm"
-          onClick={() => setComposing((v) => !v)}
-          data-api="POST /api/notes"
+      <div>
+        <h1
+          className="text-3xl font-medium"
+          style={{
+            fontFamily: "var(--font-display)",
+            letterSpacing: "-0.01em",
+            color: "var(--text)",
+          }}
         >
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          {composing ? "Close composer" : "New note"}
-        </Button>
+          Notes
+        </h1>
+        <p className="mt-1 text-sm" style={{ color: "var(--text-2)" }}>
+          {notes.length} notes across{" "}
+          {new Set(notes.map((n) => n.client_id)).size} clients ·{" "}
+          <span style={{ fontFamily: "var(--font-mono)" }}>{promotable}</span>{" "}
+          promotable ·{" "}
+          <span style={{ fontFamily: "var(--font-mono)" }}>{promoted}</span>{" "}
+          promoted
+        </p>
       </div>
 
-      {/* ── Inline composer ── */}
-      {composing ? (
-        <ComposerCard
-          form={composeForm}
-          clients={clients}
-          onSave={saveNote}
-          onCancel={() => setComposing(false)}
-        />
-      ) : null}
+      {/* ── Always-visible composer (Phase 9.20) ── */}
+      <NoteComposer
+        clients={clients}
+        meEmail={meEmail}
+        onOptimistic={handleOptimisticNote}
+        onResolved={handleResolvedNote}
+        onPromoted={handlePromotedFromComposer}
+      />
 
       {/* ── Scope chips ── */}
       <div className="flex items-center gap-2 text-xs">
@@ -511,6 +541,7 @@ export function NotesView({ advisors, clients, initialNotes, meId }: Props) {
                     client={clientById.get(n.client_id) ?? null}
                     author={advisorById.get(n.author_advisor_id) ?? null}
                     isMe={meId === n.author_advisor_id}
+                    fresh={freshIds.has(n.id)}
                     onPromote={() => startPromote(n)}
                   />
                 ))}
@@ -540,12 +571,14 @@ function NoteCard({
   client,
   author,
   isMe,
+  fresh,
   onPromote,
 }: {
   note: Note;
   client: Pick<Client, "id" | "household_name"> | null;
   author: Pick<Advisor, "first_name" | "last_name"> | null;
   isMe: boolean;
+  fresh?: boolean;
   onPromote: () => void;
 }) {
   const router = useRouter();
@@ -553,7 +586,11 @@ function NoteCard({
   const isPromoted = !!note.promoted_to_action_item_id;
   return (
     <div
-      className="relative overflow-hidden rounded-md border pl-3"
+      className={`relative overflow-hidden rounded-md border pl-3${
+        fresh
+          ? " animate-in slide-in-from-top-2 fade-in duration-300"
+          : ""
+      }`}
       style={{
         background: "var(--surface)",
         borderColor: isPromoted ? "var(--s-green-bg)" : "var(--border)",
@@ -629,155 +666,7 @@ function NoteCard({
   );
 }
 
-// ─────────── Composer ───────────
-
-interface ComposerProps {
-  form: ReturnType<typeof useForm<NoteValues>>;
-  clients: Pick<Client, "id" | "household_name">[];
-  onSave: (v: NoteValues) => void;
-  onCancel: () => void;
-}
-function ComposerCard({ form, clients, onSave, onCancel }: ComposerProps) {
-  return (
-    <div
-      className="rounded-md border"
-      style={{ borderColor: "var(--border)", background: "var(--surface)" }}
-      data-api="POST /api/notes"
-    >
-      <div
-        className="flex items-baseline justify-between border-b px-4 py-2.5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h2
-          className="text-[12px] font-medium uppercase"
-          style={{
-            color: "var(--text-2)",
-            fontFamily: "var(--font-mono)",
-            letterSpacing: "0.06em",
-            margin: 0,
-          }}
-        >
-          New note
-        </h2>
-        <span className="text-[11px]" style={{ color: "var(--text-3)" }}>
-          Captures fast — promote later if it should become an action.
-        </span>
-      </div>
-      <div className="p-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSave)} className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <FormField
-                control={form.control}
-                name="client_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      className="text-[11px] uppercase"
-                      style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
-                    >
-                      Client
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value || undefined}
-                        onValueChange={(v) => field.onChange(v ?? "")}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pick a client" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {clients.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.household_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="tag"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      className="text-[11px] uppercase"
-                      style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
-                    >
-                      Tag
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={(v) => field.onChange(v ?? "")}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {NOTE_TAGS.map((t) => (
-                            <SelectItem key={t.id} value={t.id}>
-                              {t.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="body"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel
-                    className="text-[11px] uppercase"
-                    style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
-                  >
-                    Body
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={4}
-                      autoFocus
-                      placeholder="What happened? Decisions, asks, partner needs… capture the substance, not the formatting."
-                      {...field}
-                    />
-                  </FormControl>
-                  <p className="text-[11px]" style={{ color: "var(--text-3)" }}>
-                    Tip: notes can stay private to you, or you can promote them
-                    into action items that show on your dashboard.
-                  </p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex items-center justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                disabled={form.formState.isSubmitting}
-              >
-                <Check className="mr-1.5 h-3.5 w-3.5" />
-                {form.formState.isSubmitting ? "Saving…" : "Save note"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
-    </div>
-  );
-}
+// Composer moved to ./_NoteComposer.tsx in Phase 9.20.
 
 // ─────────── Promote dialog ───────────
 

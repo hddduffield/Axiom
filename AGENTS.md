@@ -968,3 +968,44 @@ Drag end:
 
 No-op detection short-circuits before any state change when dropping
 onto a target whose patch matches the item's current state.
+
+# Phase 9.20: always-visible note composer
+
+`/notes` ditches the dialog/inline-toggle "+ New Note" button in
+favour of a persistent composer at the top of the page. Mid-day
+capture flow:
+
+- Inline client picker (required) + auto-grow textarea + tag chips
+  (call / email / meeting / review) + "Convert to action item"
+  checkbox + Save button.
+- ⌘/Ctrl+Enter from inside the textarea submits; Shift+Enter inserts
+  a newline (the default textarea behaviour, intentionally not
+  intercepted).
+- Optimistic UI: the new note appears at the top of the feed
+  immediately with a `temp-…` id. After `api.notes.create` resolves,
+  the temp id is swapped for the server's authoritative row. On
+  failure the optimistic placeholder is removed + an error toast
+  fires.
+- Convert-to-action-item: when the checkbox is on, after the create
+  succeeds the composer fires `api.notes.promoteToAction(id, …)` with
+  quick-defaults (`category: "ENGAGEMENT"`, `duration_class:
+  "one_time"`, `timing_bucket: "this_week"`, `owner: <current advisor
+  email>`). Phase 5d lifecycle hooks fire on the server-side promote.
+- Slide-in animation on freshly-saved notes uses
+  `tw-animate-css`'s `animate-in slide-in-from-top-2 fade-in
+  duration-300` utilities. The id is tracked in a `freshIds` set on
+  the parent for one second so re-renders don't loop the animation.
+
+Schema notes flagged for v1.5:
+
+- `notes.tag` is `string | null` — single-tag in this iteration. The
+  composer's chip row toggles a single value (clicking the active
+  chip clears it). Multi-tag would need `tags string[]` or a join
+  table.
+- The chip row's labels (`call` / `email` / `meeting` / `review`) are
+  new short values; existing notes saved with the older
+  `client_meeting` / `phone_call` / `partner_touchpoint` values still
+  render fine in the feed via `TAG_LABEL` fallthrough.
+
+The retroactive Promote-to-action dialog is preserved unchanged for
+older notes saved without the composer's toggle.
