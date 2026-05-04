@@ -50,6 +50,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Chip, Count } from "@/components/axiom/Chip";
 import { api, isApiError } from "@/lib/api/client";
 import type { Client, ClientArchetype, ClientStatus } from "@/lib/api/types";
 
@@ -394,41 +395,7 @@ function FilterSep() {
   );
 }
 
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors"
-      style={{
-        background: active ? "var(--accent)" : "var(--surface)",
-        borderColor: active ? "var(--accent)" : "var(--border)",
-        color: active ? "#ffffff" : "var(--text-2)",
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Count({ n }: { n: number }) {
-  return (
-    <span
-      className="text-[10px]"
-      style={{ fontFamily: "var(--font-mono)", opacity: 0.7 }}
-    >
-      {n}
-    </span>
-  );
-}
+// Chip / Count moved to src/components/axiom/Chip.tsx (Phase 9.13)
 
 function SortableTh({
   children,
