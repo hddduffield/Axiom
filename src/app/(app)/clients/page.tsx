@@ -1,115 +1,63 @@
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/server";
-import { ClientsToolbar } from "./_ClientsToolbar";
+import { ClientsView } from "./_ClientsView";
 
-interface SearchParamsInput {
-  status?: string;
-}
-
-function statusVariant(s: string): "default" | "secondary" | "outline" {
-  if (s === "inactive") return "secondary";
-  if (s === "prospect") return "outline";
-  return "default";
-}
-
-export default async function ClientsPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParamsInput>;
-}) {
-  const params = await searchParams;
+// Server-loads everything the polished ClientsList view needs:
+//   1. Clients with joined lead-advisor name
+//   2. Open-action-item counts per client (cheap aggregate; one query
+//      across all action_items, summed in JS)
+//   3. Active advisor list for the lead-advisor filter chips
+//
+// All filtering + sorting + the new-client dialog happens in
+// _ClientsView (Client Component) since v1 has ≤ 20 clients and
+// in-memory filtering avoids round-trips per chip click.
+//
+// Schema gaps vs Claude Design's reference (logged for v1.5):
+//   - clients.aum column doesn't exist. The "AUM" column + dialog
+//     field are dropped; see specs/v1_5_backlog.md.
+//   - clients.last_activity_at doesn't exist. The "Last activity"
+//     column uses created_at (renamed "Added"); v1.5 can compute
+//     last_activity from notes/action_items/plans recency.
+export default async function ClientsPage() {
   const supabase = await createClient();
+  const [clientsRes, openCountsRes, advisorsRes] = await Promise.all([
+    supabase
+      .from("clients")
+      .select(
+        "id, household_name, lead_advisor_id, status, archetype, created_at, advisors:lead_advisor_id(first_name, last_name)",
+      )
+      .order("created_at", { ascending: false }),
+    // Aggregate by hand: pull (id, client_id, status) for every non-complete
+    // action item, count by client_id in JS. Cheap at v1 scale; avoids the
+    // ergonomic awkwardness of supabase-js's group-by syntax.
+    supabase
+      .from("action_items")
+      .select("client_id")
+      .neq("status", "complete"),
+    supabase
+      .from("advisors")
+      .select("id, first_name, last_name")
+      .eq("active", true)
+      .order("first_name"),
+  ]);
 
-  let q = supabase
-    .from("clients")
-    .select("id, household_name, lead_advisor_id, status, archetype, created_at, advisors:lead_advisor_id(first_name, last_name)")
-    .order("created_at", { ascending: false });
-  if (params.status && ["active", "inactive", "prospect"].includes(params.status)) {
-    q = q.eq("status", params.status as "active" | "inactive" | "prospect");
+  const openCountByClient = new Map<string, number>();
+  for (const row of openCountsRes.data ?? []) {
+    openCountByClient.set(
+      row.client_id,
+      (openCountByClient.get(row.client_id) ?? 0) + 1,
+    );
   }
-  const { data, error } = await q;
+
+  const clients = (clientsRes.data ?? []).map((c) => ({
+    ...c,
+    open_items: openCountByClient.get(c.id) ?? 0,
+  }));
 
   return (
-    <div className="flex flex-col gap-6">
-      <ClientsToolbar activeStatus={params.status ?? null} />
-
-      {error ? (
-        <p className="text-sm text-destructive">
-          Could not load clients: {error.message}
-        </p>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>{(data ?? []).length} clients</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {(data ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No clients yet — Add your first client above.
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Household</TableHead>
-                    <TableHead>Lead Advisor</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Archetype</TableHead>
-                    <TableHead>Added</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(data ?? []).map((c) => (
-                    <TableRow key={c.id}>
-                      <TableCell>
-                        <Link
-                          href={`/clients/${c.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {c.household_name}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        {c.advisors
-                          ? `${c.advisors.first_name} ${c.advisors.last_name}`
-                          : "—"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={statusVariant(c.status)}>
-                          {c.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{c.archetype ?? "—"}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(c.created_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      )}
-    </div>
+    <ClientsView
+      clients={clients}
+      advisors={advisorsRes.data ?? []}
+      loadError={clientsRes.error?.message ?? null}
+    />
   );
 }
