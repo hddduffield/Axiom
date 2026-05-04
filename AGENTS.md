@@ -1009,3 +1009,61 @@ Schema notes flagged for v1.5:
 
 The retroactive Promote-to-action dialog is preserved unchanged for
 older notes saved without the composer's toggle.
+
+# Phase 9.21: sign-in modern-glass-v2 variant
+
+Hayden promoted `modern-glass-v2` (`sp-mglass2`) as the new default
+sign-in design in Claude Design, replacing `split` (`sp-classic`).
+Diff scope: a one-line change in `app.jsx` (`signinVariant` value);
+all `styles.css` and view-`*.jsx` files unchanged. The `Axiom.html`
+diff was a build-artifact swap (OLD had inlined Babel-compiled JS,
+new is the 47-line source skeleton) — no production-code implication.
+
+What landed:
+
+- `public/psa-logo-full-white.png` — copied from
+  `specs/design/claude-design-source/assets/`. Kept as PNG, not
+  converted to webp.
+- `src/app/(auth)/sign-in/sign-in.css` — scoped CSS file pasting the
+  `.sp-mglass2__*` block (~225 lines) verbatim from
+  `specs/design/claude-design-source/styles.css` lines 2725–2960.
+  Two token renames applied: `var(--font-serif, Georgia, serif)` →
+  `var(--font-display)`, `var(--text-1)` → `var(--text)`. All other
+  tokens already exist in `src/styles/design-tokens.css`.
+- `src/app/(auth)/sign-in/page.tsx` — rewrite. Two-pane structure
+  preserved; left panel adds animated mesh + grid + the PSA full
+  logo (next/image, clamp 340–520px); right panel renders the
+  frosted glass card containing the form. The Axiom wordmark moved
+  to top-right. "PSA · ADVISOR OS · 2026" mono caption renders at
+  the bottom of the left panel.
+- `src/app/(auth)/sign-in/sign-in-form.tsx` — rewrite. Replaced the
+  shadcn `Form` / `Input` / `Button` stack with a bare `<input>` +
+  sibling `<label>` (the floating-label CSS in sign-in.css drives
+  the `:focus + label` and `.is-filled label` transitions; the
+  shadcn primitives can't surface those state hooks cleanly). Title
+  ("Welcome back." / "Check your inbox.") moved into the form
+  because the text varies by sent-state.
+
+Decisions kept from prior phase:
+
+- "Continue to dashboard" arrow CTA in the sent-state is **dropped**
+  (the source mockup includes it; production users click the email
+  link rather than an in-app shortcut). Sent-state shows the green
+  check confirmation row + ghost "Use a different email" button
+  only.
+- Empty `<span className="sp-mglass2__chip mono"></span>` placeholder
+  from the source is dropped entirely (it renders blank).
+
+Why a scoped CSS file rather than inline-styles:
+
+The new variant has features that don't translate cleanly to inline
+styles: `:focus + label` sibling selector, keyframe animations
+(`spMglass2Drift`, `spMglass2In`), `mask-image` on the grid overlay,
+`::before` halo on the logo wrap, hover transitions. Pasting the
+class definitions verbatim keeps the production CSS 1:1 with the
+design source — future tweak diffs land directly without
+translation. Class names mirror Claude Design's source so a future
+Phase 9.x diff against `view-notes-signin.jsx` stays readable.
+
+Smoke: `tsc --noEmit` clean, `npm run build` clean (36 routes,
+including `/sign-in`). Vercel auto-deploys on push to main.

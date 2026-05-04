@@ -1,164 +1,150 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 
 // Web auth — magic link via supabase.auth.signInWithOtp + emailRedirectTo
 // pointing at /auth/callback (which exchanges the code via
 // exchangeCodeForSession). Mobile takes a different path (OTP code, see
 // mobile/app/(auth)/sign-in.tsx); the web path stays click-the-link.
+//
+// Phase 9.21: re-skinned for sp-mglass2 (modern-glass-v2) variant.
+// Floating-label field replaces the shadcn Form/Input stack — the
+// floating-label CSS in sign-in.css needs the bare <input> + sibling
+// <label> structure to drive `:focus + label` and `.is-filled label`
+// transitions. Arrow-icon CTA replaces the shadcn Button.
+//
+// The "Continue to demo dashboard →" button from the source mockup is
+// intentionally omitted (production users click the email link, not an
+// in-app button — see prior Phase 9.2 rationale).
 
-const signInSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-});
-
-type SignInValues = z.infer<typeof signInSchema>;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface SignInFormProps {
   redirectTo: string;
+  errorMessage: string | null;
 }
 
-export function SignInForm({ redirectTo }: SignInFormProps) {
-  const [linkSent, setLinkSent] = useState(false);
+function ArrowRight() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
+      <path
+        d="M3 9 H15 M10 4 L15 9 L10 14"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function SignInForm({ redirectTo, errorMessage }: SignInFormProps) {
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
   const [sentEmail, setSentEmail] = useState("");
 
-  const form = useForm<SignInValues>({
-    resolver: zodResolver(signInSchema),
-    defaultValues: { email: "" },
-  });
+  const valid = EMAIL_RE.test(email);
+  const showFieldError = email.length > 0 && !valid;
 
-  async function onSubmit(values: SignInValues) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!valid || submitting) return;
+
+    setSubmitting(true);
     const supabase = createClient();
     const callbackUrl = new URL("/auth/callback", window.location.origin);
     callbackUrl.searchParams.set("next", redirectTo);
 
     const { error } = await supabase.auth.signInWithOtp({
-      email: values.email,
+      email,
       options: { emailRedirectTo: callbackUrl.toString() },
     });
+
+    setSubmitting(false);
 
     if (error) {
       toast.error("Couldn't send sign-in link", { description: error.message });
       return;
     }
 
-    setSentEmail(values.email);
-    setLinkSent(true);
+    setSentEmail(email);
+    setSent(true);
     toast.success("Check your email for a sign-in link");
   }
 
-  // Sent-state: green check confirmation + "use a different email"
-  // (per Claude Design's `sf-sent` block). The prototype's
-  // "Continue to demo dashboard →" button is dropped — that was a
-  // demo-only shortcut; production users click the email link.
-  if (linkSent) {
-    return (
-      <div className="flex flex-col gap-1.5">
-        <div
-          className="flex items-start gap-3 rounded-md border p-3.5"
-          style={{
-            background: "var(--surface-2)",
-            borderColor: "var(--border)",
-          }}
-        >
+  return (
+    <>
+      <h1 className="sp-mglass2__title">
+        {sent ? "Check your inbox." : "Welcome back."}
+      </h1>
+
+      {errorMessage ? (
+        <div className="sp-mglass2__error">{errorMessage}</div>
+      ) : null}
+
+      {!sent ? (
+        <form onSubmit={onSubmit} className="sp-mglass2__form">
           <div
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full"
-            style={{
-              background: "var(--s-green-bg)",
-              color: "var(--s-green)",
+            className={`sp-mglass2__field${email ? " is-filled" : ""}${
+              showFieldError ? " is-err" : ""
+            }`}
+          >
+            <input
+              id="mg2-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder=" "
+              autoComplete="email"
+              autoFocus
+              disabled={submitting}
+            />
+            <label htmlFor="mg2-email">Email</label>
+          </div>
+          {showFieldError ? (
+            <div className="sp-mglass2__err">Enter a valid email address.</div>
+          ) : null}
+          <button
+            type="submit"
+            className="sp-mglass2__cta"
+            disabled={!valid || submitting}
+            data-api="POST /api/auth/magic-link"
+          >
+            <span>{submitting ? "Sending…" : "Request one-time code"}</span>
+            <ArrowRight />
+          </button>
+        </form>
+      ) : (
+        <div className="sp-mglass2__sent">
+          <div className="sp-mglass2__sent-row">
+            <div className="sp-mglass2__sent-icon">
+              <Check className="h-4 w-4" strokeWidth={2.5} />
+            </div>
+            <div>
+              <div className="sp-mglass2__sent-title">One-time code sent</div>
+              <div className="sp-mglass2__sent-sub">
+                to <span className="mono">{sentEmail}</span>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="sp-mglass2__ghost"
+            onClick={() => {
+              setSent(false);
+              setSentEmail("");
+              setEmail("");
             }}
           >
-            <Check className="h-4 w-4" strokeWidth={2.5} />
-          </div>
-          <div>
-            <div
-              className="text-[13px] font-medium leading-snug"
-              style={{ color: "var(--text)" }}
-            >
-              Magic link sent
-            </div>
-            <div
-              className="text-xs"
-              style={{ color: "var(--text-2)" }}
-            >
-              to{" "}
-              <span style={{ fontFamily: "var(--font-mono)" }}>{sentEmail}</span>
-            </div>
-          </div>
+            Use a different email
+          </button>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full justify-center"
-          onClick={() => {
-            setLinkSent(false);
-            setSentEmail("");
-            form.reset();
-          }}
-        >
-          Use a different email
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3.5">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel
-                className="text-[11px] font-medium uppercase"
-                style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
-              >
-                Email
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@psawealth.com"
-                  autoComplete="email"
-                  autoFocus
-                  disabled={form.formState.isSubmitting}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="h-9 w-full justify-center"
-          // data-api annotation per Claude Design convention
-          data-api="POST /api/auth/magic-link"
-        >
-          {form.formState.isSubmitting ? "Sending…" : "Request one-time code"}
-        </Button>
-      </form>
-    </Form>
+      )}
+    </>
   );
 }

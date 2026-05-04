@@ -1,0 +1,257 @@
+/* Phase 9.21 sign-in modern-glass-v2 variant — pasted verbatim from
+ * specs/design/claude-design-source/styles.css (.sp-mglass2__* block,
+ * lines 2725–2960) with two token renames:
+ *   - var(--font-serif, Georgia, serif) → var(--font-display)
+ *   - var(--text-1)                     → var(--text)
+ * Other tokens (--psa-navy-deep, --surface, --text-2, --text-3,
+ * --s-green-bg, --s-green, --s-red, --font-sans) already exist in
+ * src/styles/design-tokens.css.
+ *
+ * Scoped to the sign-in page only (imported by page.tsx). Class names
+ * mirror Claude Design's source 1:1 to keep future tweak diffs clean. */
+
+.sp-mglass2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.sp-mglass2__panel {
+  position: relative;
+  background: #0a1530;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px;
+}
+.sp-mglass2__mesh {
+  position: absolute; inset: -10%;
+  background:
+    radial-gradient(ellipse 50% 40% at 25% 25%, rgba(70,78,86,0.45), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(40,46,54,0.55), transparent 65%),
+    radial-gradient(ellipse 40% 30% at 60% 100%, rgba(55,62,70,0.35), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  animation: spMglass2Drift 20s ease-in-out infinite alternate;
+}
+@keyframes spMglass2Drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-3%, 2%) scale(1.06); }
+}
+.sp-mglass2__grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 80%);
+  pointer-events: none;
+}
+.sp-mglass2__logo-wrap {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.sp-mglass2__logo-wrap::before {
+  content: "";
+  position: absolute;
+  width: 140%; height: 140%;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.10), transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
+}
+.sp-mglass2__logo {
+  width: clamp(340px, 36vw, 520px);
+  height: auto; object-fit: contain;
+  filter: drop-shadow(0 4px 24px rgba(0,0,0,0.45)) drop-shadow(0 0 1px rgba(255,255,255,0.25));
+}
+.sp-mglass2__panel-foot {
+  position: absolute; bottom: 24px; left: 0; right: 0;
+  text-align: center;
+  font-size: 9px; letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.36);
+  z-index: 1;
+  font-family: var(--font-mono);
+}
+
+.sp-mglass2__main {
+  position: relative;
+  background: var(--surface);
+  display: flex; flex-direction: column;
+  padding: 32px 40px;
+}
+.sp-mglass2__top {
+  display: flex; justify-content: flex-end;
+}
+.sp-mglass2__axiom {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #2a2d33;
+}
+.sp-mglass2__card-wrap {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+.sp-mglass2__card {
+  width: 100%; max-width: 420px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 24px;
+  padding: 36px 36px 32px;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    0 1px 1px rgba(20,30,60,0.04),
+    0 8px 24px -6px rgba(20,30,60,0.08),
+    0 24px 48px -12px rgba(20,30,60,0.10),
+    0 48px 96px -24px rgba(20,30,60,0.10);
+  animation: spMglass2In 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes spMglass2In {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.sp-mglass2__title {
+  font-family: var(--font-display);
+  font-size: 44px; font-weight: 400;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  line-height: 1;
+  margin: 0 0 28px;
+}
+.sp-mglass2__error {
+  margin: -8px 0 18px;
+  padding: 10px 12px;
+  background: var(--status-red-bg);
+  border: 1px solid var(--status-red-border);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--s-red);
+  line-height: 1.5;
+}
+
+/* Floating-label field */
+.sp-mglass2__form { display: flex; flex-direction: column; gap: 14px; }
+.sp-mglass2__field {
+  position: relative;
+}
+.sp-mglass2__field input {
+  width: 100%;
+  height: 56px;
+  padding: 22px 18px 6px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(20,30,60,0.12);
+  border-radius: 14px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+.sp-mglass2__field input:focus {
+  outline: none;
+  border-color: var(--psa-navy-deep);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(15,40,90,0.08);
+}
+.sp-mglass2__field label {
+  position: absolute;
+  left: 18px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-3);
+  pointer-events: none;
+  transition: all .18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: transparent;
+}
+.sp-mglass2__field input:focus + label,
+.sp-mglass2__field.is-filled label {
+  top: 12px;
+  transform: translateY(0);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.sp-mglass2__field.is-err input { border-color: var(--s-red); }
+.sp-mglass2__err {
+  font-size: 11px;
+  color: var(--s-red);
+  margin-top: -8px;
+  margin-left: 2px;
+}
+
+.sp-mglass2__cta {
+  margin-top: 6px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--psa-navy-deep);
+  color: #fff;
+  border: 1px solid var(--psa-navy-deep);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s, opacity .15s;
+  box-shadow: 0 4px 12px -4px rgba(15,40,90,0.4);
+}
+.sp-mglass2__cta:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -6px rgba(15,40,90,0.5);
+}
+.sp-mglass2__cta:hover:not(:disabled) svg { transform: translateX(3px); }
+.sp-mglass2__cta svg { transition: transform .2s; }
+.sp-mglass2__cta:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.sp-mglass2__ghost {
+  height: 44px;
+  background: transparent;
+  border: 1px solid rgba(20,30,60,0.12);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background .15s;
+}
+.sp-mglass2__ghost:hover { background: rgba(20,30,60,0.04); }
+
+.sp-mglass2__sent { display: flex; flex-direction: column; gap: 10px; }
+.sp-mglass2__sent-row {
+  display: flex; gap: 12px; align-items: center;
+  padding: 14px;
+  background: rgba(20,30,60,0.03);
+  border: 1px solid rgba(20,30,60,0.08);
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+.sp-mglass2__sent-icon {
+  width: 32px; height: 32px; border-radius: 999px;
+  background: var(--s-green-bg); color: var(--s-green);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.sp-mglass2__sent-title { font-weight: 500; font-size: 14px; margin-bottom: 2px; color: var(--text); }
+.sp-mglass2__sent-sub   { font-size: 12px; color: var(--text-2); font-family: var(--font-sans); }
+.sp-mglass2__sent-sub .mono { font-family: var(--font-mono); }
+
+.sp-mglass2__legal {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+@media (max-width: 880px) {
+  .sp-mglass2 { grid-template-columns: 1fr; }
+  .sp-mglass2__panel { padding: 60px 24px; min-height: 280px; }
+  .sp-mglass2__main  { padding: 24px; }
+}
