@@ -909,41 +909,51 @@ function StatTile({
   hero?: boolean;
   href?: string;
 }) {
+  // Sizes per styles.css §dash-stat (line 1228-1287):
+  // - hero value: 92px Cormorant, satellite value: 38px Cormorant
+  // - hero label: 11px letter-spacing 0.14em, satellite label: 10px / 0.1em
+  // - alert tile: linear-gradient(180deg, surface 0%, #fdf3f2 100%)
+  //   with #ecc8c4 border and s-red text on label/value/delta.
+  const labelStyle: React.CSSProperties = {
+    fontSize: hero ? 11 : 10,
+    letterSpacing: hero ? "0.14em" : "0.1em",
+    textTransform: "uppercase",
+    fontWeight: 500,
+    color: alert ? "var(--s-red)" : "var(--text-3)",
+    marginBottom: 6,
+  };
+  const valueStyle: React.CSSProperties = {
+    fontFamily: "var(--font-display)",
+    fontSize: hero ? 92 : 38,
+    fontWeight: 400,
+    lineHeight: 1,
+    letterSpacing: hero ? "-0.03em" : "-0.025em",
+    fontVariantNumeric: "tabular-nums",
+    color: alert ? "var(--s-red)" : "var(--text)",
+    margin: hero ? "4px 0 14px" : "0 0 10px",
+  };
+  const deltaStyle: React.CSSProperties = {
+    fontSize: 11,
+    color: alert ? "var(--s-red)" : "var(--text-3)",
+    fontWeight: alert ? 500 : 400,
+    letterSpacing: "0.01em",
+  };
+  const cardStyle: React.CSSProperties = {
+    background: alert
+      ? "linear-gradient(180deg, var(--surface) 0%, #fdf3f2 100%)"
+      : "var(--surface)",
+    borderColor: alert ? "#ecc8c4" : "var(--border)",
+    padding: hero ? "24px 28px" : 16,
+    height: "100%",
+  };
   const inner = (
     <div
-      className="rounded-md border p-4 transition-colors hover:bg-[var(--surface-2)]"
-      style={{
-        background: "var(--surface)",
-        borderColor: alert ? "var(--s-red-bg)" : "var(--border)",
-        height: "100%",
-      }}
+      className="rounded-md border transition-colors hover:bg-[var(--surface-2)]"
+      style={cardStyle}
     >
-      <div
-        className="text-[11px] uppercase"
-        style={{
-          color: alert ? "var(--s-red)" : "var(--text-3)",
-          letterSpacing: "0.04em",
-        }}
-      >
-        {label}
-      </div>
-      <div
-        className={hero ? "mt-2 text-5xl" : "mt-1 text-3xl"}
-        style={{
-          fontFamily: "var(--font-display)",
-          fontWeight: 500,
-          color: alert ? "var(--s-red)" : "var(--text)",
-          letterSpacing: "-0.02em",
-        }}
-      >
-        {value}
-      </div>
-      <div
-        className="mt-1 text-[11px]"
-        style={{ color: alert ? "var(--s-red)" : "var(--text-3)" }}
-      >
-        {delta}
-      </div>
+      <div style={labelStyle}>{label}</div>
+      <div style={valueStyle}>{value}</div>
+      <div style={deltaStyle}>{delta}</div>
     </div>
   );
   if (href) {
