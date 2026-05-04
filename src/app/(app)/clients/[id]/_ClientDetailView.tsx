@@ -21,7 +21,7 @@ import { useState } from "react";
 import { ChevronRight, FileText, Plus } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tabs";
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import type {
   ActionItem,
@@ -313,7 +313,7 @@ export function ClientDetailView({
 
       {/* Tabs */}
       <Tabs defaultValue="overview">
-        <TabsList variant="line" className="border-b" style={{ borderColor: "var(--border)" }}>
+        <TabsList className="mb-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="plan">
             Plan
