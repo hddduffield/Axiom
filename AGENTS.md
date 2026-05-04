@@ -811,3 +811,49 @@ picks up Axiom's brand without primitive source edits.
 - **Type families**: `font-sans` (Geist), `font-mono` (Geist Mono),
   `font-display` and `font-heading` (both Cormorant Garamond) are
   Tailwind utilities. Reach for them directly.
+
+# Phase 9 complete — what shipped
+
+11 conversions, one commit each. Production state at end of phase:
+`https://axiom-zeta-flax.vercel.app`. AI engine (`src/lib/orchestrator/`)
+untouched; only the app shell (`src/app/(app)/*` + `_layout/` + brand
+assets) changed.
+
+| # | Surface | Notable preservation / shift |
+| --- | --- | --- |
+| 9.1 | Brand tokens | verbatim Claude Design tokens, shadcn primitive remap via globals.css `:root` |
+| 9.2 | Sign-in | `sp-classic` two-pane (PSA navy left / ivory right); RHF + magic-link wiring preserved |
+| 9.3 | Action item drawer | `src/components/axiom/ActionItemDrawer.tsx` (shadcn Sheet); origin-note reverse lookup; lifecycle toasts unchanged |
+| 9.4 | Plan generate | crumbs + Cormorant heading + JSON-parse validation; `api.plans.generate` multipart unchanged |
+| 9.5 | Clients list | 3-axis filter chips (Status / Archetype / Lead) + sortable Household / Open items / Added; New Client modal preserves `api.clients.create`. Schema gap: no `aum`, no `last_activity_at` — column dropped, "Added" uses `created_at`. |
+| 9.6 | Client detail | 6 tabs (Overview / Plan / Items / Notes / Lenses / Partners); ActionItemDrawer reused; PanelCard primitive |
+| 9.7 | Notes hub | Date-grouped feed (Today / This week / This month / Earlier); scope chips + curated NOTE_TAGS; PromoteDialog with source preview. `api.notes.create` + `api.notes.promoteToAction` preserved |
+| 9.8 | Action items global | **Architecture shift**: previous version round-tripped to API on every filter change; the polished view loads the full universe once and runs filter/sort/group in memory. Required for saved-views with live counts. Bulk "Mark complete" loops `api.actionItems.update` (no bulk endpoint yet). |
+| 9.9 | Dashboard | Hero + stat satellites + plan pipeline rail + triage queue with priority cards (functional Mark complete) + side rail (decisions / notes / activity). Inline compose replaces the dialog `_NewNoteButton.tsx` (deleted). |
+| 9.10 | Plan view | Sticky TOC rail with IntersectionObserver active-section tracking (`_PlanToc.tsx` Client island); 14 sections rendered from real `Stage4Result`; tightened Implementation Roadmap; status-aware actions via existing `_PlanActions.tsx` |
+| 9.11 | Top nav | Navy 56px topbar (sticky), `public/psa-mark.webp` brand mark + Cormorant wordmark, gold underline on active route via `_layout/TopNavLinks.tsx` Client island. Existing `TopNavRight.tsx` unchanged. |
+
+## v1.5 backlog created during Phase 9
+
+- **Bulk action-item endpoint** (`POST /api/action-items/bulk`) — 9.8 wires "Mark complete" via per-item PATCH loop; Reassign / Archive disabled with hint.
+- **`/api/dashboard?for=me` aggregator** — 9.9 reads each panel's slice from a single batched query in `page.tsx` instead.
+- **Cmd-K palette** — 9.11 ships the search visual element only; behaviour deferred.
+- **Cmd-K + global "+ New" dropdown** — Phase 5e original deferral still pending.
+- **Schema gaps surfaced**: `clients.aum`, `clients.entity_count`, `clients.last_activity_at`, `clients.notes` (freeform). Mid-/post-liquidity panels and partial-row layouts depend on these.
+- **Notes**: tag column is free-form `string|null`; curated `NOTE_TAGS` chips intersect with usedTags but historic non-curated tags fall through as plain `Tag` chips.
+- **Plan re-trigger from web** — Phase 9.10 deferred `POST /plans/[id]/regenerate` and "Generate next quarter" actions; CLI re-runs are still the path.
+- **TestFlight + native Apple distribution** — Phase 7 mobile is Expo Go only.
+
+## Smoke-test scope at end of phase
+
+Programmatic checks performed:
+
+- `npx tsc --noEmit` — clean.
+- `npm run build` — full prod build: 36 routes compile, TypeScript clean.
+- HTTP smoke (`curl`) for every page route — all return 200 (sign-in) or 307 (protected → sign-in via proxy.ts). No 500s.
+
+Manual browser click-through against an authenticated session was **not**
+done as part of this phase; production parity is implicit via Vercel
+auto-deploy on each conversion's push to `main`. If a runtime issue
+surfaces in browser, it lives in the per-conversion commit (granular
+revert is safe).
