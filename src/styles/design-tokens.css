@@ -1,0 +1,48 @@
+/* Axiom design tokens — populated as Claude Design's HTML references
+ * surface specific palette, typography, and spacing choices.
+ *
+ * v1 starts with shadcn/ui's `base-nova` neutral defaults (defined in
+ * globals.css). When a Claude Design reference introduces a custom
+ * value (e.g., a specific brand navy, a custom accent, a display
+ * typeface), centralize it here rather than scattering hardcoded
+ * values across components.
+ *
+ * Convention:
+ *   - Color tokens use the `--axiom-color-*` prefix to avoid colliding
+ *     with shadcn's `--color-*` and Tailwind's theme variables.
+ *   - Typography tokens use `--axiom-font-*`.
+ *   - All tokens are defined on `:root` and may be overridden inside
+ *     `[data-theme="dark"]` if dark-mode polish lands in v1.5.
+ *   - When a token is promoted from "Claude Design's mockup uses #x"
+ *     to "Axiom's brand palette is #x", move it to globals.css's
+ *     `@theme inline` block so it becomes a Tailwind class
+ *     (`bg-axiom-primary`, etc.). This file is the staging ground.
+ */
+
+:root {
+  /* Color tokens — populated per page conversion. Empty stubs below
+   * document the slots Claude Design is expected to fill; uncomment
+   * + assign as references arrive. */
+
+  /* --axiom-color-primary: ;            brand color used on key CTAs */
+  /* --axiom-color-primary-hover: ; */
+  /* --axiom-color-primary-foreground: ; text color on primary fills */
+  /* --axiom-color-accent: ;             secondary callout color */
+  /* --axiom-color-text-primary: ;       body text in main surface */
+  /* --axiom-color-text-muted: ;         labels, metadata */
+  /* --axiom-color-text-inverse: ;       text on dark surfaces */
+  /* --axiom-color-surface-raised: ;     card / panel background */
+  /* --axiom-color-surface-sunk: ;       muted background, e.g. table zebra */
+  /* --axiom-color-border-subtle: ;      hairline rules */
+  /* --axiom-color-border-strong: ;      emphasized borders */
+
+  /* Typography tokens — populated when Claude Design picks display +
+   * body fonts. Until then, falls through to shadcn's Geist defaults. */
+
+  /* --axiom-font-display: ;     headings, plan titles */
+  /* --axiom-font-body: ;        prose, table cells */
+  /* --axiom-font-mono: ;        code, IDs, compliance tracking */
+
+  /* Spacing scale lives in Tailwind; tokens added here only if Claude
+   * Design needs values outside Tailwind's defaults (rare). */
+}

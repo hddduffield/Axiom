@@ -698,3 +698,92 @@ Out (deferred):
 - Native picker for client (currently a horizontal pill scroll which is
   fine ≤ 20 clients).
 - Pagination on the notes list (currently loads default 30).
+
+# Phase 9 polish conventions
+
+Phase 9 converts Claude Design's high-fidelity HTML references into
+production Next.js components. Each conversion is a focused per-page
+prompt; this section documents the rules every conversion follows so
+they don't drift from page to page.
+
+## Where references live
+
+- **Reference HTML** — `specs/design/<page-name>.html` (e.g.,
+  `specs/design/dashboard.html`). Kept in the repo so future conversions
+  can diff against the source of truth.
+- **Converted page** — replaces the existing `src/app/(app)/<page>/page.tsx`
+  (and inline client islands as needed).
+
+## What to preserve from the reference
+
+1. **DOM hierarchy.** The semantic structure Claude Design chose
+   (sections, articles, ordering of cards, table column order). If
+   the reference shows a sidebar-then-main layout, don't flip it to
+   main-then-sidebar.
+2. **Tailwind class names** present on the reference, where possible.
+   When Claude Design picks `gap-6`, `rounded-xl`, `text-sm`, keep
+   them. Phase 9 should mostly look like a reskin, not a rewrite.
+3. **ARIA roles, `data-*` attributes, semantic landmarks** Claude
+   Design annotated.
+4. **Loading, error, empty states** as drawn in the reference.
+5. **Annotated API endpoints.** Claude Design tags every interactive
+   element with the endpoint it must call (typically as a comment or
+   `data-endpoint` attribute). Honor those — wire each to the matching
+   `api.*` method from `@/lib/api/client`.
+
+## What to substitute
+
+- **Plain `<button>`, `<input>`, `<dialog>`** → matching shadcn
+  primitive from `@/components/ui/*` (Button, Input, Dialog, etc.).
+- **Mock data in the reference** → real API calls. The mock shapes
+  are TypeScript inference helpers, not data sources.
+- **Inline styles** → Tailwind classes (Tailwind first; fall back to a
+  `style={{}}` only when the value isn't expressible in Tailwind).
+- **Hardcoded colors / fonts** that recur → tokens in
+  `src/styles/design-tokens.css`. Once stable across multiple pages,
+  promote into `globals.css`'s `@theme inline` so they become Tailwind
+  classes (`bg-axiom-primary`).
+
+## Custom components
+
+- Recurring Axiom-specific compositions go in `src/components/axiom/`.
+  See `src/components/axiom/README.md` for the convention.
+- One-off compositions can stay inlined in the page file; promote to
+  `axiom/` once they show up on a second page.
+
+## Server vs Client component split
+
+Same rule as Phase 5e:
+
+- Pages that read data → **Server Components** (read directly via
+  `@/lib/supabase/server`'s `createClient`, type the result with the
+  shape from `@/lib/api/types`).
+- Forms, dialogs, status toggles, anything with hooks or event handlers
+  → **Client islands** at `_<Name>.tsx` (underscore prefix is a Next.js
+  private folder convention so the islands aren't accidentally routed).
+- Client islands import `api` from `@/lib/api/client` for mutations.
+
+## Per-conversion checklist
+
+When the per-page conversion prompt arrives, the work is:
+
+1. Save Claude Design's HTML to `specs/design/<page>.html`.
+2. Read the existing `src/app/(app)/<page>/page.tsx` to understand the
+   current data wiring + client islands.
+3. Replace the page (and create / update islands) preserving the
+   reference's structure + classes + endpoint annotations.
+4. Wire data fetches to real API methods.
+5. tsc + dev-server smoke (verify no 500s; the per-page prompt may
+   include visual spot-checks).
+6. Commit with message `Phase 9.<n>: <page> polish — converted Claude Design reference; …`.
+
+## Token migration ladder
+
+```
+hardcoded value in component
+  ↓ used twice → move to design-tokens.css as --axiom-color-*
+hardcoded value in design-tokens.css
+  ↓ recurring across 3+ surfaces → promote to globals.css @theme inline
+@theme inline registration
+  ↓ usable as Tailwind class (bg-axiom-primary, text-axiom-text-muted)
+```
