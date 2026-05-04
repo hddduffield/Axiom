@@ -607,3 +607,87 @@ become a route.
 - Mobile responsive layouts (current is laptop-first)
 - Pagination UI for the action-items table (cursor pagination is wired in
   the API but the UI loads up to the default limit and stops)
+
+# Phase 7: mobile (Expo)
+
+iOS notes-only companion app at `mobile/`. Expo SDK 54, expo-router 6,
+React Native 0.81. Two separate `package.json` files (no monorepo
+tooling); the mobile app talks to the same Supabase project as the web,
+with **direct table reads/writes** (not via the Next /api/* routes).
+
+## Layout
+
+```
+mobile/
+├── package.json              (expo-router/entry main)
+├── app.json                  (scheme: axiom, bundle: com.psawealth.axiom)
+├── .env.example              EXPO_PUBLIC_SUPABASE_URL + ANON_KEY placeholders
+├── README.md                 first-time setup + auth flow
+├── app/
+│   ├── _layout.tsx           root Stack + SafeAreaProvider
+│   ├── index.tsx             session-aware redirect
+│   ├── (auth)/
+│   │   ├── _layout.tsx
+│   │   ├── sign-in.tsx       email → request OTP
+│   │   └── verify.tsx        paste 6-digit code
+│   └── (app)/
+│       ├── _layout.tsx       auth gate + protected stack
+│       ├── index.tsx         recent notes list (FlatList + FAB)
+│       └── new-note.tsx      modal: client picker + body + tag
+├── lib/
+│   ├── supabase.ts           createClient w/ AsyncStorage adapter
+│   ├── types.ts              inline minimal types (Advisor, Client, Note, …)
+│   └── api.ts                getCurrentAdvisor / listClients / listRecentNotes / createNote
+└── components/NoteCard.tsx
+```
+
+## Setup + run
+
+```bash
+cd mobile
+npm install
+cp .env.example .env
+# Paste the same Supabase URL + anon key the web app uses (with EXPO_PUBLIC_ prefix).
+npx expo start
+```
+
+Distribute via **Expo Go** (App Store, free) — phone scans the QR from
+the dev server. Same Wi-Fi required.
+
+## Auth model
+
+OTP, not magic-link: `signInWithOtp({ email, options: { shouldCreateUser:
+false } })` then `verifyOtp({ email, token, type: 'email' })`. Sessions
+persist via AsyncStorage. Mobile relies on the same `is_active_advisor()`
+RLS gate as web — only invited PSA Wealth advisors can sign in.
+
+## Why mobile reads Supabase directly (not the /api routes)
+
+The Next.js /api routes assume `same-origin` cookies. From a native app,
+the cookie story is much messier (you'd need a custom URL scheme +
+manual cookie management or a hosted endpoint that issues bearer
+tokens). With direct Supabase access via the supabase-js client +
+AsyncStorage session storage, the same JWT that signed in the user
+gates every query through RLS. No additional surface to maintain.
+
+## v1 scope (mobile)
+
+In: notes list, write a note, sign out.
+
+Out (deferred):
+- Action item viewing or editing
+- Client detail / plan viewing  
+- Plan generation
+- Push notifications
+- Offline queueing
+- TestFlight distribution
+
+## v1.5 backlog (mobile)
+
+- Apple Developer enrollment + TestFlight (currently distributing via
+  Expo Go which requires the Expo Go app on each phone).
+- Action item view-only mode (read existing items + cycle status).
+- Plan view-only mode.
+- Native picker for client (currently a horizontal pill scroll which is
+  fine ≤ 20 clients).
+- Pagination on the notes list (currently loads default 30).

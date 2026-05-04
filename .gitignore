@@ -41,3 +41,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# mobile (Expo)
+mobile/node_modules
+mobile/.expo
+mobile/.expo-shared
+mobile/dist
+mobile/web-build
+mobile/ios
+mobile/android
