@@ -21,6 +21,11 @@ export interface ActionCardProps {
   /** Compact variant for the backlog list — drops the trailing tag row
    *  to keep rows scannable in tabular density. */
   compact?: boolean;
+  /** Phase 11.5.1 — when true the card belongs to an archived client and
+   *  renders muted (opacity 0.65) so the advisor can see at a glance
+   *  which items are from archived households when the "Include
+   *  archived" toggle is on. */
+  archived?: boolean;
 }
 
 function withoutFamily(name: string | null): string {
@@ -51,9 +56,15 @@ function TimingBadge({ bucket }: { bucket: string | null }) {
 }
 
 export const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(
-  function ActionCard({ item, clientName, onClick, completed, compact }, ref) {
+  function ActionCard(
+    { item, clientName, onClick, completed, compact, archived },
+    ref,
+  ) {
     const partnerBlocked = item.partner_required && item.partner_type;
     const longRunning = item.duration_class === "long_running";
+    // completed wins over archived for opacity (more visually distinctive
+    // and is the existing pattern). Otherwise apply the archived mute.
+    const opacity = completed ? 0.55 : archived ? 0.65 : undefined;
     return (
       <div
         ref={ref}
@@ -61,7 +72,7 @@ export const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(
         className="group cursor-pointer rounded-md border bg-[var(--surface)] p-3 transition-colors hover:border-[var(--text-3)]"
         style={{
           borderColor: "var(--border)",
-          opacity: completed ? 0.55 : undefined,
+          opacity,
         }}
       >
         <p

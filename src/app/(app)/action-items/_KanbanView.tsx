@@ -26,7 +26,11 @@
 // rollback from snapshot + toast.
 
 import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Archive } from "lucide-react";
+
+import { Chip } from "@/components/axiom/Chip";
 import {
   DndContext,
   DragOverlay,
@@ -69,6 +73,14 @@ interface Props {
   advisors: AdvisorRow[];
   clients: ClientLookup[];
   initialItems: ActionItem[];
+  // Phase 11.5.1 — archived-clients toggle state. Server-side filter
+  // already pruned items belonging to archived clients UNLESS
+  // includeArchived=true; this set lets cards render with a muted tone
+  // when the toggle is on so the advisor can see at a glance which
+  // items belong to archived households.
+  includeArchived: boolean;
+  archivedClientIds: string[];
+  archivedCount: number;
 }
 
 const BUCKET_ORDER: Record<string, number> = {
@@ -118,11 +130,33 @@ function bucketSort(a: ActionItem, b: ActionItem): number {
 const ADVISOR_PREFIX = "advisor:";
 const BACKLOG_DROP_ID = "backlog";
 
-export function KanbanView({ advisors, clients, initialItems }: Props) {
+export function KanbanView({
+  advisors,
+  clients,
+  initialItems,
+  includeArchived,
+  archivedClientIds,
+  archivedCount,
+}: Props) {
   const [items, setItems] = useState<ActionItem[]>(initialItems);
   const [showCompleted, setShowCompleted] = useState(false);
   const [filterTimeline, setFilterTimeline] = useState<TimelineFilter>("all");
   const [filterClient, setFilterClient] = useState<string>("all");
+
+  const archivedClientSet = useMemo(
+    () => new Set(archivedClientIds),
+    [archivedClientIds],
+  );
+  const isArchivedClient = (clientId: string): boolean =>
+    archivedClientSet.has(clientId);
+
+  const router = useRouter();
+  const pathname = usePathname();
+  function toggleIncludeArchived() {
+    const next = !includeArchived;
+    const url = next ? `${pathname}?archived=1` : pathname;
+    router.replace(url);
+  }
 
   // Drawer state — clicking any card opens detail.
   const [activeItem, setActiveItem] = useState<ActionItem | null>(null);
@@ -314,17 +348,25 @@ export function KanbanView({ advisors, clients, initialItems }: Props) {
           >
             Action items
           </h1>
-          <label
-            className="inline-flex cursor-pointer items-center gap-2 text-xs"
-            style={{ color: "var(--text-2)" }}
-          >
-            <input
-              type="checkbox"
-              checked={showCompleted}
-              onChange={(e) => setShowCompleted(e.target.checked)}
-            />
-            Show completed
-          </label>
+          <div className="flex items-center gap-3">
+            {archivedCount > 0 ? (
+              <Chip active={includeArchived} onClick={toggleIncludeArchived}>
+                <Archive className="h-3 w-3" />
+                <span className="ml-1">Include archived</span>
+              </Chip>
+            ) : null}
+            <label
+              className="inline-flex cursor-pointer items-center gap-2 text-xs"
+              style={{ color: "var(--text-2)" }}
+            >
+              <input
+                type="checkbox"
+                checked={showCompleted}
+                onChange={(e) => setShowCompleted(e.target.checked)}
+              />
+              Show completed
+            </label>
+          </div>
         </div>
 
         {/* Kanban */}
@@ -333,6 +375,7 @@ export function KanbanView({ advisors, clients, initialItems }: Props) {
           inProgressByOwner={inProgressByOwner}
           completedItems={showCompleted ? completedItems : null}
           clientNameOf={clientNameOf}
+          isArchivedClient={isArchivedClient}
           onCardClick={setActiveItem}
         />
 
@@ -340,6 +383,7 @@ export function KanbanView({ advisors, clients, initialItems }: Props) {
         <BacklogSection
           items={backlog}
           clientNameOf={clientNameOf}
+          isArchivedClient={isArchivedClient}
           clients={clients}
           filterTimeline={filterTimeline}
           setFilterTimeline={setFilterTimeline}
@@ -372,6 +416,7 @@ export function KanbanView({ advisors, clients, initialItems }: Props) {
             <ActionCard
               item={draggingItem}
               clientName={clientNameOf(draggingItem.client_id)}
+              archived={isArchivedClient(draggingItem.client_id)}
             />
           </div>
         ) : null}
@@ -388,12 +433,14 @@ function DraggableCard({
   onClick,
   completed,
   compact,
+  archived,
 }: {
   item: ActionItem;
   clientName: string | null;
   onClick: () => void;
   completed?: boolean;
   compact?: boolean;
+  archived?: boolean;
 }) {
   // Completed items are read-only — render the bare card without
   // useDraggable so the cursor stays default and clicks pass through.
@@ -419,6 +466,7 @@ function DraggableCard({
         onClick={onClick}
         completed={completed}
         compact={compact}
+        archived={archived}
       />
     </div>
   );
@@ -431,12 +479,14 @@ function KanbanRow({
   inProgressByOwner,
   completedItems,
   clientNameOf,
+  isArchivedClient,
   onCardClick,
 }: {
   advisors: AdvisorRow[];
   inProgressByOwner: Map<string, ActionItem[]>;
   completedItems: ActionItem[] | null;
   clientNameOf: (id: string) => string | null;
+  isArchivedClient: (id: string) => boolean;
   onCardClick: (item: ActionItem) => void;
 }) {
   return (
@@ -456,6 +506,7 @@ function KanbanRow({
             count={colItems.length}
             items={colItems}
             clientNameOf={clientNameOf}
+            isArchivedClient={isArchivedClient}
             onCardClick={onCardClick}
           />
         );
@@ -464,6 +515,7 @@ function KanbanRow({
         <CompletedColumn
           items={completedItems}
           clientNameOf={clientNameOf}
+          isArchivedClient={isArchivedClient}
           onCardClick={onCardClick}
         />
       ) : null}
@@ -477,6 +529,7 @@ function AdvisorColumn({
   count,
   items,
   clientNameOf,
+  isArchivedClient,
   onCardClick,
 }: {
   droppableId: string;
@@ -484,6 +537,7 @@ function AdvisorColumn({
   count: number;
   items: ActionItem[];
   clientNameOf: (id: string) => string | null;
+  isArchivedClient: (id: string) => boolean;
   onCardClick: (item: ActionItem) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: droppableId });
@@ -534,6 +588,7 @@ function AdvisorColumn({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
             />
           ))
@@ -546,10 +601,12 @@ function AdvisorColumn({
 function CompletedColumn({
   items,
   clientNameOf,
+  isArchivedClient,
   onCardClick,
 }: {
   items: ActionItem[];
   clientNameOf: (id: string) => string | null;
+  isArchivedClient: (id: string) => boolean;
   onCardClick: (item: ActionItem) => void;
 }) {
   return (
@@ -599,6 +656,7 @@ function CompletedColumn({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
               completed
             />
@@ -614,6 +672,7 @@ function CompletedColumn({
 function BacklogSection({
   items,
   clientNameOf,
+  isArchivedClient,
   clients,
   filterTimeline,
   setFilterTimeline,
@@ -623,6 +682,7 @@ function BacklogSection({
 }: {
   items: ActionItem[];
   clientNameOf: (id: string) => string | null;
+  isArchivedClient: (id: string) => boolean;
   clients: ClientLookup[];
   filterTimeline: TimelineFilter;
   setFilterTimeline: (v: TimelineFilter) => void;
@@ -705,6 +765,7 @@ function BacklogSection({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
               compact
             />
