@@ -1265,3 +1265,68 @@ cost / duration plus cumulative totals.
 | 3b | $0 | <1s |
 | 4 | $8–$10 | 4–6 min |
 | 5 | $1–$3 | 2–3 min |
+
+# Phase 10C: v1.5 production hardening
+
+First production live test surfaced two issues the local Holloway E2E
+didn't catch.
+
+## Vercel KB bundling (10C.1)
+
+Stage 0 reads `kb/v1_2/02_reference/08_volatile_rates_lookup.md` at
+runtime. Next.js's nft tracer doesn't see this dynamic readFile path
+(constructed at runtime, not statically imported), so kb/ was excluded
+from the serverless bundle. Vercel returned "file unreadable" against
+`/var/task/kb/...` on cold start.
+
+Fix: `next.config.ts` declares `outputFileTracingIncludes` mapping
+`/api/plans/generate` → `./kb/v1_2/**/*`. Build trace manifest
+(`route.js.nft.json`) now lists kb/ entries; total bundle weight ~1.2 MB,
+well under Vercel's 50 MB function ceiling.
+
+The CLI (`npm run generate-pending`) runs on Hayden's laptop with the
+repo cwd, so it never hit this. Only Vercel-side reads (Stage 0
+preflight in the API route) needed the bundling hint.
+
+## Stage 0 permissive matching (10C.2)
+
+Real PSA Fact Reviews don't always use the exact "Section 3 / Entities"
+header or "Primary Owner Name" label. Stage 0's strict matching blocked
+real-world documents.
+
+Hybrid approach:
+
+1. **Expanded deterministic alternative lists** — broadened
+   REQUIRED_SECTIONS, OWNER_NAME_LABELS, ENTITY_NAME_LABELS, and
+   ARCHETYPES to cover real-world wording (business / company /
+   operating entities for entities; exit / liquidity / succession for
+   transaction posture; Husband Name / Wife Name / Member 1-2 for
+   names; "transaction posture:" / "archetype:" loose archetype
+   markers).
+2. **Haiku 4.5 LLM fallback** — `validateFactReview` accepts an
+   optional `apiClient`. When deterministic matching leaves any
+   section/owner/entity/archetype unresolved, fires a single Haiku
+   call asking it to identify still-missing items semantically + extract
+   field values (constrained to the 5 KB archetype enums). Cost
+   ~$0.01–$0.05 per fallback; hard cap $2/run.
+
+Call sites updated to inject the Anthropic client:
+- `src/app/api/plans/generate/route.ts` (production preflight; falls
+  back to deterministic-only if `ANTHROPIC_API_KEY` is absent).
+- `scripts/generatePending.ts` (CLI re-validation passes existing
+  client through).
+- `scripts/testIntegrationE2E.ts` (E2E test).
+
+Failure messaging now lists the first 8 alternative labels Stage 0
+actually looked for, plus a fallback pattern hint ("…or include the
+owner's name on a single line as 'Name: <Full Name>'"). Advisors can
+fix the FR by adding ONE explicit label rather than rewriting
+headers.
+
+Stage 1's ClientProfile schema enforces archetype enum + required
+fields downstream — Stage 0 misses that get through here surface as
+clean Stage 1 schema validation failures. The right boundary: Stage 0
+= format check, Stage 1+ = data correctness.
+
+All 4 existing Stage 0 unit tests pass unchanged (deterministic path
+handles Holloway cleanly; Haiku fallback never fires for it).

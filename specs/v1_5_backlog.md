@@ -26,6 +26,22 @@ spans architecture, reliability, and observability concerns.
   upload either .docx or .pdf. Image-only/scanned PDFs surface as a
   Stage 0 file_integrity failure (OCR remains out of scope).
 
+## Resolved in Phase 10C (2026-05-05) — first production hardening pass
+
+- **Vercel KB bundling** — `next.config.ts` adds
+  `outputFileTracingIncludes` for `/api/plans/generate`, so Stage 0's
+  dynamic readFile of the volatile-rates KB file resolves correctly on
+  serverless cold start.
+- **Stage 0 strictness for real Fact Reviews** — REQUIRED_SECTIONS,
+  OWNER_NAME_LABELS, ENTITY_NAME_LABELS, and ARCHETYPES alternative
+  lists massively expanded; Haiku 4.5 LLM fallback added that fires
+  only when deterministic matching leaves gaps. Cost ~$0.01–$0.05 per
+  fallback when triggered, $0 otherwise.
+- **Stage 0 error messaging** — failure remediation now surfaces the
+  exact first 8 alternative labels Stage 0 looked for, plus an explicit
+  fallback pattern advisors can drop into the FR (e.g., "Name: <Full
+  Name>") rather than asking them to restructure headers.
+
 ---
 
 ## Stage 3a reliability at Holloway scale
