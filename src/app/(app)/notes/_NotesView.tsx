@@ -32,7 +32,8 @@
 //     `partnerReq` boolean is normalized into the "yes"/"no" enum.
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Archive } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -112,6 +113,15 @@ type PromoteValues = z.infer<typeof promoteSchema>;
 interface Props {
   advisors: Pick<Advisor, "id" | "email" | "first_name" | "last_name">[];
   clients: Pick<Client, "id" | "household_name">[];
+  /** Phase 11.5.2 — composer's client dropdown gets only active+prospect
+   *  clients. You don't add new notes to an archived household. */
+  composerClients: Pick<Client, "id" | "household_name">[];
+  /** Set of archived client ids — used for the muted-feed treatment
+   *  when includeArchived is on. */
+  archivedClientIds: string[];
+  /** Phase 11.5.2 — true when ?archived=1; the page server-side
+   *  fetched ALL clients' notes (not just active+prospect). */
+  includeArchived: boolean;
   initialNotes: Note[];
   meId: string | null;
   /** Current advisor's email — passed through to the composer's
@@ -124,11 +134,24 @@ type Scope = "all" | "promotable" | "promoted";
 export function NotesView({
   advisors,
   clients,
+  composerClients,
+  archivedClientIds,
+  includeArchived,
   initialNotes,
   meId,
   meEmail,
 }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
+  const archivedClientSet = useMemo(
+    () => new Set(archivedClientIds),
+    [archivedClientIds],
+  );
+  function toggleIncludeArchived() {
+    const next = !includeArchived;
+    const url = next ? `${pathname}?archived=1` : pathname;
+    router.replace(url);
+  }
   const [notes, setNotes] = useState<Note[]>(initialNotes);
   const [scope, setScope] = useState<Scope>("all");
   const [filterClient, setFilterClient] = useState<string>("all");
@@ -348,7 +371,7 @@ export function NotesView({
 
       {/* ── Always-visible composer (Phase 9.20) ── */}
       <NoteComposer
-        clients={clients}
+        clients={composerClients}
         meEmail={meEmail}
         onOptimistic={handleOptimisticNote}
         onResolved={handleResolvedNote}
@@ -449,6 +472,17 @@ export function NotesView({
               </Chip>
             ))}
         </FilterGroup>
+
+        {/* Phase 11.5.2 — archived clients toggle */}
+        {archivedClientIds.length > 0 ? (
+          <>
+            <FilterSep />
+            <Chip active={includeArchived} onClick={toggleIncludeArchived}>
+              <Archive className="h-3 w-3" />
+              <span className="ml-1">Include archived</span>
+            </Chip>
+          </>
+        ) : null}
       </div>
 
       {/* ── Search + reset + count ── */}
@@ -542,6 +576,7 @@ export function NotesView({
                     author={advisorById.get(n.author_advisor_id) ?? null}
                     isMe={meId === n.author_advisor_id}
                     fresh={freshIds.has(n.id)}
+                    archived={archivedClientSet.has(n.client_id)}
                     onPromote={() => startPromote(n)}
                   />
                 ))}
@@ -572,6 +607,7 @@ function NoteCard({
   author,
   isMe,
   fresh,
+  archived,
   onPromote,
 }: {
   note: Note;
@@ -579,6 +615,8 @@ function NoteCard({
   author: Pick<Advisor, "first_name" | "last_name"> | null;
   isMe: boolean;
   fresh?: boolean;
+  /** Phase 11.5.2 — note belongs to an archived client; render muted. */
+  archived?: boolean;
   onPromote: () => void;
 }) {
   const router = useRouter();
@@ -594,6 +632,7 @@ function NoteCard({
       style={{
         background: "var(--surface)",
         borderColor: isPromoted ? "var(--s-green-bg)" : "var(--border)",
+        opacity: archived ? 0.65 : undefined,
       }}
     >
       <div
