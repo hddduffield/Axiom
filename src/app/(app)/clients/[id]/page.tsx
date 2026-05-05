@@ -21,6 +21,7 @@ export default async function ClientDetailPage({ params }: RouteContext) {
     notesRes,
     partnersRes,
     lensRunsRes,
+    advisorsRes,
   ] = await Promise.all([
     supabase
       .from("clients")
@@ -56,6 +57,12 @@ export default async function ClientDetailPage({ params }: RouteContext) {
       .select("id, lens_type, status, generated_at, cost_cents, context_input")
       .eq("client_id", id)
       .order("generated_at", { ascending: false }),
+    // Phase 11.1 — advisor list for the Edit dialog's lead-advisor dropdown.
+    supabase
+      .from("advisors")
+      .select("id, first_name, last_name")
+      .eq("active", true)
+      .order("first_name"),
   ]);
 
   if (clientRes.error || !clientRes.data) {
@@ -70,6 +77,7 @@ export default async function ClientDetailPage({ params }: RouteContext) {
       notes={notesRes.data ?? []}
       partners={partnersRes.data ?? []}
       lensRuns={lensRunsRes.data ?? []}
+      advisors={advisorsRes.data ?? []}
     />
   );
 }

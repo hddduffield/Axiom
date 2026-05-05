@@ -24,6 +24,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tabs";
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { ClientEditDialog } from "./_ClientEditDialog";
 import type {
   ActionItem,
   Client,
@@ -55,6 +56,12 @@ type LensRunRow = Pick<
   "id" | "lens_type" | "status" | "generated_at" | "cost_cents" | "context_input"
 >;
 
+interface AdvisorOption {
+  id: string;
+  first_name: string;
+  last_name: string;
+}
+
 interface Props {
   client: ClientWithAdvisor;
   plans: PlanRow[];
@@ -62,6 +69,7 @@ interface Props {
   notes: NoteWithAuthor[];
   partners: Partner[];
   lensRuns: LensRunRow[];
+  advisors: AdvisorOption[];
 }
 
 // ─────────────── Formatting helpers ───────────────
@@ -181,6 +189,7 @@ export function ClientDetailView({
   notes,
   partners,
   lensRuns,
+  advisors,
 }: Props) {
   const [activeItem, setActiveItem] = useState<ActionItem | null>(null);
   const [items, setItems] = useState(actionItems); // local mutable copy for drawer
@@ -239,7 +248,8 @@ export function ClientDetailView({
               ) : null}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ClientEditDialog client={client} advisors={advisors} />
             <Button variant="outline" size="sm" disabled>
               <Plus className="mr-1.5 h-3.5 w-3.5" />
               Note
