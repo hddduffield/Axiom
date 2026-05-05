@@ -25,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tab
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { PanelCard } from "@/components/axiom/PanelCard";
 import { ClientEditDialog } from "./_ClientEditDialog";
+import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import type {
   ActionItem,
   Client,
@@ -206,8 +207,17 @@ export function ClientDetailView({
     setActiveItem(updated);
   }
 
+  // Phase 11.2 — archived client visual treatment. status='inactive' is
+  // the soft-delete state; we mute the page (opacity) and prominently
+  // surface the ARCHIVED badge in the header. Edit + Archive are hidden;
+  // Restore takes their place (lands in Phase 11.3).
+  const isArchived = client.status === "inactive";
+
   return (
-    <div className="flex flex-col gap-5">
+    <div
+      className="flex flex-col gap-5"
+      style={{ opacity: isArchived ? 0.85 : 1 }}
+    >
       {/* PageHead */}
       <div>
         <Link
@@ -225,16 +235,34 @@ export function ClientDetailView({
         </span>
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <h1
-              className="text-3xl font-medium"
-              style={{
-                fontFamily: "var(--font-display)",
-                letterSpacing: "-0.01em",
-                color: "var(--text)",
-              }}
-            >
-              {client.household_name}
-            </h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1
+                className="text-3xl font-medium"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  letterSpacing: "-0.01em",
+                  color: "var(--text)",
+                }}
+              >
+                {client.household_name}
+              </h1>
+              {isArchived ? (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase"
+                  style={{
+                    background: "var(--s-slate-bg)",
+                    color: "var(--s-slate)",
+                    letterSpacing: "0.06em",
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: "var(--s-slate)" }}
+                  />
+                  Archived
+                </span>
+              ) : null}
+            </div>
             <p className="mt-1 text-sm" style={{ color: "var(--text-2)" }}>
               Lead:{" "}
               {client.advisors
@@ -249,22 +277,30 @@ export function ClientDetailView({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <ClientEditDialog client={client} advisors={advisors} />
-            <Button variant="outline" size="sm" disabled>
-              <Plus className="mr-1.5 h-3.5 w-3.5" />
-              Note
-            </Button>
-            <Button variant="outline" size="sm" disabled>
-              <Plus className="mr-1.5 h-3.5 w-3.5" />
-              Item
-            </Button>
-            <Link
-              href="/plans/generate"
-              className={buttonVariants({ size: "sm" })}
-            >
-              <FileText className="mr-1.5 h-3.5 w-3.5" />
-              Generate plan
-            </Link>
+            {isArchived ? (
+              // Restore button lands in Phase 11.3.
+              null
+            ) : (
+              <>
+                <ClientEditDialog client={client} advisors={advisors} />
+                <ClientArchiveDialog client={client} />
+                <Button variant="outline" size="sm" disabled>
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  Note
+                </Button>
+                <Button variant="outline" size="sm" disabled>
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  Item
+                </Button>
+                <Link
+                  href="/plans/generate"
+                  className={buttonVariants({ size: "sm" })}
+                >
+                  <FileText className="mr-1.5 h-3.5 w-3.5" />
+                  Generate plan
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
