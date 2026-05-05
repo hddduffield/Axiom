@@ -96,12 +96,14 @@ function fmtRelative(iso: string | null): string {
 }
 
 function statusBadge(s: ClientStatus) {
+  // Phase 11.3 — surface "inactive" as "Archived" everywhere user-facing.
+  // Same DB value; clearer label for the soft-delete semantic.
   const tone =
     s === "active"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)", label: "Active" }
       : s === "prospect"
         ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Prospect" }
-        : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Inactive" };
+        : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Archived" };
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
@@ -122,6 +124,12 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
 
   const filtered = useMemo(() => {
     let rows = clients.filter((c) => {
+      // Phase 11.3 — Archived clients (status='inactive') are hidden by
+      // default. The "All" filter shows active + prospect only;
+      // Archived only appears when its filter chip is explicitly
+      // selected. This matches CRM convention — archived is reachable
+      // but doesn't clutter the working view.
+      if (statusFilter === "all" && c.status === "inactive") return false;
       if (statusFilter !== "all" && c.status !== statusFilter) return false;
       if (archetypeFilter !== "all" && c.archetype !== archetypeFilter) return false;
       if (advisorFilter !== "all" && c.lead_advisor_id !== advisorFilter) return false;
@@ -137,6 +145,8 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
   }, [clients, statusFilter, archetypeFilter, advisorFilter, sortKey]);
 
   const cnt = (s: ClientStatus) => clients.filter((c) => c.status === s).length;
+  // Non-archived count for the "All" chip — reflects the default-hide rule.
+  const cntAllNonArchived = clients.filter((c) => c.status !== "inactive").length;
 
   function resetFilters() {
     setStatusFilter("all");
@@ -183,7 +193,7 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
         <FilterGroup label="Status">
           <Chip active={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
-            All <Count n={clients.length} />
+            All <Count n={cntAllNonArchived} />
           </Chip>
           <Chip active={statusFilter === "active"} onClick={() => setStatusFilter("active")}>
             Active <Count n={cnt("active")} />
@@ -192,7 +202,7 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
             Prospect <Count n={cnt("prospect")} />
           </Chip>
           <Chip active={statusFilter === "inactive"} onClick={() => setStatusFilter("inactive")}>
-            Inactive <Count n={cnt("inactive")} />
+            Archived <Count n={cnt("inactive")} />
           </Chip>
         </FilterGroup>
 
@@ -305,10 +315,16 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
 
 function ClientRowEl({ c }: { c: ClientRow }) {
   const router = useRouter();
+  // Phase 11.3 — archived rows render muted so they read as deprioritized
+  // when the Archived filter is active.
+  const isArchived = c.status === "inactive";
   return (
     <tr
       className="cursor-pointer border-b transition-colors hover:bg-[var(--surface-2)]"
-      style={{ borderColor: "var(--border)" }}
+      style={{
+        borderColor: "var(--border)",
+        opacity: isArchived ? 0.65 : 1,
+      }}
       onClick={() => router.push(`/clients/${c.id}`)}
     >
       <td className="px-3 py-2.5">

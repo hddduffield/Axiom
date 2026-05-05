@@ -26,6 +26,7 @@ import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { PanelCard } from "@/components/axiom/PanelCard";
 import { ClientEditDialog } from "./_ClientEditDialog";
 import { ClientArchiveDialog } from "./_ClientArchiveDialog";
+import { ClientRestoreDialog } from "./_ClientRestoreDialog";
 import type {
   ActionItem,
   Client,
@@ -278,8 +279,7 @@ export function ClientDetailView({
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {isArchived ? (
-              // Restore button lands in Phase 11.3.
-              null
+              <ClientRestoreDialog client={client} />
             ) : (
               <>
                 <ClientEditDialog client={client} advisors={advisors} />
