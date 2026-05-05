@@ -749,17 +749,55 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
 // ────────────────────────────────────────────────────────────────────────
 
 function makeStage1ApiClient(real: Anthropic): Stage1ApiClient {
+  let attempt = 0;
   return {
     messages: {
-      create: (params) => real.messages.create(params),
+      create: async (params) => {
+        attempt += 1;
+        const t0 = Date.now();
+        console.log(`  [s1 create #${attempt}] opened`);
+        const msg = await real.messages.create(params);
+        const dt = Date.now() - t0;
+        const ai = msg.usage?.input_tokens ?? 0;
+        const ao = msg.usage?.output_tokens ?? 0;
+        const cw = msg.usage?.cache_creation_input_tokens ?? 0;
+        const cr = msg.usage?.cache_read_input_tokens ?? 0;
+        const cents = computeOpusCost(ai, ao, cw, cr);
+        console.log(
+          `  [s1 create #${attempt}] resolved ${dt}ms in=${ai.toLocaleString()} out=${ao.toLocaleString()} cw=${cw.toLocaleString()} cr=${cr.toLocaleString()} stop=${msg.stop_reason} cost~${fmtCost(cents)}`,
+        );
+        return msg;
+      },
     },
   };
 }
 
 function makeStage2ApiClient(real: Anthropic): Stage2ApiClient {
+  let attempt = 0;
   return {
     messages: {
-      stream: (params) => real.messages.stream(params),
+      stream: (params) => {
+        attempt += 1;
+        const id = attempt;
+        const t0 = Date.now();
+        console.log(`  [s2 stream #${id}] opened`);
+        const stream = real.messages.stream(params);
+        return {
+          finalMessage: async () => {
+            const msg = await stream.finalMessage();
+            const dt = Date.now() - t0;
+            const ai = msg.usage?.input_tokens ?? 0;
+            const ao = msg.usage?.output_tokens ?? 0;
+            const cw = msg.usage?.cache_creation_input_tokens ?? 0;
+            const cr = msg.usage?.cache_read_input_tokens ?? 0;
+            const cents = computeOpusCost(ai, ao, cw, cr);
+            console.log(
+              `  [s2 stream #${id}] resolved ${dt}ms in=${ai.toLocaleString()} out=${ao.toLocaleString()} cw=${cw.toLocaleString()} cr=${cr.toLocaleString()} stop=${msg.stop_reason} cost~${fmtCost(cents)}`,
+            );
+            return msg;
+          },
+        };
+      },
     },
   };
 }
