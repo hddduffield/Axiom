@@ -29,9 +29,10 @@ spans architecture, reliability, and observability concerns.
 ## Resolved in Phase 10C (2026-05-05) — first production hardening pass
 
 - **Vercel KB bundling** — `next.config.ts` adds
-  `outputFileTracingIncludes` for `/api/plans/generate`, so Stage 0's
-  dynamic readFile of the volatile-rates KB file resolves correctly on
-  serverless cold start.
+  `outputFileTracingIncludes` for `/api/plans/generate`. Trace manifest
+  shows kb/ files included, but runtime path resolution proved
+  unreliable; Phase 10D.2 follows up by inlining the only KB file Stage
+  0 actually reads.
 - **Stage 0 strictness for real Fact Reviews** — REQUIRED_SECTIONS,
   OWNER_NAME_LABELS, ENTITY_NAME_LABELS, and ARCHETYPES alternative
   lists massively expanded; Haiku 4.5 LLM fallback added that fires
@@ -41,6 +42,22 @@ spans architecture, reliability, and observability concerns.
   exact first 8 alternative labels Stage 0 looked for, plus an explicit
   fallback pattern advisors can drop into the FR (e.g., "Name: <Full
   Name>") rather than asking them to restructure headers.
+
+## Resolved in Phase 10D (2026-05-05) — Stage 0 architectural rethink
+
+- **Stage 0 reclassified as a diagnostic checkpoint** (10D.1) — only
+  `file_integrity` failures return 422. Section / field / archetype /
+  freshness misses are surfaced as warnings in the 202 response body
+  and rendered as a yellow informational notice on the form's success
+  state. Stage 1's LLM parser is robust enough to recover from
+  heuristic misses; Stage 1's Zod schema validation gates data
+  correctness downstream.
+- **KB volatile rates inlined** (10D.2) — Stage 0 no longer reads
+  `kb/v1_2/02_reference/08_volatile_rates_lookup.md` at runtime.
+  Reads from inlined `src/lib/orchestrator/data/volatileRates.ts`
+  constant. Eliminates Vercel filesystem dependency. Refresh requires
+  updating both the KB markdown (still consumed by Stage 3a's CLI
+  context) and the TS module.
 
 ---
 

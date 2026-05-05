@@ -1330,3 +1330,71 @@ clean Stage 1 schema validation failures. The right boundary: Stage 0
 
 All 4 existing Stage 0 unit tests pass unchanged (deterministic path
 handles Holloway cleanly; Haiku fallback never fires for it).
+
+# Phase 10D: Stage 0 architectural rethink + KB inlining
+
+Phase 10C made Stage 0 more permissive but kept it as a strict gate.
+Real-world Fact Reviews from PSA still failed on archetype detection,
+and Vercel's `outputFileTracingIncludes` hint for the kb/ directory
+turned out not to be reliably honored at runtime. Phase 10D reframes
+Stage 0 entirely.
+
+## Stage 0 is a diagnostic checkpoint, not a gate (10D.1)
+
+Hard fail (block submission with 422):
+  - **file_integrity** only — file unreadable, empty extraction,
+    suspiciously short text (<2000 chars), corrupt format, password-
+    protected, image-only PDF without OCR.
+
+Soft warnings (proceed to queue with 202):
+  - **required_sections_present** — heuristic header miss
+  - **required_field_markers** — owner/entity/archetype label miss
+  - **volatile_rates_freshness** — >30 days stale (no longer ever
+    fails; was a hard fail at >45 days)
+  - **content_hash** — runtime safety; warning if hashing fails
+
+Stage 1's LLM parser already has explicit guidance for inferring
+archetype from context when not labeled, and reads the whole document
+to extract content semantically — section heuristic misses are recovered
+there. If Stage 1 also can't recover, the failure surfaces cleanly at
+Stage 1's ClientProfile schema validation with precise diagnostics. The
+right boundary: Stage 0 = format check, Stage 1+ = data correctness.
+
+`POST /api/plans/generate` returns 202 with a `stage0_warnings: string[]`
+field on the response body. The form's success state renders warnings
+as a yellow informational notice above the plan-id detail block, with
+copy: "Stage 0 noted N concerns. Pipeline will proceed; check the
+generated plan for accuracy. Stage 1's LLM parser is robust enough to
+recover from heuristic misses." The plan still queues regardless.
+
+## KB volatile rates inlined (10D.2)
+
+Stage 0's freshness check no longer reads
+`kb/v1_2/02_reference/08_volatile_rates_lookup.md`. Instead it imports
+from `src/lib/orchestrator/data/volatileRates.ts`, an inlined
+`VOLATILE_RATES` snapshot containing the active month, current §7520
+rate, last-refreshed ISO date, §7520 history, and the §382 long-term
+rate.
+
+No filesystem readFile, no kb/ path resolution at runtime, no
+serverless bundling dependency. Stage 3a's CLI-side LLM context still
+loads the markdown file (it runs on Hayden's laptop with the repo cwd,
+so no issue).
+
+Refresh procedure:
+  1. On the 19th of each month, pull the new IRS Rev. Rul. rates.
+  2. Update BOTH the KB markdown AND
+     `src/lib/orchestrator/data/volatileRates.ts`.
+  3. Bump `last_refreshed_iso`. The 30-day soft-warning threshold
+     gates against this date.
+
+## Stage 0 unit tests
+
+Test count grew to 5:
+  1. Holloway fixture passes
+  2. Nonexistent file fails on file_integrity
+  3. Empty/invalid file fails on file_integrity
+  4. Stale volatile rates yield warning (never fail) — exercises the
+     30-day, 60-day reference-date paths against the inlined constant.
+  5. Stage 0 only fails on file_integrity — explicit guard that
+     section / field misses don't trigger failure.
