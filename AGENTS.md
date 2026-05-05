@@ -1481,3 +1481,56 @@ archetype enums. The clients-table schema only has `archetype enum
 ('PRE','MID','POST','NONE')` and lacks those numeric columns. The
 Edit form matches the schema as-is; expanding the form requires a
 DB migration first.
+
+# Phase 11.5: Hide archived clients' related data app-wide
+
+Phase 11 added the archive flow at the client level. Phase 11.5
+extends the same default-hide semantic to every surface that displays
+client-related data, so archiving a client genuinely declutters the
+working view (not just the clients list).
+
+## Pattern across the affected surfaces
+
+Server-side query-time filtering. Each affected page.tsx pre-fetches
+the clients table with status, derives `activeClientIds` (status !=
+'inactive'), and threads `.in("client_id", activeClientIds)` into the
+related queries. No archived data leaves the database for the default
+view.
+
+URL search params drive the toggle: `?archived=1` re-runs the page
+with the looser filter. The toggle Chip in the page-head/filter row
+calls `router.replace(pathname?archived=1)` to flip state, so the
+toggle is bookmarkable and shareable.
+
+Display layer: when archived data IS rendered (toggle on), cards /
+note rows render at opacity 0.65 to read as deprioritized.
+
+## Per-surface differences
+
+| Surface | Toggle | Composer dropdown | Visual |
+| --- | --- | --- | --- |
+| `/action-items` | "Include archived" Chip in page head | n/a (no compose flow here) | ActionCard.archived → opacity 0.65 |
+| `/notes` | "Include archived" Chip in filter row | always active+prospect only (composerClients prop separate from feed clients) | NoteCard.archived → opacity 0.65 |
+| `/dashboard` | none — clean working view | QuickCompose only sees active+prospect (passed clients are pre-filtered) | n/a (archived never rendered) |
+| `/clients/[id]` | n/a — explicit archived-client view shows all that client's data | n/a | page-level treatment from Phase 11 |
+
+## Composer dropdowns
+
+Notes composer + dashboard QuickCompose both restrict their client
+dropdown to **active + prospect only**, regardless of toggle state.
+You don't add new notes to an archived household — the workflow
+itself is gated on the client side.
+
+## Edge cases handled
+
+- Empty `activeClientIds` set: queries pass `["__none__"]` so the
+  `.in()` clause stays well-formed and matches nothing rather than
+  matching everything.
+- Lookup maps: NotesView's `clientById` consumes the FULL clients
+  list (including archived) so `clientById.get(n.client_id)` resolves
+  correctly when the toggle is on and archived clients' notes appear.
+  `composerClients` is a separate prop passed to the composer with
+  active+prospect only.
+- Action item lifecycle (Phase 5d spawn / auto-close hooks): unchanged.
+  The archived filter only affects which items render, not how they
+  behave when transitioned.
