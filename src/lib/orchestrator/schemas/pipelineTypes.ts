@@ -336,7 +336,9 @@ export interface Stage3aMetadata {
 }
 
 export interface QuantifiedRecommendations {
-  _sequencer_status?: "FAILED";
+  // Phase 10B.5 — orchestration explicitly stamps "SUCCESS" on the
+  // success path (was undefined). Failure path stamps "FAILED".
+  _sequencer_status?: "SUCCESS" | "FAILED";
   _sequencer_failures?: SequencerFailure[];
   _sequencer_flags: SequencerFlags3a;
   recommendations: SequencedRecommendation[];

@@ -250,8 +250,19 @@ export async function runStage3a(
     sourceSelectedRecsHash,
   );
 
+  // Phase 10B.5 — explicitly stamp _sequencer_status on the success path
+  // for symmetry with the failure path. Without this, downstream consumers
+  // see `undefined` on success and `"FAILED"` on failure, which forces
+  // asymmetric "is FAILED?" + "are there failed batches?" checks.
+  // validateAndMerge populates _sequencer_status="FAILED" when it abandons
+  // the merge; on success the field is undefined — we explicitly set
+  // "SUCCESS" only when the consolidated result did not already mark FAILED.
+  const resultStatus =
+    (consolidated as { _sequencer_status?: string })._sequencer_status ?? "SUCCESS";
+
   return {
     ...consolidated,
+    _sequencer_status: resultStatus as QuantifiedRecommendations["_sequencer_status"],
     _metadata: metadata,
   };
 }
