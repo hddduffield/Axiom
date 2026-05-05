@@ -124,46 +124,43 @@ export async function POST(request: Request) {
       );
     }
 
-    // Stage 0 preflight — validateFactReview reads from a file path, so we
-    // write the upload to /tmp/ and clean up before responding.
+    // Stage 0 preflight — Phase 10D.1 reclassifies Stage 0 as a diagnostic
+    // checkpoint. Only file_integrity failure (file unreadable, empty,
+    // suspiciously short) returns 422. Section / field / archetype /
+    // freshness misses become warnings surfaced inline; the plan still
+    // queues. Stage 1's LLM parser is robust enough to recover from
+    // section / archetype heuristic misses.
     const arrayBuffer = await frFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const tmpDir = await mkdtemp(join(tmpdir(), "plan-fr-"));
     const tmpPath = join(tmpDir, `fact_review${ext}`);
-    // Phase 10C.2 — inject Haiku 4.5 client as the optional LLM fallback
-    // for Stage 0. Fires only when deterministic matching misses sections
-    // or fields; ~$0.01-0.05 per fallback. If ANTHROPIC_API_KEY is absent
-    // the validator falls back to deterministic-only behavior.
     const llmClient: Stage0LlmApiClient | undefined = process.env.ANTHROPIC_API_KEY
       ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
       : undefined;
-    let stage0Failed = false;
+    let stage0Warnings: string[] = [];
     try {
       await writeFile(tmpPath, buffer);
       const stage0 = await validateFactReview(tmpPath, { apiClient: llmClient });
       if (stage0.status === "failed") {
-        stage0Failed = true;
         return err(
           "validation_failed",
-          `Fact Review failed Stage 0 validation (${stage0.failures.length} ${stage0.failures.length === 1 ? "issue" : "issues"}).`,
+          `Fact Review failed Stage 0 file integrity (${stage0.failures.length} ${stage0.failures.length === 1 ? "issue" : "issues"}). Most common causes: image-only PDF (needs OCR), empty file, template stub, or password-protected document.`,
           stage0.failures,
         );
       }
-      // passed or passed_with_warnings — proceed.
+      // passed or passed_with_warnings — capture warnings + proceed.
+      stage0Warnings = stage0.warnings;
     } catch (e) {
-      stage0Failed = true;
       return err(
         "validation_failed",
         `Stage 0 preflight error: ${(e as Error).message}`,
       );
     } finally {
-      // Clean up the tmp file regardless. Best-effort; non-blocking.
       try {
         await unlink(tmpPath);
       } catch {
         /* ignore */
       }
-      void stage0Failed;
     }
 
     // Insert the plans row first to mint a stable plan_id for the Storage path.
@@ -209,6 +206,7 @@ export async function POST(request: Request) {
       id: plan.id,
       status: "queued",
       queued_at: plan.generated_at,
+      stage0_warnings: stage0Warnings.length > 0 ? stage0Warnings : undefined,
     };
     return NextResponse.json(body, { status: 202 });
   }

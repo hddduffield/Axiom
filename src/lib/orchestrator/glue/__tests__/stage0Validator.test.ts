@@ -4,6 +4,7 @@ import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
 import { validateFactReview } from "../stage0Validator";
+import { VOLATILE_RATES } from "../../data/volatileRates";
 
 const HOLLOWAY_FIXTURE = path.resolve("tests/fixtures/Holloway_Fact_Review_FILLED.docx");
 
@@ -52,41 +53,68 @@ test("empty/invalid file fails", async () => {
   });
 });
 
-test("stale volatile rates yields warning; expired rates fails", async () => {
+test("stale volatile rates yield warning (never fail; Phase 10D.1)", async () => {
+  // Phase 10D.2 — volatile rates come from the inlined VOLATILE_RATES
+  // constant (last_refreshed_iso). Test by manipulating referenceDate
+  // relative to that fixed date.
+  const refreshIso = VOLATILE_RATES.last_refreshed_iso;
+  const refreshDate = new Date(refreshIso + "T00:00:00Z");
+
+  // Day 0 — fresh, should be a clean pass on the freshness check.
+  const freshResult = await validateFactReview(HOLLOWAY_FIXTURE, {
+    referenceDate: refreshDate,
+  });
+  assert.ok(
+    freshResult.status === "passed" || freshResult.status === "passed_with_warnings",
+    `fresh-day expected pass*, got ${freshResult.status}`,
+  );
+  assert.equal(freshResult.checks.volatile_rates_freshness.status, "passed");
+
+  // 35 days later — within the >30 day warn band.
+  const staleRefDate = new Date(refreshDate.getTime() + 35 * 24 * 60 * 60 * 1000);
+  const staleResult = await validateFactReview(HOLLOWAY_FIXTURE, {
+    referenceDate: staleRefDate,
+  });
+  assert.equal(
+    staleResult.status,
+    "passed_with_warnings",
+    `stale-band expected passed_with_warnings, got ${staleResult.status}`,
+  );
+  assert.equal(staleResult.checks.volatile_rates_freshness.status, "warning");
+  assert.equal(staleResult.flags.volatile_rates_stale, true);
+
+  // 60 days later — Phase 10D.1: still passed_with_warnings, never failed.
+  const veryStaleRefDate = new Date(refreshDate.getTime() + 60 * 24 * 60 * 60 * 1000);
+  const veryStaleResult = await validateFactReview(HOLLOWAY_FIXTURE, {
+    referenceDate: veryStaleRefDate,
+  });
+  assert.equal(
+    veryStaleResult.status,
+    "passed_with_warnings",
+    `60-day-stale expected passed_with_warnings (Phase 10D.1 reclassified to soft), got ${veryStaleResult.status}`,
+  );
+  assert.equal(veryStaleResult.checks.volatile_rates_freshness.status, "warning");
+  assert.equal(
+    veryStaleResult.failures.some((f) => f.check === "volatile_rates_freshness"),
+    false,
+    "volatile_rates_freshness must never appear in result.failures after Phase 10D.1",
+  );
+});
+
+test("Stage 0 only fails on file_integrity (Phase 10D.1 hard-gate scope)", async () => {
+  // Section / field / archetype heuristic misses must NOT produce status='failed'.
   await withTempDir(async (dir) => {
-    const ratesPath = path.join(dir, "rates.md");
-    // Refreshed exactly 35 days before the simulated reference date → "stale" band (30-45).
-    const refreshDate = new Date("2026-04-01T00:00:00Z");
-    await writeFile(
-      ratesPath,
-      `# VOLATILE RATES LOOKUP\n\n**Last refreshed:** ${refreshDate.toISOString().slice(0, 10)}\n\nSome content.\n`,
-    );
-
-    // 35 days later → stale, but not expired
-    const staleRefDate = new Date(refreshDate.getTime() + 35 * 24 * 60 * 60 * 1000);
-    const staleResult = await validateFactReview(HOLLOWAY_FIXTURE, {
-      referenceDate: staleRefDate,
-      volatileRatesPath: ratesPath,
-    });
-    assert.equal(
-      staleResult.status,
-      "passed_with_warnings",
-      `stale-band expected passed_with_warnings, got ${staleResult.status}; ` +
-        `rates check: ${JSON.stringify(staleResult.checks.volatile_rates_freshness)}`,
-    );
-    assert.equal(staleResult.checks.volatile_rates_freshness.status, "warning");
-    assert.equal(staleResult.flags.volatile_rates_stale, true);
-
-    // 60 days later → expired → fail
-    const expiredRefDate = new Date(refreshDate.getTime() + 60 * 24 * 60 * 60 * 1000);
-    const expiredResult = await validateFactReview(HOLLOWAY_FIXTURE, {
-      referenceDate: expiredRefDate,
-      volatileRatesPath: ratesPath,
-    });
-    assert.equal(expiredResult.status, "failed");
-    assert.equal(expiredResult.checks.volatile_rates_freshness.status, "failed");
-    assert.ok(
-      expiredResult.failures.some((f) => f.check === "volatile_rates_freshness"),
-    );
+    // Create a syntactically valid but content-light .docx-extension file.
+    // It won't actually parse as a docx, so file_integrity will fail. That's
+    // the right hard-fail trigger.
+    const filePath = path.join(dir, "garbage.docx");
+    await writeFile(filePath, "this is not actually a docx");
+    const result = await validateFactReview(filePath);
+    assert.equal(result.status, "failed");
+    assert.equal(result.checks.file_integrity.status, "failed");
+    // No other checks should have been "failed" — they should be skipped
+    // because the run short-circuits on file_integrity hard fail.
+    assert.equal(result.checks.required_sections_present.status, "skipped");
+    assert.equal(result.checks.required_field_markers.status, "skipped");
   });
 });

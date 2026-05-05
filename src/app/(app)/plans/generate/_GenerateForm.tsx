@@ -50,6 +50,8 @@ interface SubmittedState {
   fr_filename: string;
   queued_at: string;
   mode: "fact_review" | "json_fallback";
+  // Phase 10D.1 — non-blocking Stage 0 diagnostic warnings.
+  stage0_warnings?: string[];
 }
 
 interface Stage0Failure {
@@ -210,6 +212,7 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
         fr_filename: frFilename,
         queued_at: accepted.queued_at,
         mode: useFrMode ? "fact_review" : "json_fallback",
+        stage0_warnings: accepted.stage0_warnings,
       });
     } catch (e) {
       if (isApiError(e)) {
@@ -297,6 +300,49 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
                 </p>
               </div>
             </div>
+
+            {/* Phase 10D.1 — Stage 0 diagnostic warnings */}
+            {submitted.stage0_warnings && submitted.stage0_warnings.length > 0 && (
+              <div
+                className="rounded-md border-l-[3px] px-4 py-3"
+                style={{
+                  background: "var(--s-amber-bg)",
+                  borderLeftColor: "var(--s-amber)",
+                }}
+              >
+                <div className="flex items-start gap-2.5">
+                  <Info
+                    className="mt-0.5 h-4 w-4 flex-shrink-0"
+                    style={{ color: "var(--s-amber)" }}
+                  />
+                  <div className="flex-1">
+                    <div
+                      className="text-[13px] font-medium"
+                      style={{ color: "var(--text)" }}
+                    >
+                      Stage 0 noted {submitted.stage0_warnings.length}{" "}
+                      {submitted.stage0_warnings.length === 1 ? "concern" : "concerns"}
+                    </div>
+                    <p
+                      className="mt-1 text-[12px] leading-relaxed"
+                      style={{ color: "var(--text-2)" }}
+                    >
+                      Pipeline will proceed; check the generated plan for accuracy.
+                      Stage 1&rsquo;s LLM parser is robust enough to recover from
+                      heuristic misses.
+                    </p>
+                    <ul
+                      className="mt-2 space-y-1 pl-4 text-[11px]"
+                      style={{ color: "var(--text-2)", listStyleType: "disc" }}
+                    >
+                      {submitted.stage0_warnings.map((w, i) => (
+                        <li key={i}>{w}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <Separator />
 

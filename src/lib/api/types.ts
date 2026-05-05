@@ -135,6 +135,12 @@ export namespace PlansApi {
     id: string;
     status: PlanStatus; // always "queued" on initial accept
     queued_at: string; // ISO 8601
+    // Phase 10D.1 — non-blocking Stage 0 diagnostic warnings (e.g.,
+    // section heuristic missed, archetype not detected, volatile rates
+    // stale). Empty array = clean Stage 0 pass. The form surfaces these
+    // as a yellow informational notice on the success state; the plan
+    // still queues regardless.
+    stage0_warnings?: string[];
   }
 
   // Dashboard-friendly slim view: queued + processing plans with the

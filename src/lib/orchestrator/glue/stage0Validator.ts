@@ -1,4 +1,3 @@
-import * as path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
 import type {
   CheckResult,
@@ -7,22 +6,32 @@ import type {
 } from "../schemas/stage0.types";
 import { readFile } from "node:fs/promises";
 import { computeFactReviewHash, extractFactReviewText } from "../utils/factReviewIO";
-
-const DEFAULT_VOLATILE_RATES_PATH = "kb/v1_2/02_reference/08_volatile_rates_lookup.md";
+import { VOLATILE_RATES } from "../data/volatileRates";
 
 // ────────────────────────────────────────────────────────────────────────
-// Phase 10C.2 — Permissive deterministic matching
+// Phase 10D.1 — Stage 0 reclassified as a diagnostic checkpoint.
+//
+// HARD failures (block submission with 422):
+//   - file_integrity: file unreadable, empty, corrupt, wrong format,
+//     extracted text suspiciously short.
+//
+// SOFT warnings (proceed to queue with 202; surfaced inline + on form):
+//   - required_sections_present: known section header not detected
+//   - required_field_markers: owner / entity / archetype not detected
+//   - volatile_rates_freshness: rates more than 30 days stale
+//   - content_hash: pure runtime integrity, never expected to fail
+//
+// Why? The advisor cannot edit Fact Reviews on the fly (Hayden has
+// neither Word nor Adobe Acrobat). Real Fact Reviews don't always use
+// PSA-canonical headers/labels. Stage 1's LLM is robust enough to
+// extract structured data from messy real-world docs and infer
+// archetype from context (per its system prompt's archetype rubric).
+// Stage 1's Zod schema gates data correctness downstream.
+//
+// Phase 10D.2 — volatile-rates check no longer reads the KB markdown
+// file. Reads the inlined VOLATILE_RATES constant in
+// ../data/volatileRates.ts. Eliminates filesystem dependency on Vercel.
 // ────────────────────────────────────────────────────────────────────────
-//
-// First production live test surfaced that real PSA Fact Reviews don't
-// always follow the exact "Section 3 / Entities" header convention or use
-// "Primary Owner Name" as the literal label. Stage 0's job is to confirm
-// the upload IS a Fact Review (format check) — not to validate every
-// field is correctly populated (Stage 1's job).
-//
-// Strategy: comprehensive alternative lists for deterministic matching
-// + a Haiku 4.5 LLM fallback that fires only when deterministic finds
-// gaps. Costs $0 most of the time; ~$0.01-0.05 per fallback invocation.
 
 const REQUIRED_SECTIONS: { label: string; alternatives: string[] }[] = [
   {
@@ -164,8 +173,6 @@ const ARCHETYPES = [
   "founder-led",
   "founding owner",
   "pre-IPO",
-  // Looser standalone words — lowercase comparison; need to be careful
-  // these don't match noise.
   "transaction posture:",
   "archetype:",
   "engagement archetype:",
@@ -216,14 +223,10 @@ const ENTITY_NAME_LABELS = [
 
 const LLM_FALLBACK_MODEL = "claude-haiku-4-5";
 const LLM_FALLBACK_MAX_TOKENS = 1024;
-const LLM_FALLBACK_FR_TEXT_LIMIT = 30000; // chars (~7500 tokens)
-
-// Hard per-Stage-0 LLM cost cap. Haiku 4.5 input is ~$1/MTok, output ~$5/MTok;
-// a typical fallback (~7500 in / 200 out) costs ~1c. The cap below catches
-// unexpected runaway behavior.
+const LLM_FALLBACK_FR_TEXT_LIMIT = 30000;
 const LLM_FALLBACK_HARD_CAP_CENTS = 200;
-const HAIKU_INPUT_CENTS_PER_M = 100;   // $1.00/MTok
-const HAIKU_OUTPUT_CENTS_PER_M = 500;  // $5.00/MTok
+const HAIKU_INPUT_CENTS_PER_M = 100;
+const HAIKU_OUTPUT_CENTS_PER_M = 500;
 
 export interface Stage0LlmApiClient {
   messages: {
@@ -234,7 +237,7 @@ export interface Stage0LlmApiClient {
 }
 
 interface LlmFallbackExtraction {
-  found_section_labels: string[]; // subset of REQUIRED_SECTIONS labels
+  found_section_labels: string[];
   primary_owner_name: string | null;
   entity_name: string | null;
   archetype: string | null;
@@ -276,7 +279,13 @@ function buildFallbackUserTurn(
     `2. Extract these field values when present (return null if not findable):`,
     fields.length > 0 ? fields.map((f) => `   - ${f}`).join("\n") : "   (none)",
     "",
-    "ARCHETYPE values must be one of: Pre-Exit, Post-Exit, Active-No-Exit, Family-Office, Pre-Liquidity-Founder. Choose the closest fit based on the client's current business / liquidity status. Return null if no clear match.",
+    "ARCHETYPE — if not labeled explicitly, INFER from context. The archetype reflects the client's primary status:",
+    " - Pre-Exit: business owner working toward a sale / liquidity event in the next ~5 years.",
+    " - Post-Exit: liquidity already happened; client now manages the proceeds.",
+    " - Active-No-Exit: business owner with no near-term exit plans; long-term operation.",
+    " - Family-Office: dedicated entity managing wealth across multiple generations / branches.",
+    " - Pre-Liquidity-Founder: still building the business; first major liquidity event has not occurred (often pre-IPO / pre-Series-B founders).",
+    "Choose the closest fit. Return null only if you cannot make a reasonable inference from any context in the document.",
     "",
     "RESPONSE FORMAT — output ONLY a JSON object, no preamble, no commentary, no markdown code fences:",
     "",
@@ -360,7 +369,6 @@ async function runLlmFallbackExtraction(
 
   let parsed: unknown;
   try {
-    // Strip markdown fences if Haiku ignored the "no fences" instruction.
     const cleaned = responseText
       .replace(/^```(?:json)?\s*/i, "")
       .replace(/\s*```\s*$/i, "")
@@ -429,7 +437,6 @@ function emptyResult(filePath: string): Stage0ValidationResult {
 function findLabeledValue(text: string, labels: string[]): string | null {
   for (const label of labels) {
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    // Match "Label: value" on same line, OR "Label\n value" on the next non-empty line.
     const inline = new RegExp(`${escaped}\\s*[:\\-]\\s*([^\\n\\r]{1,200})`, "i");
     const m1 = text.match(inline);
     if (m1 && m1[1].trim().length > 0) return m1[1].trim();
@@ -440,6 +447,9 @@ function findLabeledValue(text: string, labels: string[]): string | null {
   return null;
 }
 
+// HARD-fail path. Empty / suspiciously short / unreadable extraction means
+// the upload is not actually a Fact Review (template stub, garbage file,
+// extraction-failed PDF, etc.). Stage 1 cannot recover from this.
 function checkFileIntegrity(text: string): { check: CheckResult; suspicious: boolean; failure?: ValidationFailure } {
   if (text.length === 0) {
     return {
@@ -447,8 +457,8 @@ function checkFileIntegrity(text: string): { check: CheckResult; suspicious: boo
       suspicious: false,
       failure: {
         check: "file_integrity",
-        reason: "Mammoth extracted 0 characters from the .docx",
-        remediation: "Verify the file is a valid Word document with content. Re-export from Word if necessary.",
+        reason: "Mammoth/pdf-parse extracted 0 characters from the upload",
+        remediation: "Verify the file is a valid Word document or text-based PDF with content. Image-only / scanned PDFs require OCR (out of scope). Re-export from Word or pick a different format.",
       },
     };
   }
@@ -462,7 +472,7 @@ function checkFileIntegrity(text: string): { check: CheckResult; suspicious: boo
       failure: {
         check: "file_integrity",
         reason: `Extracted text is only ${text.length} characters; expected a fully populated Fact Review (>5000 chars typical)`,
-        remediation: "Confirm the .docx is the completed Fact Review, not a template stub.",
+        remediation: "Confirm the upload is the completed Fact Review, not a template stub or partial draft.",
       },
     };
   }
@@ -476,7 +486,7 @@ function checkFileIntegrity(text: string): { check: CheckResult; suspicious: boo
     };
   }
   return {
-    check: { status: "passed", details: `Extracted ${text.length} chars from .docx` },
+    check: { status: "passed", details: `Extracted ${text.length} chars from upload` },
     suspicious: false,
   };
 }
@@ -509,85 +519,34 @@ function deterministicCheckFields(text: string): DeterministicFieldResult {
   return { ownerName, entityName, archetype };
 }
 
-async function checkVolatileRatesFreshness(
-  ratesPath: string,
+// SOFT path — checks freshness against the inlined VOLATILE_RATES constant
+// (Phase 10D.2). No filesystem read; runs identically on Vercel and on
+// Hayden's laptop.
+function checkVolatileRatesFreshness(
   referenceDate: Date,
-): Promise<{ check: CheckResult; stale: boolean; failure?: ValidationFailure; warning?: string }> {
-  let contents: string;
-  try {
-    contents = await readFile(ratesPath, "utf8");
-  } catch (err) {
-    return {
-      check: {
-        status: "failed",
-        details: `Could not read volatile rates file at ${ratesPath}: ${(err as Error).message}`,
-      },
-      stale: false,
-      failure: {
-        check: "volatile_rates_freshness",
-        reason: `Volatile rates file unreadable: ${ratesPath}`,
-        remediation: `Confirm the file exists at ${ratesPath} and is readable.`,
-      },
-    };
-  }
-
-  const isoLine = contents
-    .split("\n")
-    .find((line) => /(?:Last refreshed|Snapshot date)/i.test(line) && /\d{4}-\d{2}-\d{2}/.test(line));
-  if (!isoLine) {
-    return {
-      check: {
-        status: "warning",
-        details: 'No ISO date found on a "Last refreshed" or "Snapshot date" line; rates file may not have date populated yet',
-      },
-      stale: false,
-      warning: "Volatile rates file has no parseable ISO date — freshness could not be verified.",
-    };
-  }
-  const match = isoLine.match(/(\d{4}-\d{2}-\d{2})/);
-  if (!match) {
-    return {
-      check: { status: "warning", details: "Date line found but no ISO date matched" },
-      stale: false,
-      warning: "Volatile rates date present but not in ISO YYYY-MM-DD form.",
-    };
-  }
-  const refreshDate = new Date(match[1] + "T00:00:00Z");
+): { check: CheckResult; stale: boolean; warning?: string } {
+  const refreshDate = new Date(VOLATILE_RATES.last_refreshed_iso + "T00:00:00Z");
   if (Number.isNaN(refreshDate.getTime())) {
     return {
-      check: { status: "warning", details: `Unparseable date "${match[1]}"` },
+      check: { status: "warning", details: `VOLATILE_RATES.last_refreshed_iso unparseable: "${VOLATILE_RATES.last_refreshed_iso}"` },
       stale: false,
-      warning: `Volatile rates date "${match[1]}" could not be parsed.`,
+      warning: `Inlined volatile-rates last-refreshed date is malformed; freshness could not be verified.`,
     };
   }
   const ageMs = referenceDate.getTime() - refreshDate.getTime();
   const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
-  if (ageDays > 45) {
-    return {
-      check: {
-        status: "failed",
-        details: `Volatile rates expired: refreshed ${ageDays} days ago (threshold 45 days)`,
-      },
-      stale: false,
-      failure: {
-        check: "volatile_rates_freshness",
-        reason: `Volatile rates file last refreshed ${ageDays} days ago (>45 day threshold)`,
-        remediation: `Refresh ${ratesPath} with the current month's IRS Rev. Rul. rates and update the "Last refreshed" date.`,
-      },
-    };
-  }
   if (ageDays > 30) {
     return {
       check: {
         status: "warning",
-        details: `Volatile rates stale: refreshed ${ageDays} days ago (warning threshold 30 days)`,
+        details: `Volatile rates ${ageDays} days old (refreshed ${VOLATILE_RATES.last_refreshed_iso}, threshold 30 days)`,
       },
       stale: true,
-      warning: `Volatile rates last refreshed ${ageDays} days ago — refresh recommended before next plan run.`,
+      warning: `Volatile rates last refreshed ${ageDays} days ago (${VOLATILE_RATES.last_refreshed_iso}). Refresh src/lib/orchestrator/data/volatileRates.ts and the KB markdown before next plan run if rates have moved materially.`,
     };
   }
   return {
-    check: { status: "passed", details: `Volatile rates refreshed ${ageDays} days ago` },
+    check: { status: "passed", details: `Volatile rates refreshed ${ageDays} days ago (${VOLATILE_RATES.last_refreshed_iso})` },
     stale: false,
   };
 }
@@ -600,20 +559,19 @@ export async function validateFactReview(
   filePath: string,
   options: {
     referenceDate?: Date;
-    volatileRatesPath?: string;
     apiClient?: Stage0LlmApiClient;
   } = {},
 ): Promise<Stage0ValidationResult> {
   const result = emptyResult(filePath);
   const referenceDate = options.referenceDate ?? new Date();
-  const ratesPath = options.volatileRatesPath ?? path.resolve(DEFAULT_VOLATILE_RATES_PATH);
 
   let extractedText = "";
 
   try {
+    // ──────────────────────────────────────────────────────────────────
+    // HARD GATE — file integrity
+    // ──────────────────────────────────────────────────────────────────
     try {
-      // Probe readability first so we can distinguish "file missing" from
-      // "valid file but mammoth couldn't parse" with clean failure context.
       await readFile(filePath);
     } catch (err) {
       result.checks.file_integrity = {
@@ -626,11 +584,6 @@ export async function validateFactReview(
         remediation: "Verify the file path is correct and the file is accessible.",
       });
       result.status = "failed";
-      const rates = await checkVolatileRatesFreshness(ratesPath, referenceDate);
-      result.checks.volatile_rates_freshness = rates.check;
-      if (rates.failure) result.failures.push(rates.failure);
-      if (rates.warning) result.warnings.push(rates.warning);
-      result.flags.volatile_rates_stale = rates.stale;
       return result;
     }
 
@@ -640,19 +593,14 @@ export async function validateFactReview(
     } catch (err) {
       result.checks.file_integrity = {
         status: "failed",
-        details: `mammoth could not extract text: ${(err as Error).message}`,
+        details: `Extractor (mammoth/pdf-parse) could not extract text: ${(err as Error).message}`,
       };
       result.failures.push({
         check: "file_integrity",
-        reason: `Mammoth failed to parse the .docx: ${(err as Error).message}`,
-        remediation: "Confirm the file is a valid .docx (not corrupted, password-protected, or a different format).",
+        reason: `Text extraction failed: ${(err as Error).message}`,
+        remediation: "Confirm the file is a valid .docx or text-based .pdf (not corrupted, password-protected, or image-only).",
       });
       result.status = "failed";
-      const rates = await checkVolatileRatesFreshness(ratesPath, referenceDate);
-      result.checks.volatile_rates_freshness = rates.check;
-      if (rates.failure) result.failures.push(rates.failure);
-      if (rates.warning) result.warnings.push(rates.warning);
-      result.flags.volatile_rates_stale = rates.stale;
       return result;
     }
 
@@ -662,19 +610,15 @@ export async function validateFactReview(
     const integrity = checkFileIntegrity(extractedText);
     result.checks.file_integrity = integrity.check;
     result.flags.text_length_suspicious = integrity.suspicious;
-    if (integrity.failure) result.failures.push(integrity.failure);
-
-    if (integrity.check.status === "failed") {
-      const rates = await checkVolatileRatesFreshness(ratesPath, referenceDate);
-      result.checks.volatile_rates_freshness = rates.check;
-      if (rates.failure) result.failures.push(rates.failure);
-      if (rates.warning) result.warnings.push(rates.warning);
-      result.flags.volatile_rates_stale = rates.stale;
+    if (integrity.failure) {
+      result.failures.push(integrity.failure);
       result.status = "failed";
       return result;
     }
 
-    // Phase 10C.2 — deterministic-first, then LLM fallback for misses.
+    // ──────────────────────────────────────────────────────────────────
+    // SOFT CHECKS — emit warnings, do NOT fail.
+    // ──────────────────────────────────────────────────────────────────
     const dSections = deterministicCheckSections(extractedText);
     const dFields = deterministicCheckFields(extractedText);
 
@@ -696,89 +640,81 @@ export async function validateFactReview(
         needLlmForArchetype,
       );
       if (llmExtraction.failed_reason) {
-        result.warnings.push(`LLM fallback for Stage 0 did not complete cleanly: ${llmExtraction.failed_reason}`);
+        result.warnings.push(`Stage 0 LLM fallback did not complete cleanly: ${llmExtraction.failed_reason}`);
       } else {
+        const sectionsResolved = llmExtraction.found_section_labels.length;
+        const fieldsResolved = [
+          llmExtraction.primary_owner_name !== null ? "owner" : null,
+          llmExtraction.entity_name !== null ? "entity" : null,
+          llmExtraction.archetype ? `archetype=${llmExtraction.archetype}` : null,
+        ]
+          .filter((s): s is string => !!s)
+          .join(", ");
         result.warnings.push(
-          `LLM fallback resolved Stage 0 gaps: sections found=${llmExtraction.found_section_labels.length}/${dSections.missingLabels.length}, owner=${llmExtraction.primary_owner_name !== null ? "found" : "miss"}, entity=${llmExtraction.entity_name !== null ? "found" : "miss"}, archetype=${llmExtraction.archetype ?? "miss"} (cost ${llmExtraction.cost_cents}c)`,
+          `Stage 0 LLM fallback resolved gaps: ${sectionsResolved}/${dSections.missingLabels.length} sections, fields: ${fieldsResolved || "none"} (cost ${llmExtraction.cost_cents}c)`,
         );
         result.flags.additional.stage0_llm_fallback_cost_cents = llmExtraction.cost_cents;
       }
     }
 
-    // Resolve final state for sections.
+    // Sections — soft check.
     const stillMissingSections = dSections.missingLabels.filter(
       (label) => !llmExtraction?.found_section_labels.includes(label),
     );
-    const sectionsCheck: CheckResult = stillMissingSections.length === 0
-      ? {
-          status: "passed",
-          details:
-            dSections.missingLabels.length === 0
-              ? `All ${REQUIRED_SECTIONS.length} required sections present (deterministic match)`
-              : `All ${REQUIRED_SECTIONS.length} required sections present (${dSections.missingLabels.length} resolved by LLM fallback)`,
-        }
-      : {
-          status: "failed",
-          details: `Missing ${stillMissingSections.length} required section(s) after deterministic + LLM fallback: ${stillMissingSections.join("; ")}`,
-        };
-    result.checks.required_sections_present = sectionsCheck;
-    if (stillMissingSections.length > 0) {
+    if (stillMissingSections.length === 0) {
+      result.checks.required_sections_present = {
+        status: "passed",
+        details:
+          dSections.missingLabels.length === 0
+            ? `All ${REQUIRED_SECTIONS.length} required sections present (deterministic match)`
+            : `All ${REQUIRED_SECTIONS.length} required sections present (${dSections.missingLabels.length} resolved by LLM fallback)`,
+      };
+    } else {
+      result.checks.required_sections_present = {
+        status: "warning",
+        details: `Could not detect ${stillMissingSections.length} expected section(s): ${stillMissingSections.join("; ")}. Stage 1 will attempt to parse anyway.`,
+      };
       for (const m of stillMissingSections) {
-        const sec = REQUIRED_SECTIONS.find((s) => s.label === m);
-        const altList = sec?.alternatives.slice(0, 8).join(", ") ?? "(see source)";
-        result.failures.push({
-          check: "required_sections_present",
-          reason: `Required section not found: ${m}`,
-          remediation: `Stage 0 looked for any of these (case-insensitive): ${altList}. Add a header matching one of these to the Fact Review.`,
-        });
+        result.warnings.push(
+          `Section heuristic missed "${m}" — Stage 1 (LLM parser) will attempt to extract this content from context.`,
+        );
       }
     }
 
-    // Resolve final state for fields.
+    // Fields — soft check.
     const finalOwner = dFields.ownerName ?? llmExtraction?.primary_owner_name ?? null;
     const finalEntity = dFields.entityName ?? llmExtraction?.entity_name ?? null;
     const finalArchetype = dFields.archetype ?? llmExtraction?.archetype ?? null;
 
-    const fieldFailures: ValidationFailure[] = [];
-    if (!finalOwner) {
-      fieldFailures.push({
-        check: "required_field_markers",
-        reason: "Primary owner first name not found",
-        remediation: `Stage 0 looked for any of these labels (case-insensitive): ${OWNER_NAME_LABELS.slice(0, 8).join(", ")}. Add a labeled field with one of these names, or include the owner's name on a single line as "Name: <Full Name>".`,
-      });
-    }
-    if (!finalEntity) {
-      fieldFailures.push({
-        check: "required_field_markers",
-        reason: "Entity legal name not found",
-        remediation: `Stage 0 looked for any of these labels (case-insensitive): ${ENTITY_NAME_LABELS.slice(0, 8).join(", ")}. Add a labeled field with one of these names, or include the entity's legal name on a single line as "Company Name: <Legal Entity>".`,
-      });
-    }
-    if (!finalArchetype) {
-      fieldFailures.push({
-        check: "required_field_markers",
-        reason: "Engagement archetype not detected",
-        remediation: `Stage 0 looked for one of: Pre-Exit, Post-Exit, Active-No-Exit, Family-Office, Pre-Liquidity-Founder (case-insensitive, plus loose variants). Add an explicit "Archetype: <value>" line, or describe the client's business / liquidity status in clearer terms (pre-transaction, post-transaction, active-operating, family-office, founder-led).`,
-      });
-    }
-    const fieldsCheck: CheckResult = fieldFailures.length === 0
-      ? {
-          status: "passed",
-          details: `Owner="${finalOwner}", Entity="${finalEntity}", Archetype="${finalArchetype}"${llmExtraction && (!dFields.ownerName || !dFields.entityName || !dFields.archetype) ? " (some fields resolved by LLM fallback)" : ""}`,
-        }
-      : {
-          status: "failed",
-          details: `Missing ${fieldFailures.length} required field marker(s) after deterministic + LLM fallback`,
-        };
-    result.checks.required_field_markers = fieldsCheck;
-    result.failures.push(...fieldFailures);
+    const fieldGaps: string[] = [];
+    if (!finalOwner) fieldGaps.push("primary owner first name");
+    if (!finalEntity) fieldGaps.push("entity legal name");
+    if (!finalArchetype) fieldGaps.push("engagement archetype");
 
-    const rates = await checkVolatileRatesFreshness(ratesPath, referenceDate);
+    if (fieldGaps.length === 0) {
+      result.checks.required_field_markers = {
+        status: "passed",
+        details: `Owner="${finalOwner}", Entity="${finalEntity}", Archetype="${finalArchetype}"${llmExtraction && (!dFields.ownerName || !dFields.entityName || !dFields.archetype) ? " (some fields resolved by LLM fallback)" : ""}`,
+      };
+    } else {
+      result.checks.required_field_markers = {
+        status: "warning",
+        details: `Could not detect ${fieldGaps.length} expected field(s): ${fieldGaps.join("; ")}. Stage 1 (LLM parser) has explicit guidance to infer archetype from context and to extract names from any explicit or implicit reference.`,
+      };
+      for (const g of fieldGaps) {
+        result.warnings.push(
+          `Field heuristic missed ${g} — Stage 1 will attempt to extract / infer this. If Stage 1 also cannot recover, the plan will fail at Stage 1's ClientProfile schema validation with a precise diagnostic.`,
+        );
+      }
+    }
+
+    // Volatile rates — soft check (now from inlined constant).
+    const rates = checkVolatileRatesFreshness(referenceDate);
     result.checks.volatile_rates_freshness = rates.check;
-    if (rates.failure) result.failures.push(rates.failure);
     if (rates.warning) result.warnings.push(rates.warning);
     result.flags.volatile_rates_stale = rates.stale;
 
+    // Content hash — runtime safety; should never fail.
     try {
       const hash = computeFactReviewHash(extractedText);
       result.source_fr_content_hash = hash;
@@ -788,26 +724,34 @@ export async function validateFactReview(
       };
     } catch (err) {
       result.checks.content_hash = {
-        status: "failed",
+        status: "warning",
         details: `Hashing failed: ${(err as Error).message}`,
       };
-      result.failures.push({
-        check: "content_hash",
-        reason: `Could not compute SHA-256 of extracted text: ${(err as Error).message}`,
-        remediation: "Investigate the Node crypto runtime; this should never fail in normal environments.",
-      });
+      result.warnings.push(
+        `Content hashing failed: ${(err as Error).message}. Provenance hash will be empty in metadata.`,
+      );
     }
 
+    // Compute final status. Only file_integrity contributes to "failed".
+    // Everything else is at most a warning.
     const checkStatuses = Object.values(result.checks).map((c) => c.status);
-    if (checkStatuses.includes("failed")) {
+    if (result.checks.file_integrity.status === "failed") {
       result.status = "failed";
-    } else if (checkStatuses.includes("warning")) {
+    } else if (
+      checkStatuses.includes("warning") ||
+      result.warnings.length > 0
+    ) {
       result.status = "passed_with_warnings";
     } else {
       result.status = "passed";
     }
     return result;
   } catch (err) {
+    // Truly unexpected error — log as warning, return failed integrity to be safe.
+    result.checks.file_integrity = {
+      status: "failed",
+      details: `Unexpected validator error: ${(err as Error).message}`,
+    };
     result.failures.push({
       check: "unknown",
       reason: `Unexpected error in validator: ${(err as Error).message}`,
