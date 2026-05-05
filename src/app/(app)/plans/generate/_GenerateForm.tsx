@@ -1,21 +1,23 @@
 "use client";
 
-// Plan generate form — Claude Design's view-plan-generate.jsx polish
-// applied. Two-card layout with JSON parse validation + Parsed/Invalid
-// badges per file, smart submit-button hint cycling, and a success
-// state showing the queued plan_id with a 4-step "what happens next"
-// explainer.
+// Phase 10B.2 — Plan generate form.
 //
-// Preserved from Phase 5b wiring:
-//   - api.plans.generate({ clientId, factReviewFilename, clientprofile,
-//     selectedRecommendations }) → POST /api/plans/generate (multipart)
-//   - Server-side validation flagging back to the user via toast
-//   - Redirect-to-client deferred to a CTA on the success state
-//     (Claude Design surfaces the plan_id + queued_at first)
+// Default path: advisor uploads a Fact Review (.docx or .pdf). The CLI
+// runs Stages 0 → 1 → 2 → 3a → 4 → 5 against Anthropic Opus 4.7,
+// producing a Holloway-quality plan in ~25-40 min.
+//
+// Power-user fallback (collapsed by default): advisor uploads pre-built
+// ClientProfile + SelectedRecommendations JSONs to skip Stages 1+2.
+// Useful for test fixtures and re-running plans where the upstream parses
+// are already on disk.
+//
+// Stage 0 server-side validation errors (422 from POST /api/plans/generate)
+// surface as a red bullet list above the form, preserving client_id +
+// filename selection so the advisor can fix the FR and resubmit.
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, FileText, Info, Upload } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, FileText, Info, Upload, X, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +49,22 @@ interface SubmittedState {
   client_name: string;
   fr_filename: string;
   queued_at: string;
+  mode: "fact_review" | "json_fallback";
+}
+
+interface Stage0Failure {
+  check: string;
+  reason: string;
+  remediation?: string;
+}
+
+const FR_ACCEPT_EXTENSIONS = [".docx", ".pdf"];
+const FR_MAX_BYTES = 25 * 1024 * 1024; // 25 MB
+
+function getFileExtension(filename: string): string | null {
+  const i = filename.lastIndexOf(".");
+  if (i === -1) return null;
+  return filename.slice(i).toLowerCase();
 }
 
 export function GenerateForm({ clients }: { clients: ClientOption[] }) {
@@ -55,6 +73,12 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
   const [clientId, setClientId] = useState("");
   const [frFilename, setFrFilename] = useState("");
 
+  // Primary FR upload state
+  const [frFile, setFrFile] = useState<File | null>(null);
+  const [frFileError, setFrFileError] = useState<string | null>(null);
+
+  // Power-user JSON fallback state
+  const [jsonFallbackOpen, setJsonFallbackOpen] = useState(false);
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [recsFile, setRecsFile] = useState<File | null>(null);
   const [profileJson, setProfileJson] = useState<unknown>(null);
@@ -62,16 +86,19 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
   const [profileErr, setProfileErr] = useState<string | null>(null);
   const [recsErr, setRecsErr] = useState<string | null>(null);
 
+  // Submission state
   const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState<SubmittedState | null>(null);
+  const [stage0Failures, setStage0Failures] = useState<Stage0Failure[]>([]);
+  const [topLevelError, setTopLevelError] = useState<string | null>(null);
 
   const client = useMemo(
     () => clients.find((c) => c.id === clientId) ?? null,
     [clientId, clients],
   );
 
-  // Auto-suggest fact_review filename when client picked. Honors any
-  // value the user typed manually — only fills when blank.
+  // Auto-suggest fact_review filename when client picked, only if blank.
   useEffect(() => {
     if (!client || frFilename) return;
     const slug = client.household_name.toLowerCase().split(/\s+/)[0];
@@ -79,6 +106,30 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
     setFrFilename(`${slug}_fr_${today}.docx`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
+
+  function handleFrPick(file: File) {
+    setStage0Failures([]);
+    setTopLevelError(null);
+    const ext = getFileExtension(file.name);
+    if (!ext || !FR_ACCEPT_EXTENSIONS.includes(ext)) {
+      setFrFileError(
+        `Unsupported file type "${ext ?? "(none)"}". Upload a .docx or .pdf Fact Review.`,
+      );
+      setFrFile(file);
+      return;
+    }
+    if (file.size > FR_MAX_BYTES) {
+      setFrFileError(
+        `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Limit is ${FR_MAX_BYTES / 1024 / 1024} MB.`,
+      );
+      setFrFile(file);
+      return;
+    }
+    setFrFile(file);
+    setFrFileError(null);
+    // Auto-update filename to match the uploaded file (advisor can still edit).
+    setFrFilename(file.name);
+  }
 
   function readJsonFile(
     file: File,
@@ -101,46 +152,85 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
     reader.readAsText(file);
   }
 
+  // Submission preconditions — depends on which mode is active.
+  // FR mode wins if a valid FR file is picked; otherwise JSON-fallback mode
+  // requires both JSONs.
+  const frModeReady = !!frFile && !frFileError;
+  const jsonModeReady =
+    jsonFallbackOpen && profileJson !== null && recsJson !== null;
   const canSubmit =
-    !!clientId && !!frFilename && profileJson !== null && recsJson !== null && !submitting;
+    !!clientId &&
+    !!frFilename &&
+    (frModeReady || jsonModeReady) &&
+    !submitting;
 
   const submitHint = (() => {
-    if (submitting) return "Queueing…";
+    if (submitting) return uploadProgress !== null ? `Uploading… ${uploadProgress}%` : "Queueing…";
     if (!clientId) return "Select a client to begin.";
-    if (!profileJson) return "Upload ClientProfile JSON.";
-    if (!recsJson) return "Upload SelectedRecommendations JSON.";
+    if (!frModeReady && !jsonModeReady) return "Upload a Fact Review (.docx or .pdf).";
     if (canSubmit) return "Ready to queue.";
     return "";
   })();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit || !profileFile || !recsFile || !client) return;
+    if (!canSubmit || !client) return;
     setSubmitting(true);
+    setStage0Failures([]);
+    setTopLevelError(null);
+    setUploadProgress(0);
     try {
+      const useFrMode = frModeReady;
       const accepted: PlansApi.GenerateAcceptedResponse = await api.plans.generate({
         clientId: client.id,
         factReviewFilename: frFilename,
-        clientprofile: profileFile,
-        selectedRecommendations: recsFile,
+        factReview: useFrMode ? (frFile as File) : undefined,
+        clientprofile: !useFrMode && profileFile ? profileFile : undefined,
+        selectedRecommendations:
+          !useFrMode && recsFile ? recsFile : undefined,
       });
+      setUploadProgress(100);
       setSubmitted({
         plan_id: accepted.id,
         client_id: client.id,
         client_name: client.household_name,
         fr_filename: frFilename,
         queued_at: accepted.queued_at,
+        mode: useFrMode ? "fact_review" : "json_fallback",
       });
     } catch (e) {
-      toast.error(isApiError(e) ? e.message : "Could not queue plan");
+      if (isApiError(e)) {
+        // Stage 0 validation failures land as 422 with details: Stage0Failure[].
+        const details = e.details as unknown;
+        if (
+          e.status === 422 &&
+          Array.isArray(details) &&
+          details.length > 0 &&
+          (details[0] as { check?: unknown }).check !== undefined
+        ) {
+          setStage0Failures(details as Stage0Failure[]);
+          setTopLevelError(
+            "Fact Review failed Stage 0 validation. Review the issues below and re-upload.",
+          );
+        } else {
+          setTopLevelError(e.message);
+          toast.error(e.message);
+        }
+      } else {
+        setTopLevelError("Could not queue plan");
+        toast.error("Could not queue plan");
+      }
     } finally {
       setSubmitting(false);
+      setUploadProgress(null);
     }
   }
 
   function reset() {
     setClientId("");
     setFrFilename("");
+    setFrFile(null);
+    setFrFileError(null);
     setProfileFile(null);
     setRecsFile(null);
     setProfileJson(null);
@@ -148,10 +238,14 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
     setProfileErr(null);
     setRecsErr(null);
     setSubmitted(null);
+    setStage0Failures([]);
+    setTopLevelError(null);
+    setJsonFallbackOpen(false);
   }
 
   // ─────────────── Success state ───────────────
   if (submitted) {
+    const frMode = submitted.mode === "fact_review";
     return (
       <div className="max-w-2xl">
         <Card
@@ -184,10 +278,9 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
                   <code style={{ fontFamily: "var(--font-mono)" }}>
                     npm run generate-pending
                   </code>
-                  . This isn&rsquo;t an instant draft — you&rsquo;ll see the plan land in{" "}
+                  . Expected wall-clock for {frMode ? "the full Stage 0→5 chain" : "the Stage 3a→5 chain (Stages 1+2 skipped)"}: ~{frMode ? "25–40" : "20–30"} min, ~${frMode ? "23–38" : "13–25"} per plan. You&rsquo;ll see the plan land in{" "}
                   <span style={{ fontFamily: "var(--font-mono)" }}>ready_for_review</span>{" "}
-                  once the queue is processed. Typical turnaround is same-day for runs
-                  submitted before 5pm ET.
+                  once processing completes.
                 </p>
               </div>
             </div>
@@ -218,6 +311,12 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
               </dt>
               <dd style={{ fontFamily: "var(--font-mono)", color: "var(--text)" }}>
                 {submitted.fr_filename}
+              </dd>
+              <dt className="text-[11px] uppercase" style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}>
+                Mode
+              </dt>
+              <dd style={{ fontFamily: "var(--font-mono)", color: "var(--text)" }}>
+                {frMode ? "Stage 0 → 5 (full pipeline)" : "Stage 3a → 5 (JSON fallback)"}
               </dd>
               <dt className="text-[11px] uppercase" style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}>
                 Queued at
@@ -252,7 +351,7 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
                 className="text-[11px] uppercase"
                 style={{ color: "var(--text-3)", letterSpacing: "0.06em", marginBottom: 6 }}
               >
-                What happens next
+                Pipeline stages
               </div>
               <ol
                 className="space-y-1.5 pl-5 text-xs"
@@ -262,22 +361,17 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
                   listStyleType: "decimal",
                 }}
               >
-                <li>Hayden&rsquo;s CLI picks up the queued payload.</li>
-                <li>
-                  Orchestrator runs Stages 3a → 4 → 5 against Anthropic Opus 4.7.
-                </li>
-                <li>
-                  Stage outputs (
-                  <span style={{ fontFamily: "var(--font-mono)" }}>stage3a_output</span>,{" "}
-                  <span style={{ fontFamily: "var(--font-mono)" }}>stage4_output</span>,{" "}
-                  <span style={{ fontFamily: "var(--font-mono)" }}>stage5_output</span>) write
-                  to the plan record.
-                </li>
-                <li>
-                  Plan status flips to{" "}
-                  <span style={{ fontFamily: "var(--font-mono)" }}>ready_for_review</span>;
-                  you&rsquo;ll see it on the client&rsquo;s Plan tab.
-                </li>
+                {frMode && (
+                  <>
+                    <li>Stage 0 — preflight FR validation (already passed).</li>
+                    <li>Stage 1 — parse Fact Review .docx/.pdf into ClientProfile.</li>
+                    <li>Stage 2 — select recommendations from KB.</li>
+                  </>
+                )}
+                <li>Stage 3a — quantify recommendations (parallel batches).</li>
+                <li>Stage 3b — assemble sequenced plan (deterministic).</li>
+                <li>Stage 4 — generate the 14-section plan body.</li>
+                <li>Stage 5 — coherence audit.</li>
               </ol>
             </div>
           </CardContent>
@@ -303,6 +397,48 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
   // ─────────────── Form state ───────────────
   return (
     <form onSubmit={onSubmit} className="max-w-2xl">
+      {/* Stage 0 failures or other top-level errors */}
+      {topLevelError && (
+        <Card
+          className="mb-4"
+          style={{
+            borderLeftWidth: 3,
+            borderLeftColor: "var(--s-red)",
+            background: "var(--s-red-bg)",
+          }}
+        >
+          <CardContent className="space-y-2 px-4 py-3">
+            <div className="flex items-start gap-2.5">
+              <AlertCircle
+                className="mt-0.5 h-4 w-4 flex-shrink-0"
+                style={{ color: "var(--s-red)" }}
+              />
+              <div className="flex-1 text-[13px]" style={{ color: "var(--text)" }}>
+                <strong>{topLevelError}</strong>
+                {stage0Failures.length > 0 && (
+                  <ul className="mt-2 space-y-1.5 pl-4 text-xs" style={{ listStyleType: "disc", color: "var(--text-2)" }}>
+                    {stage0Failures.map((f, i) => (
+                      <li key={i}>
+                        <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
+                          {f.check}
+                        </span>
+                        {": "}
+                        {f.reason}
+                        {f.remediation && (
+                          <div className="mt-0.5" style={{ color: "var(--text-3)" }}>
+                            → {f.remediation}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Card 1: Client + filename */}
       <Card className="mb-4">
         <CardHeader>
@@ -362,55 +498,107 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
               required
             />
             <div className="text-[11px]" style={{ color: "var(--text-3)" }}>
-              Reference only — used as the source-of-truth filename in plan provenance.
-              The .docx itself does not need to be uploaded here.
+              Source-of-truth filename in plan provenance. Auto-fills when a Fact Review file is uploaded.
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Card 2: Upload payload JSON */}
+      {/* Card 2: Upload Fact Review */}
       <Card className="mb-4">
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle
             className="text-[12px] font-medium uppercase"
             style={{ color: "var(--text-2)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}
           >
-            2 · Upload payload JSON
+            2 · Upload Fact Review
           </CardTitle>
           <span
             className="text-[11px]"
             style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
           >
-            2 files required
+            .docx or .pdf
           </span>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <FileField
-            id="pg-profile"
-            label="ClientProfile JSON"
-            hint="Output of the discovery / fact-review stage. Validated as JSON on upload."
-            shape="ClientProfile"
-            file={profileFile}
-            parsed={profileJson}
-            error={profileErr}
-            onPick={(f) =>
-              readJsonFile(f, setProfileFile, setProfileJson, setProfileErr)
-            }
+        <CardContent className="space-y-3">
+          <FrFileField
+            file={frFile}
+            error={frFileError}
+            onPick={handleFrPick}
+            onClear={() => {
+              setFrFile(null);
+              setFrFileError(null);
+            }}
+            disabled={jsonModeReady}
           />
-          <FileField
-            id="pg-recs"
-            label="SelectedRecommendations JSON"
-            hint="Curated rec set from the recommendation stage. Drives RB.* / RP.* sections."
-            shape="SelectedRecommendations"
-            file={recsFile}
-            parsed={recsJson}
-            error={recsErr}
-            onPick={(f) =>
-              readJsonFile(f, setRecsFile, setRecsJson, setRecsErr)
-            }
-          />
+          <div className="text-[11px]" style={{ color: "var(--text-3)" }}>
+            The orchestrator runs Stages 0 → 5: validate, parse, select recommendations, quantify, generate the plan body, and audit. Typical run-time ~25–40 min.
+          </div>
         </CardContent>
+      </Card>
+
+      {/* Power-user JSON fallback (collapsible) */}
+      <Card className="mb-4">
+        <CardHeader
+          className="flex-row items-center justify-between space-y-0 cursor-pointer"
+          onClick={() => setJsonFallbackOpen((v) => !v)}
+        >
+          <div className="flex items-center gap-2">
+            {jsonFallbackOpen ? (
+              <ChevronDown className="h-3.5 w-3.5" style={{ color: "var(--text-2)" }} />
+            ) : (
+              <ChevronRight className="h-3.5 w-3.5" style={{ color: "var(--text-2)" }} />
+            )}
+            <CardTitle
+              className="text-[12px] font-medium uppercase"
+              style={{ color: "var(--text-2)", fontFamily: "var(--font-mono)", letterSpacing: "0.06em" }}
+            >
+              Or upload pre-built JSONs (advanced)
+            </CardTitle>
+          </div>
+          <span
+            className="text-[11px]"
+            style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+          >
+            skip Stages 1+2
+          </span>
+        </CardHeader>
+        {jsonFallbackOpen && (
+          <CardContent className="space-y-4">
+            <div
+              className="rounded-md px-3 py-2 text-[11px]"
+              style={{ background: "var(--surface-2)", color: "var(--text-2)" }}
+            >
+              When both JSONs are provided, the CLI skips parsing (Stage 1) and recommendation
+              selection (Stage 2). Useful for re-running plans with deterministic upstream output
+              (e.g., test fixtures).
+            </div>
+            <FileField
+              id="pg-profile"
+              label="ClientProfile JSON"
+              hint="Output of Stage 1. Validated against ClientProfileSchema on upload."
+              shape="ClientProfile"
+              file={profileFile}
+              parsed={profileJson}
+              error={profileErr}
+              onPick={(f) =>
+                readJsonFile(f, setProfileFile, setProfileJson, setProfileErr)
+              }
+            />
+            <FileField
+              id="pg-recs"
+              label="SelectedRecommendations JSON"
+              hint="Output of Stage 2. Drives Stage 3a quantification + RB.* / RP.* sections."
+              shape="SelectedRecommendations"
+              file={recsFile}
+              parsed={recsJson}
+              error={recsErr}
+              onPick={(f) =>
+                readJsonFile(f, setRecsFile, setRecsJson, setRecsErr)
+              }
+            />
+          </CardContent>
+        )}
       </Card>
 
       {/* Deferred-processing notice */}
@@ -429,50 +617,187 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
               Submitting queues a job — it does not generate the plan in your
               browser. The orchestrator runs locally on Hayden&rsquo;s machine via{" "}
               <code style={{ fontFamily: "var(--font-mono)" }}>npm run generate-pending</code>.
-              Expect same-day turnaround for runs submitted before 5pm ET; you&rsquo;ll see
-              the plan appear in{" "}
-              <span style={{ fontFamily: "var(--font-mono)" }}>ready_for_review</span> on
-              the client detail page.
+              Expected cost ~$23–38 per plan; budget cap is $150 per run with per-stage gates.
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Submit row with smart hint */}
-      <div className="flex items-center justify-end gap-2">
-        <span
-          className="mr-auto text-[11px]"
-          style={{ color: "var(--text-3)" }}
-        >
-          {submitHint}
-        </span>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.push("/clients")}
-        >
-          Cancel
-        </Button>
-        <Button
-          type="submit"
-          disabled={!canSubmit}
-          data-api="POST /api/plans/generate"
-        >
-          {submitting ? (
-            "Queueing…"
-          ) : (
-            <>
-              <FileText className="mr-1.5 h-3.5 w-3.5" />
-              Queue plan
-            </>
-          )}
-        </Button>
+      {/* Submit row with smart hint + upload progress */}
+      <div className="space-y-2">
+        {submitting && uploadProgress !== null && (
+          <div className="space-y-1">
+            <div
+              className="text-[11px]"
+              style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+            >
+              Uploading… {uploadProgress}%
+            </div>
+            <div
+              className="h-1 w-full rounded-full overflow-hidden"
+              style={{ background: "var(--surface-2)" }}
+            >
+              <div
+                className="h-full transition-all"
+                style={{
+                  width: `${uploadProgress}%`,
+                  background: "var(--accent)",
+                }}
+              />
+            </div>
+          </div>
+        )}
+        <div className="flex items-center justify-end gap-2">
+          <span
+            className="mr-auto text-[11px]"
+            style={{ color: "var(--text-3)" }}
+          >
+            {submitHint}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/clients")}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={!canSubmit}
+            data-api="POST /api/plans/generate"
+          >
+            {submitting ? (
+              "Queueing…"
+            ) : (
+              <>
+                <FileText className="mr-1.5 h-3.5 w-3.5" />
+                Queue plan
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </form>
   );
 }
 
-// ─────────────── File picker for JSON payloads ───────────────
+// ─────────────── Fact Review file picker (.docx + .pdf) ───────────────
+interface FrFileFieldProps {
+  file: File | null;
+  error: string | null;
+  onPick: (f: File) => void;
+  onClear: () => void;
+  disabled?: boolean;
+}
+
+function FrFileField({ file, error, onPick, onClear, disabled }: FrFileFieldProps) {
+  const sizeKb = file ? (file.size / 1024).toFixed(1) : null;
+  const ext = file ? getFileExtension(file.name) : null;
+
+  return (
+    <div className="space-y-1.5">
+      <div
+        className="relative rounded-md border-2 border-dashed transition-colors hover:bg-[var(--surface-2)]"
+        style={{
+          borderColor: error
+            ? "var(--s-red)"
+            : file
+              ? "var(--s-green)"
+              : "var(--border-strong)",
+          opacity: disabled ? 0.5 : 1,
+          pointerEvents: disabled ? "none" : "auto",
+        }}
+      >
+        <input
+          id="pg-fr-file"
+          type="file"
+          accept={FR_ACCEPT_EXTENSIONS.join(",") + ",application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
+          className="absolute inset-0 cursor-pointer opacity-0"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) onPick(f);
+          }}
+        />
+        <label htmlFor="pg-fr-file" className="flex cursor-pointer items-center gap-3 px-4 py-4">
+          {!file ? (
+            <>
+              <Upload className="h-5 w-5 flex-shrink-0" style={{ color: "var(--text-2)" }} />
+              <div className="flex flex-1 flex-col">
+                <span className="text-[14px]" style={{ color: "var(--text)" }}>
+                  <strong>Click to upload</strong> or drop a Fact Review
+                </span>
+                <span className="text-[11px]" style={{ color: "var(--text-3)" }}>
+                  Accepted formats:{" "}
+                  <span style={{ fontFamily: "var(--font-mono)" }}>.docx</span>{" "}
+                  <span style={{ fontFamily: "var(--font-mono)" }}>.pdf</span>
+                  {" "}· Max 25 MB
+                </span>
+              </div>
+            </>
+          ) : error ? (
+            <>
+              <FileText className="h-5 w-5 flex-shrink-0" style={{ color: "var(--s-red)" }} />
+              <div className="flex-1">
+                <div className="text-[13px] font-medium" style={{ color: "var(--text)" }}>
+                  {file.name}
+                </div>
+                <div className="mt-0.5 text-[11px]" style={{ color: "var(--s-red)" }}>
+                  {error}
+                </div>
+              </div>
+              <button
+                type="button"
+                className="rounded-full p-1 hover:bg-[var(--surface-2)]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClear();
+                }}
+              >
+                <X className="h-3.5 w-3.5" style={{ color: "var(--text-2)" }} />
+              </button>
+            </>
+          ) : (
+            <>
+              <FileText className="h-5 w-5 flex-shrink-0" style={{ color: "var(--s-green)" }} />
+              <div className="flex-1">
+                <div className="text-[13px] font-medium" style={{ color: "var(--text)" }}>
+                  {file.name}
+                </div>
+                <div
+                  className="mt-0.5 text-[11px]"
+                  style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}
+                >
+                  {sizeKb} KB · {ext}
+                </div>
+              </div>
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
+                style={{ background: "var(--s-green-bg)", color: "var(--s-green)" }}
+              >
+                <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--s-green)" }} />
+                Ready
+              </span>
+              <button
+                type="button"
+                className="rounded-full p-1 hover:bg-[var(--surface-2)]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClear();
+                }}
+              >
+                <X className="h-3.5 w-3.5" style={{ color: "var(--text-2)" }} />
+              </button>
+            </>
+          )}
+        </label>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────── File picker for JSON payloads (fallback path) ───────────────
 interface FileFieldProps {
   id: string;
   label: string;

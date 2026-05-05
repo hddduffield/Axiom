@@ -149,19 +149,27 @@ export const api = {
       request<PlansApi.ListByClientResponse>(`/api/clients/${clientId}/plans`, { query: q }),
     get: (id: string) =>
       request<PlansApi.GetResponse>(`/api/plans/${id}`),
-    // Phase 5b: v1 skips Stages 0/1/2 — the advisor uploads the already-
-    // prepared ClientProfile + SelectedRecommendations JSON blobs.
+    // Phase 10B: dual-mode generation submission.
+    //   - FR mode (default): upload a .docx or .pdf Fact Review; the CLI
+    //     runs Stages 0 → 1 → 2 → 3a → 4 → 5.
+    //   - JSON fallback mode (power-user): upload pre-built ClientProfile
+    //     + SelectedRecommendations JSONs; the CLI skips Stages 1+2 and
+    //     runs 3a → 4 → 5.
+    // The route handler discriminates by which fields are present.
     generate: (args: {
       clientId: string;
       factReviewFilename: string;
-      clientprofile: File | Blob;
-      selectedRecommendations: File | Blob;
+      factReview?: File | Blob;
+      clientprofile?: File | Blob;
+      selectedRecommendations?: File | Blob;
     }) => {
       const fd = new FormData();
       fd.set("client_id", args.clientId);
       fd.set("fact_review_filename", args.factReviewFilename);
-      fd.set("clientprofile", args.clientprofile);
-      fd.set("selected_recommendations", args.selectedRecommendations);
+      if (args.factReview) fd.set("fact_review", args.factReview);
+      if (args.clientprofile) fd.set("clientprofile", args.clientprofile);
+      if (args.selectedRecommendations)
+        fd.set("selected_recommendations", args.selectedRecommendations);
       return request<PlansApi.GenerateAcceptedResponse>("/api/plans/generate", {
         method: "POST",
         formData: fd,
