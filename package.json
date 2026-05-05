@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "supabase:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
-    "generate-pending": "tsx scripts/generatePending.ts"
+    "generate-pending": "tsx scripts/generatePending.ts",
+    "test:integration:e2e": "tsx scripts/testIntegrationE2E.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.92.0",
