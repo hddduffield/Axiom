@@ -1398,3 +1398,86 @@ Test count grew to 5:
      30-day, 60-day reference-date paths against the inlined constant.
   5. Stage 0 only fails on file_integrity — explicit guard that
      section / field misses don't trigger failure.
+
+# Phase 11: Client management UI complete (Edit + Archive + Restore)
+
+Backend client CRUD has been fully wired since Phase 5a (the
+api.clients.* methods). v1.5 surfaces Edit, Archive, and Restore in the
+UI for the first time. Client management is now end-to-end clickable.
+
+## Three new Client Components
+
+All under `src/app/(app)/clients/[id]/`:
+
+- **`_ClientEditDialog.tsx`** — opens from a new "Edit" button in the
+  detail-page header. Pre-fills from the current client record;
+  fields: household_name / archetype / status (active|prospect only) /
+  lead_advisor_id / notes. No-op short-circuit: buildPatch() compares
+  each form value to the incoming client and only includes changed
+  keys in the PATCH body. If nothing changed, API call is skipped and
+  a toast.info("No changes to save.") fires. Status="inactive" is
+  deliberately excluded from the dropdown — the dedicated Archive
+  flow owns that transition with its typo-confirm guard.
+
+- **`_ClientArchiveDialog.tsx`** — opens from a red-toned "Archive"
+  button. Modal shows AlertTriangle icon + body explaining the
+  soft-delete semantic. **Typo-confirm guard**: the destructive button
+  stays disabled until the user types the household name verbatim
+  into a confirmation input. Prevents accidental archives from a
+  misclicked button. Submit fires `api.clients.softDelete(id)` (which
+  the route translates to `UPDATE clients SET status='inactive'`); on
+  success, toast + `router.push('/clients')` so the advisor lands in
+  a coherent state.
+
+- **`_ClientRestoreDialog.tsx`** — opens from a primary "Restore"
+  button visible only when `client.status === 'inactive'`. Single
+  confirmation prompt (no typo guard — non-destructive). Submit fires
+  `api.clients.update(id, { status: 'active' })` and
+  `router.refresh()` so the detail page renders without the
+  archived treatment immediately.
+
+## Detail-page header reshaping
+
+`_ClientDetailView.tsx` derives `isArchived = client.status === "inactive"`
+and branches the header button cluster:
+
+- **Active / prospect:** Edit + Archive + (existing stub buttons:
+  Note + Item + Generate plan)
+- **Archived:** Restore (only)
+
+When archived: the entire page renders at opacity 0.85 + an "ARCHIVED"
+slate pill renders next to the household-name h1 in the page head.
+
+## List-view filter integration
+
+`_ClientsView.tsx`:
+
+- "Inactive" status chip relabeled to "Archived". Same DB value, clearer
+  surface label. The `statusBadge()` helper also surfaces "Archived" for
+  any inactive row.
+- **Default-hide behavior**: the "All" status filter now excludes
+  archived clients. Archived rows only appear when the "Archived" chip
+  is explicitly selected. Matches CRM convention — archived is
+  reachable but doesn't clutter the working view.
+- "All" chip count = active + prospect; "Archived" chip count =
+  status='inactive' rows.
+- Archived rows in the table render at opacity 0.65 when the Archived
+  filter is selected — visually deprioritized. Click-row still
+  navigates to the detail page where the user can hit Restore.
+
+## Server data flow update
+
+`page.tsx` for `/clients/[id]` now fetches the active advisor list in
+parallel with the existing six-table query (clientRes / plansRes /
+actionItemsRes / notesRes / partnersRes / lensRunsRes + advisorsRes).
+The advisors prop threads through `_ClientDetailView` →
+`_ClientEditDialog` to populate the lead-advisor dropdown.
+
+## Schema gaps deferred to v1.5+
+
+The Phase 11 brief mentioned `aum`, `entity_count`,
+`last_activity_at` columns and Family-Office / Pre-Liquidity-Founder
+archetype enums. The clients-table schema only has `archetype enum
+('PRE','MID','POST','NONE')` and lacks those numeric columns. The
+Edit form matches the schema as-is; expanding the form requires a
+DB migration first.
