@@ -175,6 +175,8 @@ export interface Database {
           processing_started_at: string | null;
           processing_completed_at: string | null;
           failure_reason: string | null;
+          // Phase 10B.1 — FR upload path:
+          input_fact_review_path: string | null;
         };
         Insert: {
           id?: string;
@@ -196,6 +198,7 @@ export interface Database {
           processing_started_at?: string | null;
           processing_completed_at?: string | null;
           failure_reason?: string | null;
+          input_fact_review_path?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["plans"]["Insert"]>;
         Relationships: [
