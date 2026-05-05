@@ -1,0 +1,48 @@
+{
+  "_metadata": {
+    "source_input": "tests/fixtures/Holloway_Fact_Review_FILLED.docx",
+    "duration_ms": 50,
+    "cost_cents": 0,
+    "script": "scripts/testIntegrationE2E.ts",
+    "written_at": "2026-05-05T01:26:58.648Z"
+  },
+  "result": {
+    "status": "passed_with_warnings",
+    "validated_at": "2026-05-05T01:26:58.598Z",
+    "source_file_path": "/Users/haydenduffield/projects/axiom/tests/fixtures/Holloway_Fact_Review_FILLED.docx",
+    "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+    "checks": {
+      "file_integrity": {
+        "status": "passed",
+        "details": "Extracted 22788 chars from .docx"
+      },
+      "required_sections_present": {
+        "status": "passed",
+        "details": "All 7 required sections present"
+      },
+      "required_field_markers": {
+        "status": "passed",
+        "details": "Owner=\"Marcus James Holloway\", Entity=\"Marcus James Holloway\", Archetype=\"Pre-Exit\""
+      },
+      "volatile_rates_freshness": {
+        "status": "warning",
+        "details": "No ISO date found on a \"Last refreshed\" or \"Snapshot date\" line; rates file may not have date populated yet"
+      },
+      "content_hash": {
+        "status": "passed",
+        "details": "SHA-256 computed (5eb13aeb2446…)"
+      }
+    },
+    "flags": {
+      "volatile_rates_stale": false,
+      "text_length_suspicious": false,
+      "additional": {}
+    },
+    "failures": [],
+    "warnings": [
+      "Volatile rates file has no parseable ISO date — freshness could not be verified."
+    ],
+    "extracted_text_length": 22788,
+    "extracted_text_preview": "\n\nPSA WEALTH\n\nCLIENT FACT REVIEW\n\nComprehensive Discovery Document\n\nPre-Exit & Post-Exit Business Owner Engagements\n\nClient Name\n\nMarcus & Catherine Holloway\n\nPrimary Entity\n\nHolloway Industrial Solutions, LLC\n\nEngagement Type\n\nPre-Exit Business Owner\n\nLead Advisor\n\nWill Bearden\n\nDiscovery Period\n\nFebruary – April 2026\n\nDocument Version\n\n1.0 – Final\n\nDate Completed\n\nApril 22, 2026\n\n\n\nC O N F I D E N T I A L\n\nHow to Use This Document\n\nThe Client Fact Review is the structured intake document that "
+  }
+}

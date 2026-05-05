@@ -1,0 +1,135 @@
+{
+  "_metadata": {
+    "source_input": "tests/fixtures/Holloway_Fact_Review_FILLED.docx",
+    "duration_ms": 44340,
+    "cost_cents": 159,
+    "script": "scripts/testIntegrationE2E.ts",
+    "written_at": "2026-05-05T01:52:41.094Z"
+  },
+  "result": {
+    "findings": [
+      {
+        "finding_id": "LC2-001",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "ES",
+          "RB.5"
+        ],
+        "description": "Executive Summary's Top 5 Priorities lists REC-RSK-008 (umbrella) at ~$25.0M and REC-RSK-004 (ILIT/SUL) at ~$10.0M, but ranks them #1 and #2 by 'estimated impact'. These figures are coverage face amounts, not estimated impact (savings or value transferred). REC-RSK-007 (~$2.0M) is also a face amount. Mixing face-amount notional with the impact-dollar convention used elsewhere in the plan (e.g., REC-EST-005 at ~$6.0M of estate tax savings) is misleading — the umbrella's $25M is not comparable to a $6M estate-tax savings figure.",
+        "evidence": "{rank:1, REC-RSK-008 (Risk & Insurance), ~$25.0M, 0-30 days}, {rank:2, REC-RSK-004 (Risk & Insurance), ~$10.0M}, ... {rank:3, REC-EST-005 (Estate), ~$6.0M}",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-002",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.3",
+          "RB.5"
+        ],
+        "description": "RB.3 closer states 'PTET savings alone fund the entire annual cost of the buy/sell life insurance program in Section 5 with room to spare.' RB.5 closer states the aggregate annual premium load runs '$30K-$60K, which is approximately what the PTET election in Section 3 saves on its own.' PTET is quantified at ~$73K/yr. $30K-$60K vs $73K is consistent with 'with room to spare,' but RB.5 frames PTET savings and premium as 'approximately' equal — which understates the cushion. Minor cross-section framing inconsistency the advisor should reconcile.",
+        "evidence": "RB.3: 'The PTET savings alone fund the entire annual cost of the buy/sell life insurance program in Section 5 with room to spare.' RB.5: 'The aggregate annual premium load across the full business-side insurance program runs roughly $30K-$60K, which is approximately what the PTET election in Section 3 saves on its own.'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC3-001",
+        "severity": "warning",
+        "category": "LC3_strategic_coherence",
+        "section_ids": [
+          "DN",
+          "RP.9"
+        ],
+        "description": "Decisions Needed surfaces REC-RSK-011 (standalone LTC) and REC-RSK-012 (hybrid LTC) as a mutual-exclusion tie still pending sign-off, but RP.9 Section 9C presents the hybrid LTC decision as already made ('Choose hybrid LTC life over standalone LTC. We compared standalone LTC against hybrid LTC-life across a 30-year horizon. Hybrid wins...'). Either DN should reflect that the recommendation is firm pending only client confirmation, or RP.9 should present it as a comparison awaiting decision. As written, the two sections contradict each other on the decision status.",
+        "evidence": "RP.9: 'Choose hybrid LTC life over standalone LTC. We compared standalone LTC against hybrid LTC-life across a 30-year horizon. Hybrid wins for an HNW couple...' vs DN row 4: 'REC-RSK-012: decision pending ... decisions_needed=true reflects mutual-exclusion tie with REC-RSK-011 pending final client/advisor sign-off.'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-003",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.4",
+          "RP.12"
+        ],
+        "description": "RB.4 cites annual exclusion gifting capacity as '4 donees × 2 spouses × $19K = $152K/year' producing '$3.04M of estate removal' over 20 years. RP.12 12B repeats the math but the underlying multiplication 4 × 2 × $19K = $152K is correct, while $152K × 20yr = $3.04M is also correct. However, RP.12 12B then says '4 donees (Olivia, James, Sophie, plus a 4th donee added through Crummey-noticed irrevocable trust mechanics) × 2 spouses × $19K = $152K per year' — introducing a 4th donee that is not present in RB.4. The donee count is internally consistent at 4 but the identity of the 4th donee differs between sections (RB.4 implies 4 children-equivalent; RP.12 explicitly invents a 'Crummey-noticed irrevocable trust' as the 4th donee). Advisor should reconcile.",
+        "evidence": "RB.4: '$152K/year of capacity for the Holloways: 4 donees × 2 spouses × $19K.' RP.12: '4 donees (Olivia, James, Sophie, plus a 4th donee added through Crummey-noticed irrevocable trust mechanics) × 2 spouses × $19K = $152K per year.'",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC4-001",
+        "severity": "info",
+        "category": "LC4_findings_alignment",
+        "section_ids": [
+          "FO",
+          "RB.6"
+        ],
+        "description": "FO Retirement opportunity cites '$8,600/year of tax-free growth capacity' from clearing Catherine's pro-rata block via 401(k) rollover. RP.10 addresses this ('doubling annual capacity to $17,200'). Coverage is present but the figure $8,600 in FO maps to Marcus's solo capacity, while the unblock-Catherine number is also $8,600 — text could read as if both numbers describe the same item. Minor; advisor should verify the FO opportunity reads cleanly against the RP.10 treatment.",
+        "evidence": "FO: 'a workplace-401(k) rollover would unlock another $8,600/year of tax-free growth capacity.' RP.10: 'Marcus has clean backdoor Roth capacity at $8,600 per year ... doubling annual capacity to $17,200.'",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC5-001",
+        "severity": "info",
+        "category": "LC5_narrative_weaving",
+        "section_ids": [
+          "RB.4",
+          "RP.12"
+        ],
+        "description": "RB.4 and RP.12 both quantify the same estate-planning layers (children's trusts $4M-$8M, GRAT ~$4.2M, IDGT $8M-$15M, SLAT $5.4M-$16.2M, GST $50M-$500M). RP.12's combined-estate closer states the sum 'is on the order of $20M+ at the midpoint,' which roughly aligns with the cited layers. However, RB.4 closer claims the layered savings 'eliminate the bulk of the projected $11.4M-$17.6M federal estate tax exposure' — a much smaller framing than RP.12's $20M+ midpoint. Both can be true depending on framing (estate-tax dollars saved vs. value transferred outside estate), but the narrative connective is unclear and could confuse the reader.",
+        "evidence": "RB.4 closer: 'eliminate the bulk of the projected $11.4M-$17.6M federal estate tax exposure'; RP.12 closer: 'cumulative estate-tax savings range across the layers is on the order of $20M+ at the midpoint'",
+        "suggested_action": "verify_with_advisor"
+      }
+    ],
+    "deterministic_checks": {
+      "DC1_unresolved_cross_refs": [],
+      "DC2_roadmap_orphans": [],
+      "DC3_top5_mismatch": null,
+      "DC4_missing_decisions": [],
+      "DC5_unused_glossary": [],
+      "DC6_missing_sections": [],
+      "DC7_archetype_violations": [],
+      "DC8_unused_numbers": [],
+      "DC9_compliance_issues": [],
+      "DC10_lifecycle_violations": []
+    },
+    "llm_assessment": {
+      "voice_consistency_score": 90,
+      "contradiction_count": 4,
+      "llm_overall_assessment": "review_recommended"
+    },
+    "overall_assessment": "review_recommended",
+    "_flags": {
+      "assessment_disagreement": false,
+      "llm_skipped": false,
+      "llm_skipped_due_to_context_overflow": false,
+      "unresolved_findings_count": 1
+    },
+    "_metadata": {
+      "stage_version": "5-1.0.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 85158,
+      "output_token_count": 2742,
+      "cache_creation_input_tokens": 5532,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 44142,
+          "input_tokens": 85158,
+          "output_tokens": 2742
+        }
+      ],
+      "duration_ms": 44336,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-05T01:52:41.091Z",
+      "cost_cents": 159,
+      "source_stage4_result_hash": "22226982f5a5582e5d12ab6d61a8a5b5a26aca8565fdd3c304504aa3d780a3b8",
+      "source_quantified_recommendations_hash": "c4ef5de6cbabc2e6a16df787f01ac6dea670b33b9fcac1455517825e26df9e71",
+      "source_client_profile_hash": "0fed83ab839ff02a32779c7c97bdc83586e58848afb2a6593c4005e2e39ed631"
+    }
+  }
+}

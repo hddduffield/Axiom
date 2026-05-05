@@ -1,0 +1,60 @@
+{
+  "test": "integration_v2_holloway_e2e",
+  "status": "SUCCESS",
+  "source_fr": "tests/fixtures/Holloway_Fact_Review_FILLED.docx",
+  "total_cost_cents": 3560,
+  "total_wall_clock_ms": 1542496,
+  "per_stage": [
+    {
+      "stage": "stage0",
+      "status": "SUCCESS",
+      "cost_cents": 0,
+      "duration_ms": 50,
+      "details": "passed_with_warnings — 0 failures, 1 warnings"
+    },
+    {
+      "stage": "stage1",
+      "status": "SUCCESS",
+      "cost_cents": 97,
+      "duration_ms": 129284,
+      "details": "archetype=PRE advisor=Will Bearden"
+    },
+    {
+      "stage": "stage2",
+      "status": "SUCCESS",
+      "cost_cents": 433,
+      "duration_ms": 369362,
+      "details": "62 recs selected"
+    },
+    {
+      "stage": "stage3a",
+      "status": "SUCCESS",
+      "cost_cents": 2205,
+      "duration_ms": 384076,
+      "details": "62 recs quantified"
+    },
+    {
+      "stage": "stage3b",
+      "status": "SUCCESS",
+      "cost_cents": 0,
+      "duration_ms": 2,
+      "details": "deterministic; 62 sequenced recs"
+    },
+    {
+      "stage": "stage4",
+      "status": "SUCCESS",
+      "cost_cents": 666,
+      "duration_ms": 615374,
+      "details": "plan body generated"
+    },
+    {
+      "stage": "stage5",
+      "status": "SUCCESS",
+      "cost_cents": 159,
+      "duration_ms": 44340,
+      "details": "6 findings"
+    }
+  ],
+  "abort_reason": null,
+  "written_at": "2026-05-05T01:52:41.094Z"
+}

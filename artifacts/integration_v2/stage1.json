@@ -1,0 +1,537 @@
+{
+  "_metadata": {
+    "source_input": "tests/fixtures/Holloway_Fact_Review_FILLED.docx",
+    "duration_ms": 129284,
+    "cost_cents": 97,
+    "script": "scripts/testIntegrationE2E.ts",
+    "written_at": "2026-05-05T01:29:07.932Z"
+  },
+  "result": {
+    "engagement": {
+      "advisor_id": "Will Bearden",
+      "archetype": "PRE",
+      "secondary_archetype": null,
+      "engagement_date": "2026-04-22",
+      "plan_purpose": "Pre-exit business owner engagement for Holloway Industrial Solutions, LLC; 3-5 year transaction window planning covering tax optimization, entity restructuring, estate planning, and risk management."
+    },
+    "client_and_family": {
+      "primary_owner": {
+        "full_legal_name": "Marcus James Holloway",
+        "short_name": null,
+        "date_of_birth": "1973-06-14",
+        "age": 52,
+        "relationship": "Primary Owner",
+        "state_of_residence": "Georgia",
+        "citizenship": "U.S. citizen",
+        "notes": "Cobb County resident. Founder/CEO of HIS. Excellent health, non-smoker/non-nicotine 10+ years, insurable at preferred rates. Married."
+      },
+      "spouse": {
+        "full_legal_name": "Catherine Anne Holloway",
+        "short_name": null,
+        "date_of_birth": "1976-09-03",
+        "age": 49,
+        "relationship": "Spouse",
+        "state_of_residence": "Georgia",
+        "citizenship": "U.S. citizen",
+        "notes": "Née Reeves. Manages family affairs and serves on 2 nonprofit boards. Excellent health, non-smoker (never). Prior career: Regional Marketing Director at healthcare REIT (left 2019). No earned income; spousal of Marcus's S-Corp distributions."
+      },
+      "children": [
+        {
+          "full_legal_name": "Olivia Holloway",
+          "short_name": null,
+          "date_of_birth": null,
+          "age": 19,
+          "relationship": "Daughter",
+          "state_of_residence": null,
+          "citizenship": null,
+          "notes": "College student at UGA, sophomore, Business major. No current income. Generally aware of family wealth situation. Needs HIPAA authorization."
+        },
+        {
+          "full_legal_name": "James Holloway",
+          "short_name": null,
+          "date_of_birth": null,
+          "age": 16,
+          "relationship": "Son",
+          "state_of_residence": null,
+          "citizenship": null,
+          "notes": "Minor; junior in high school. Eligible for legitimate family-business work for custodial Roth. Not yet briefed on family wealth."
+        },
+        {
+          "full_legal_name": "Sophie Holloway",
+          "short_name": null,
+          "date_of_birth": null,
+          "age": 12,
+          "relationship": "Daughter",
+          "state_of_residence": null,
+          "citizenship": null,
+          "notes": "Minor; 7th grade. Long planning horizon. Not yet briefed on family wealth. 2014 wills do not name guardian for Sophie."
+        }
+      ],
+      "dependents": [
+        {
+          "full_legal_name": "Eleanor Holloway",
+          "short_name": null,
+          "date_of_birth": null,
+          "age": 78,
+          "relationship": "Mother (of Marcus)",
+          "state_of_residence": "Georgia",
+          "citizenship": null,
+          "notes": "Widowed (Marcus's father passed 2018). Lives in Marietta. Currently independent and in good health. Marcus and Catherine expect to provide some financial support within 5-10 years (assisted-living, in-home care, or both). No long-term-care insurance in place (to be verified). Catherine's parents both deceased; Catherine has one sister in Colorado with no expected support need."
+        }
+      ]
+    },
+    "entities": [
+      {
+        "legal_name": "Holloway Industrial Solutions, LLC",
+        "short_name": "HIS",
+        "entity_type": "LLC, taxed as S-Corporation",
+        "state_of_formation": "Georgia",
+        "ein_last_four": "4831",
+        "industry": "238220 - Plumbing, Heating, and Air-Conditioning Contractors (specialty mechanical contractor: HVAC, process piping, controls)",
+        "primary_owner_name": "Marcus Holloway",
+        "ownership_percentage": {
+          "value": 88,
+          "unit": "percent"
+        },
+        "founded_year": 2009,
+        "notes": "S-election filed at formation. HQ: Kennesaw, GA — 38,000 sf owned facility currently inside the operating LLC (material structural issue — real estate inside operating entity). 87 FTEs as of Q1 2026. Geographic markets: GA, TN, AL, the Carolinas, Northern Florida. Customer vertical mix: data center ~55%, healthcare ~28%, advanced manufacturing ~17%. Top 3 customers = 47% of 2024 revenue (concentration risk); top 10 = 78%; largest single customer = 22% (hyperscale data-center client). Recurring/project mix: ~30% service/maintenance recurring, 70% project. Backlog $48M at Q1 2026 (~14 months revenue). Trailing financials — 2024: Revenue $42.8M, EBITDA $6.42M (15.0% margin); 2023: Revenue $36.1M, EBITDA $5.054M (14.0%); 2022: Revenue $28.4M, EBITDA $3.692M (13.0%). Preliminary valuation range $32M-$48M (5.0x-7.5x trailing adjusted EBITDA); no formal valuation or Q-of-E performed. Comps: 3 regional MEP roll-ups 2023-2025 at 6.2x-7.1x, one strategic at 8.4x. Ownership: Marcus 88% (founder), Derek Chen 12% (vested 2022 via 2014 profits-interest plan, 8-year vest). Marcus personally guarantees $4M revolving line of credit at Truist; Catherine does not. Owns Kennesaw HQ/fabrication facility (38,000 sf) valued at $4,200,000 inside the LLC — flagged structural issue."
+      }
+    ],
+    "entity_structure": {
+      "has_holdco": false,
+      "holdco_jurisdiction": null,
+      "has_dynasty_trust": false,
+      "has_foundation": false,
+      "additional_entities": []
+    },
+    "personal_balance_sheet": {
+      "liquid_assets": [
+        {
+          "description": "Personal checking",
+          "category": "Cash",
+          "estimated_value": {
+            "value": 310000,
+            "unit": "USD"
+          },
+          "custodian_or_location": "Truist",
+          "notes": "JT Marcus & Catherine"
+        },
+        {
+          "description": "Taxable brokerage",
+          "category": "Taxable investments",
+          "estimated_value": {
+            "value": 1800000,
+            "unit": "USD"
+          },
+          "custodian_or_location": "Schwab",
+          "notes": "JT Marcus & Catherine. Currently self-directed; will become PSA-managed."
+        }
+      ],
+      "retirement_accounts": [
+        {
+          "description": "401(k) — HIS plan",
+          "category": "401(k)",
+          "estimated_value": {
+            "value": 920000,
+            "unit": "USD"
+          },
+          "custodian_or_location": "Empower",
+          "notes": "Marcus deferring at limit ($23K + $7.5K catch-up at 50+). Plan is generic — Safe Harbor match, no profit-sharing layer or cross-tested allocation. No dedicated TPA."
+        },
+        {
+          "description": "Rollover IRA",
+          "category": "IRA",
+          "estimated_value": {
+            "value": 340000,
+            "unit": "USD"
+          },
+          "custodian_or_location": "Schwab",
+          "notes": "Catherine. Catherine not on payroll, $0 deferral."
+        }
+      ],
+      "real_estate": [
+        {
+          "description": "East Cobb residence (primary)",
+          "category": "Primary residence",
+          "estimated_value": {
+            "value": 2100000,
+            "unit": "USD"
+          },
+          "custodian_or_location": null,
+          "notes": "JT Marcus & Catherine. Mortgage $680K at 3.10%."
+        },
+        {
+          "description": "Blue Ridge vacation home",
+          "category": "Vacation home",
+          "estimated_value": {
+            "value": 1400000,
+            "unit": "USD"
+          },
+          "custodian_or_location": null,
+          "notes": "JT Marcus & Catherine. No mortgage."
+        }
+      ],
+      "business_interests": [
+        {
+          "description": "Holloway Industrial Solutions, LLC — Marcus's 88% membership interest",
+          "category": "Operating business equity",
+          "estimated_value": {
+            "value": [
+              28200000,
+              42200000
+            ],
+            "unit": "USD"
+          },
+          "custodian_or_location": null,
+          "notes": "Estimated value range based on preliminary 5.0x-7.5x trailing EBITDA. Catherine has no current ownership in HIS."
+        }
+      ],
+      "other_assets": [
+        {
+          "description": "Two vehicles (combined)",
+          "category": "Personal property",
+          "estimated_value": {
+            "value": 165000,
+            "unit": "USD"
+          },
+          "custodian_or_location": null,
+          "notes": null
+        },
+        {
+          "description": "Personal property and contents (per homeowner's policy)",
+          "category": "Personal property",
+          "estimated_value": {
+            "value": 400000,
+            "unit": "USD",
+            "is_approximate": true
+          },
+          "custodian_or_location": null,
+          "notes": "Approximate; no scheduled valuables, art, or collectibles."
+        }
+      ],
+      "liabilities": [
+        {
+          "description": "East Cobb residence mortgage",
+          "category": "Mortgage",
+          "outstanding_balance": {
+            "value": 680000,
+            "unit": "USD"
+          },
+          "interest_rate": {
+            "value": 3.1,
+            "unit": "percent"
+          },
+          "maturity_or_term": null,
+          "notes": "JT Marcus & Catherine."
+        },
+        {
+          "description": "Personal guarantee on HIS $4M revolving line of credit (Truist)",
+          "category": "Personal guarantee (contingent)",
+          "outstanding_balance": null,
+          "interest_rate": null,
+          "maturity_or_term": null,
+          "notes": "Marcus personally guarantees the $4M revolver; Catherine does not. Contingent obligation, not direct personal debt."
+        }
+      ],
+      "net_worth": {
+        "value": null,
+        "unit": "USD",
+        "narrative_context": "Aggregate net worth not explicitly computed in FR; FR provides component asset and liability values plus business equity range of $28.2M-$42.2M.",
+        "known_unknown": true
+      }
+    },
+    "income": {
+      "wages_w2": {
+        "value": 480000,
+        "unit": "USD",
+        "narrative_context": "Marcus W-2 from HIS; Catherine $0 (not on payroll).",
+        "is_annual": true
+      },
+      "k1_distributions": {
+        "value": 3400000,
+        "unit": "USD",
+        "narrative_context": "Marcus S-Corp K-1 distributions from HIS, ~$3.4M projected current year.",
+        "is_approximate": true,
+        "is_annual": true
+      },
+      "other_income": {
+        "value": 45000,
+        "unit": "USD",
+        "narrative_context": "Joint investment income (taxable), mixed tax treatment.",
+        "is_approximate": true,
+        "is_annual": true
+      },
+      "agi": {
+        "value": 3600000,
+        "unit": "USD",
+        "narrative_context": "Federal AGI ~$3.6M for 2024 (most recent year).",
+        "is_approximate": true,
+        "is_annual": true
+      }
+    },
+    "cash_flow": {
+      "monthly_inflows": {
+        "value": null,
+        "unit": "USD",
+        "narrative_context": "FR captures annual income, not monthly inflow figures.",
+        "known_unknown": true
+      },
+      "monthly_outflows": {
+        "value": null,
+        "unit": "USD",
+        "narrative_context": "FR provides annual lifestyle expenses of $420K-$480K (implies ~$35K-$40K/month) but does not state monthly outflows directly.",
+        "known_unknown": true
+      },
+      "monthly_savings": {
+        "value": null,
+        "unit": "USD",
+        "narrative_context": "FR notes household savings rate ~25% of income after taxes but does not provide a monthly savings figure.",
+        "known_unknown": true
+      }
+    },
+    "tax_status": {
+      "filing_status": "MFJ",
+      "federal_marginal_rate": {
+        "value": null,
+        "unit": "percent",
+        "narrative_context": "Effective combined federal+GA rate ~41% reported; federal marginal rate not separately disclosed.",
+        "known_unknown": true
+      },
+      "state_residency": "Georgia",
+      "ptet_election_status": "not_elected",
+      "prior_returns_received": true
+    },
+    "estate_planning": {
+      "will_status": "stale",
+      "will_date": "2014",
+      "trusts": [],
+      "beneficiaries": [],
+      "dpoa_in_place": false,
+      "healthcare_directive_in_place": false
+    },
+    "insurance": {
+      "life_insurance_policies": [
+        {
+          "carrier": null,
+          "policy_type": "Term life (laddered)",
+          "insured": "Marcus Holloway",
+          "owner": "Personal",
+          "beneficiary": null,
+          "face_amount": {
+            "value": 2000000,
+            "unit": "USD"
+          },
+          "cash_value": null,
+          "annual_premium": null,
+          "policy_year": null,
+          "notes": "Expires 2031; not in trust (ILIT gap)."
+        },
+        {
+          "carrier": null,
+          "policy_type": "Term life",
+          "insured": "Catherine Holloway",
+          "owner": "Personal",
+          "beneficiary": null,
+          "face_amount": {
+            "value": 500000,
+            "unit": "USD"
+          },
+          "cash_value": null,
+          "annual_premium": null,
+          "policy_year": null,
+          "notes": "Inadequate face amount; not in trust."
+        }
+      ],
+      "dis_insurance": [
+        {
+          "carrier": null,
+          "policy_type": "Group LTD",
+          "insured": "Marcus Holloway",
+          "owner": null,
+          "beneficiary": null,
+          "face_amount": null,
+          "cash_value": null,
+          "annual_premium": null,
+          "policy_year": null,
+          "notes": "60% income replacement; 24-month own-occ then any-occ. Inadequate for HNW owner. No individual LTD. Catherine has no DI coverage. No business overhead expense coverage."
+        }
+      ],
+      "ltc_insurance": [],
+      "umbrella_liability": {
+        "carrier": null,
+        "policy_type": "Personal umbrella liability",
+        "insured": null,
+        "owner": null,
+        "beneficiary": null,
+        "face_amount": {
+          "value": 2000000,
+          "unit": "USD"
+        },
+        "cash_value": null,
+        "annual_premium": null,
+        "policy_year": null,
+        "notes": "Inadequate for net-worth profile. Auto liability $250K/$250K — sub-umbrella. Personal P&C agent: Allstate."
+      },
+      "errors_omissions": {
+        "carrier": null,
+        "policy_type": "Professional / E&O (business)",
+        "insured": "Holloway Industrial Solutions, LLC",
+        "owner": null,
+        "beneficiary": null,
+        "face_amount": {
+          "value": 5000000,
+          "unit": "USD"
+        },
+        "cash_value": null,
+        "annual_premium": null,
+        "policy_year": null,
+        "notes": "$5M limit. Other business coverages: GL $2M occurrence/$4M aggregate, Workers Comp in place, commercial auto fleet in place, Cyber $1M (likely under-insured given customer mix). No buy/sell life funding. No key person coverage on Derek or controller."
+      }
+    },
+    "transaction_posture": {
+      "transaction_window": "3-5 years",
+      "transaction_status": "Not actively in market; two unsolicited approaches in past 14 months (one strategic regional MEP roll-up, one PE lower-middle-market financial buyer).",
+      "inbound_interest": true,
+      "advisor_engaged": null,
+      "valuation_status": "preliminary range only — no formal valuation or Q-of-E performed"
+    },
+    "prior_transactions": [],
+    "goals_and_values": {
+      "financial_goals": "Ranked: (1) Maximize after-tax sale proceeds — position HIS for 3-5 year transaction window with structural and tax planning that compounds value retained. (2) Take care of Derek — treat his 12% fairly through any transition, both economically and as key continuity person. (3) Estate planning — reduce projected $11M+ estate-tax exposure via layered structure of trusts, gifts, and life insurance. (4) Entity & real estate structure — separate Kennesaw real estate from operating company; build holding-company layer for future flexibility. (5) Tax strategy — Georgia PTET election, optimize W-2 vs K-1 mix, evaluate cost segregation, §469 grouping, cash-balance plan. (6) Children's provision without demotivation — fund education and meaningful head start with controls preventing unrestricted access before age 35. (7) Catherine's real estate vision — build structural capacity for post-exit real estate development deployment. (8) Risk management — match life, disability, key-person coverage to actual exposures. (9) Personal investment diversification — build wealth outside the business; systematic taxable brokerage funding; structured asset location. (10) Philanthropic vehicles — DAF near-term, family foundation post-liquidity with children eventually involved in governance.",
+      "philanthropic_goals": "Near-term DAF; family foundation post-liquidity with children involved in governance as values-formation mechanism (Catherine's hard preference for foundation, not just DAF). Specific causes: (1) children's hospital where Catherine serves on the board; (2) trade scholarships at North Cobb Tech (Marcus's alma mater).",
+      "family_priorities": "Children provided for but with restrictions — no unrestricted access to inherited wealth before age 35 (hard rule). Catherine wants children involved in foundation governance. Marcus and Catherine expect to provide financial support to Marcus's mother (Eleanor, 78) within 5-10 years. Family wealth communication has been minimal: Olivia generally aware; James and Sophie not yet briefed. Catherine wants this to change deliberately as children enter adulthood but is cautious about timing.",
+      "succession_goals": "Open transaction type (likely strategic for valuation) but requires buyer that retains operations and Derek's role. Stock sale preferred; willingness to discuss F-reorg/asset structures if material price impact. Open to 1-3 years transition role post-sale; not interested in long-term employment. Hard constraints: will not sell to a buyer who would relocate operations or eliminate Derek's role; no strip-and-flip economics — intact business non-negotiable. Marcus will not personally guarantee debt for any new venture post-exit.",
+      "raw_values_text": "Marcus values the dignity of skilled trades work — built HIS deliberately as a place where field people are paid and respected like the professionals they are. Wants to extend that through trade scholarships at North Cobb Tech. Catherine values community health access (her board work at the children's hospital) and sees philanthropy as how the children learn responsibility for wealth they did not create. Both deeply value the operating partner relationship with Derek; \"taking care of Derek\" is a values position, not just a planning priority."
+    },
+    "documents_received": [
+      "2024 business tax return (1120-S) — received Feb 18, 2026",
+      "2023 business tax return — received Feb 18, 2026",
+      "2022 business tax return — received Feb 18, 2026",
+      "2024 personal tax return (1040) — received Feb 18, 2026",
+      "2023 personal tax return — received Feb 18, 2026",
+      "2022 personal tax return — received Feb 18, 2026",
+      "LLC Operating Agreement (HIS) — received Feb 25, 2026 (pending attorney review)",
+      "Will — Marcus (2014) — received Feb 25, 2026 (pending attorney review)",
+      "Will — Catherine (2014) — received Feb 25, 2026 (pending attorney review)",
+      "Personal balance sheet (client-prepared) — received Mar 4, 2026",
+      "Insurance policy summaries (life, P&C) — received Mar 11, 2026",
+      "Mortgage statements — received Mar 11, 2026"
+    ],
+    "existing_advisor_relationships": [
+      {
+        "firm_or_advisor_name": null,
+        "role": "CPA / Tax Preparer",
+        "contact": null,
+        "scope_of_engagement": "Local generalist; ~150 small business returns; no M&A or pre-transaction depth.",
+        "notes": "Recommend transition to an advisor with M&A and pre-transaction expertise."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Estate Attorney",
+        "contact": null,
+        "scope_of_engagement": null,
+        "notes": "Gap — PSA to introduce candidate."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Business Attorney",
+        "contact": null,
+        "scope_of_engagement": "General practice — adequate for ongoing operations.",
+        "notes": "Adequate for ops; replace for transactional/M&A work."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "M&A Counsel",
+        "contact": null,
+        "scope_of_engagement": null,
+        "notes": "Gap — engage T-12 months prior to transaction."
+      },
+      {
+        "firm_or_advisor_name": "Truist",
+        "role": "Banker",
+        "contact": null,
+        "scope_of_engagement": "Personal and business banking; $4M revolving line of credit (personally guaranteed by Marcus).",
+        "notes": "Strong relationship."
+      },
+      {
+        "firm_or_advisor_name": "Allstate",
+        "role": "Personal P&C Agent",
+        "contact": null,
+        "scope_of_engagement": "Personal homeowners, auto, umbrella.",
+        "notes": "Review and upgrade — umbrella inadequate for net-worth profile."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Commercial P&C Carrier",
+        "contact": null,
+        "scope_of_engagement": "Business GL, workers comp, commercial auto, professional/E&O, cyber.",
+        "notes": "Carrier in place; cyber limit ($1M) likely under-insured."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Health Insurance Broker",
+        "contact": null,
+        "scope_of_engagement": "Group health for HIS.",
+        "notes": null
+      },
+      {
+        "firm_or_advisor_name": "Paychex",
+        "role": "Payroll Provider",
+        "contact": null,
+        "scope_of_engagement": "Payroll for HIS.",
+        "notes": null
+      },
+      {
+        "firm_or_advisor_name": "Schwab",
+        "role": "Investment Advisor (current self-directed custodian)",
+        "contact": null,
+        "scope_of_engagement": "Self-directed taxable brokerage and Catherine's Rollover IRA.",
+        "notes": "Will become PSA-managed."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Specialty Tax Credits",
+        "contact": null,
+        "scope_of_engagement": null,
+        "notes": "Gap — R&D study candidate; no R&D credits pursued historically."
+      },
+      {
+        "firm_or_advisor_name": null,
+        "role": "Valuation / Quality of Earnings",
+        "contact": null,
+        "scope_of_engagement": null,
+        "notes": "Gap — engage T-12 months. No formal valuation or Q-of-E performed."
+      },
+      {
+        "firm_or_advisor_name": "Empower",
+        "role": "401(k) Plan Provider",
+        "contact": null,
+        "scope_of_engagement": "HIS 401(k) plan with Safe Harbor match.",
+        "notes": "No dedicated TPA. Plan is generic — no profit-sharing layer or cross-tested allocation."
+      }
+    ],
+    "advisor_observations": "Archetype assigned PRE per FR designation. Estate exposure flagged at $11.4M-$17.6M but not structured as a dedicated NumericValue field in schema; captured in goals_and_values. Net worth not explicitly summed in the FR; emitted as known_unknown. Federal marginal rate not separately disclosed (only effective combined federal+GA rate ~41% provided) — captured per the three-state rule. Cash flow section lacks explicit monthly figures; FR provides only annual ranges and a savings-rate qualitative figure. Kennesaw HQ real estate ($4.2M) is held INSIDE the operating LLC — captured in entity notes per asset hierarchy rule (NOT duplicated in personal_balance_sheet.real_estate); this is flagged as a material structural issue (transaction-readiness concern). Marcus's personal guarantee on HIS revolver captured as contingent liability with no outstanding_balance (it is a guarantee, not direct debt). Olivia, James, and Sophie DOBs not provided in FR (only ages). Eleanor Holloway captured as dependent given anticipated future support need. Wills classified as 'stale' (2014, drafted at ~$3M net worth, do not name guardian for Sophie). Trusts and beneficiaries arrays empty — none currently exist; FR notes plan recommends Holloway Properties LLC, Holloway Holdings LLC (post-F-reorg), Joint Revocable Trust, ILIT, three children's trusts, and DAF (these are forward recommendations, not existing entities, so they are NOT populated in entities/trusts arrays). DPOA, healthcare directive, and HIPAA all absent. Inbound interest is true (two unsolicited approaches in past 14 months); advisor noted Marcus initially understated this — 3-5 year transaction window may plausibly be shorter than stated. Several carriers/firms are unnamed in FR (life insurance carriers, commercial P&C carrier, health broker, business attorney, etc.) — these are emitted as null per the no-sentinel-strings rule.",
+    "_metadata": {
+      "stage_version": "1.0.1",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 9112,
+      "output_token_count": 9066,
+      "cache_creation_input_tokens": 8151,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 129251,
+          "input_tokens": 9112,
+          "output_tokens": 9066
+        }
+      ],
+      "duration_ms": 129284,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-05T01:29:07.932Z"
+    }
+  }
+}
