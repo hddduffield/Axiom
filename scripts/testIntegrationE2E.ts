@@ -44,7 +44,10 @@ import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
 
-import { validateFactReview } from "../src/lib/orchestrator/glue/stage0Validator";
+import {
+  validateFactReview,
+  type Stage0LlmApiClient,
+} from "../src/lib/orchestrator/glue/stage0Validator";
 import {
   parseFactReview,
   type Stage1ApiClient,
@@ -443,7 +446,13 @@ async function main(): Promise<number> {
   // ────────────────────────────────────────────────────────────────────
   console.log(`========== STAGE 0 ==========`);
   let s0t = Date.now();
-  const stage0 = await validateFactReview(resolve(FIXTURE_FR));
+  // Phase 10C.2 — Stage 0 now accepts a Haiku 4.5 fallback client.
+  const stage0LlmClient: Stage0LlmApiClient = {
+    messages: { create: (params) => real.messages.create(params) },
+  };
+  const stage0 = await validateFactReview(resolve(FIXTURE_FR), {
+    apiClient: stage0LlmClient,
+  });
   let s0d = Date.now() - s0t;
   await writeArtifact("stage0.json", stage0, s0d, 0);
   console.log(`Stage 0: ${stage0.status} (${stage0.failures.length} failures, ${stage0.warnings.length} warnings) ${fmtMinSec(s0d)}`);

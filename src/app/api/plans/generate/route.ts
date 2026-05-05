@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 import { writeFile, unlink, mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import Anthropic from "@anthropic-ai/sdk";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 import { ClientProfileSchema } from "@/lib/orchestrator/schemas/clientProfile";
 import { SelectedRecommendationsSchema } from "@/lib/orchestrator/schemas/selectedRecommendations";
-import { validateFactReview } from "@/lib/orchestrator/glue/stage0Validator";
+import {
+  validateFactReview,
+  type Stage0LlmApiClient,
+} from "@/lib/orchestrator/glue/stage0Validator";
 import type { PlansApi } from "@/lib/api/types";
 
 const STORAGE_BUCKET = "plan-inputs";
@@ -126,10 +130,17 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(arrayBuffer);
     const tmpDir = await mkdtemp(join(tmpdir(), "plan-fr-"));
     const tmpPath = join(tmpDir, `fact_review${ext}`);
+    // Phase 10C.2 — inject Haiku 4.5 client as the optional LLM fallback
+    // for Stage 0. Fires only when deterministic matching misses sections
+    // or fields; ~$0.01-0.05 per fallback. If ANTHROPIC_API_KEY is absent
+    // the validator falls back to deterministic-only behavior.
+    const llmClient: Stage0LlmApiClient | undefined = process.env.ANTHROPIC_API_KEY
+      ? new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+      : undefined;
     let stage0Failed = false;
     try {
       await writeFile(tmpPath, buffer);
-      const stage0 = await validateFactReview(tmpPath);
+      const stage0 = await validateFactReview(tmpPath, { apiClient: llmClient });
       if (stage0.status === "failed") {
         stage0Failed = true;
         return err(

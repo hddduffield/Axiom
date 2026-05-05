@@ -43,7 +43,10 @@ import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import Anthropic from "@anthropic-ai/sdk";
 
-import { validateFactReview } from "../src/lib/orchestrator/glue/stage0Validator";
+import {
+  validateFactReview,
+  type Stage0LlmApiClient,
+} from "../src/lib/orchestrator/glue/stage0Validator";
 import {
   parseFactReview,
   type Stage1ApiClient,
@@ -377,7 +380,12 @@ async function processPlan(admin: SupabaseAdmin, plan: PlanRow): Promise<number>
     const dl = await downloadFrToTmp(admin, plan.input_fact_review_path!);
     frTmpPath = dl.tmpPath;
     cleanupFr = dl.cleanup;
-    const stage0 = await validateFactReview(frTmpPath);
+    // Phase 10C.2 — pass the same Anthropic client through to Stage 0 so
+    // its LLM fallback (Haiku 4.5) can fire on deterministic gaps.
+    const stage0LlmClient: Stage0LlmApiClient = {
+      messages: { create: (params) => real.messages.create(params) },
+    };
+    const stage0 = await validateFactReview(frTmpPath, { apiClient: stage0LlmClient });
     console.log(`Stage 0: ${stage0.status} (${stage0.failures.length} failures, ${stage0.warnings.length} warnings)`);
     if (stage0.status === "failed") {
       console.warn(
