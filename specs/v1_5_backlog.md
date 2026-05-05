@@ -11,6 +11,23 @@ spans architecture, reliability, and observability concerns.
 
 ---
 
+## Resolved in Phase 10B (2026-05-04)
+
+- **Stage 0/1/2 production integration** — `/plans/generate` accepts a
+  Fact Review .docx/.pdf; the CLI runs the full Stage 0 → 5 chain.
+  Manual JSON authoring is preserved as a power-user fallback.
+- **Hardcoded advisor ID** in `generatePending.ts` — replaced with a
+  dynamic lookup against `advisors` rowed by `plans.generated_by_advisor_id`,
+  slug-matched to the KB advisor registry.
+- **Stage 3a `_sequencer_status: undefined` on success** — orchestration
+  now stamps `"SUCCESS"` explicitly; the field's type widens to
+  `"SUCCESS" | "FAILED" | undefined`.
+- **PDF support** — `pdf-parse` wired into `factReviewIO`; advisors can
+  upload either .docx or .pdf. Image-only/scanned PDFs surface as a
+  Stage 0 file_integrity failure (OCR remains out of scope).
+
+---
+
 ## Stage 3a reliability at Holloway scale
 
 **Surfaced:** Phase 3.4 first attempt (full Stage 3a→4→5 live), 2026-05-03.

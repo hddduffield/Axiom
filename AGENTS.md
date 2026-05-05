@@ -1117,3 +1117,151 @@ Hayden's advisor record untouched. `auth.users` untouched. Audit-log
 rows referencing deleted Burke entity_ids remain (audit_log uses a
 polymorphic `entity_id` with no FK; intentional — history outlives
 data).
+
+# Phase 10B: full Stage 0 → 5 pipeline wired into production
+
+v1 production pipeline shipped Stage 3a → 4 → 5 only. Advisors had to
+hand-author the ClientProfile + SelectedRecommendations JSONs and
+upload them as pipeline INPUTS — but those files are pipeline OUTPUTS,
+not advisor inputs. v1.5 closes the gap: advisors upload a Fact Review
+(.docx or .pdf), and the orchestrator runs the entire chain
+end-to-end.
+
+## Submission
+
+`/plans/generate` accepts a Fact Review file by default; the
+ClientProfile / SelectedRecommendations file pickers are demoted to a
+collapsible "advanced" fallback (kept for re-running plans where the
+upstream parses are already on disk).
+
+`POST /api/plans/generate` is **dual-mode** and dispatches by which
+form fields are present:
+
+| Mode | Trigger | Server-side actions |
+| --- | --- | --- |
+| FR mode (default) | `fact_review` File field present | Run Stage 0 preflight against /tmp/. On `failed` → 422 with `error.details = stage0Result.failures`. On pass → insert plans row, upload to `plan-inputs/{id}/fact_review.{ext}`, set `input_fact_review_path`. |
+| JSON fallback | `clientprofile` + `selected_recommendations` File fields present (and no `fact_review`) | Validate via Zod, insert plans row, upload to `plan-inputs/{id}/{name}.json`, set `input_clientprofile_path` + `input_selected_recs_path`. CLI will skip Stages 1 + 2. |
+
+Stage 0 422 errors (validation failures) render as a red bullet list
+on the form with humanized check labels + remediation callouts;
+client + filename selection are preserved across the failure roundtrip.
+
+## CLI chain
+
+`npm run generate-pending` (script: `scripts/generatePending.ts`)
+claims the oldest queued plan and runs the appropriate chain:
+
+| Mode | Stages |
+| --- | --- |
+| FR upload | Stage 0 (re-validate; diagnostic) → Stage 1 → Stage 2 → Stage 3a → Stage 3b (assemble, sanity check) → Stage 4 → Stage 5 |
+| JSON fallback | Stage 3a → Stage 3b → Stage 4 → Stage 5 (Stages 1 + 2 skipped) |
+
+Stage 3b is purely deterministic (no LLM). It builds a SequencedPlan
+from the QR + selectedRecs, catching dependency cycles before Stage 4
+fires. Stage 4 reads QR directly (not the SequencedPlan); the 3b pass
+is a sanity gate, not a data feed. This preserves the v1 Stage 4
+input contract.
+
+## Per-stage budget caps
+
+```
+STAGE_BUDGET_CAPS = { stage1: 500, stage2: 1000, stage3a: 3000,
+                     stage4: 2500, stage5: 500 }    // cents
+TOTAL_CAP_PER_RUN_CENTS = 15000                     // $150
+```
+
+Each stage is gated twice: **pre-flight** (would the next stage even
+fit under the per-run cap?) and **post-flight** (did the stage's
+actual cost breach its own cap?). On any breach, the stage's output
+(success or failure envelope) is persisted to JSONB + Storage before
+`markFailed` flips status='failed'. Cumulative cost is seeded from
+`plans.cost_cents` at claim time so a re-claim after a partial failure
+can never burn 2× the cap.
+
+## Skip-on-cache
+
+Each stage checks if its output is already persisted before firing:
+
+- **Stage 1**: `plans.stage1_output` JSONB column.
+- **Stage 2**: `plans.input_selected_recs_path` Storage path.
+- **Stage 3a**: `plans.stage3a_output` JSONB column.
+
+Re-claiming a plan after a partial failure (e.g., Stage 4 failed)
+skips already-completed Stages 1/2/3a and resumes at the failed point.
+Idempotent.
+
+## DB migration 0004
+
+Adds `plans.input_fact_review_path text` (nullable). Existing rows
+(Holloway's v1 plan) leave it NULL — historical state preserved.
+The migration is **manual** in v1.5: paste
+`supabase/migrations/0004_input_fact_review_path.sql` into the
+Supabase Dashboard SQL editor (the JS service-role client cannot run
+DDL). Verifier: `tsx scripts/applyMigration0004.ts` reports column
+status + prints SQL on miss.
+
+## PDF support
+
+`pdf-parse` 1.1.4 added; `factReviewIO.extractFactReviewText`
+dispatches by file extension:
+
+- `.docx` → `mammoth.extractRawText` (preserves the v1 path that
+  produced the Holloway baseline).
+- `.pdf`  → `pdf-parse`, imported via `pdf-parse/lib/pdf-parse.js` to
+  skip the package's index.js smoke-test side effect on require.
+
+Image-only / scanned PDFs return empty text + a warning; Stage 0's
+file_integrity check then fails on text length. OCR is out of scope.
+
+## Advisor identity
+
+`generatePending.ts` no longer hardcodes `"will-bearden"`. The CLI
+queries the `advisors` table for the row matching
+`plans.generated_by_advisor_id`, then slug-matches `${first_name}-${last_name}`
+to a known KB advisor_id (`hayden-duffield`, `will-bearden`,
+`third-advisor-placeholder`). Falls back to `"hayden-duffield"` when
+the slug doesn't match.
+
+## Stage 3a `_sequencer_status` SUCCESS sentinel
+
+Stage 3a orchestration now explicitly stamps `"SUCCESS"` on the clean
+path (was undefined). Type widened to `"SUCCESS" | "FAILED" | undefined`.
+External runners can now detect status from a single field.
+
+## UI sub-stage progress
+
+`/plans/[id]` derives finer progress when `status='processing'`:
+
+| stageN_output state | Sub-stage label |
+| --- | --- |
+| stage1_output null + FR path | "Parsing Fact Review" |
+| stage1_output set, stage3a null | "Selecting recs / Quantifying" (or "Quantifying" in JSON fallback) |
+| stage3a set, stage4 null | "Generating plan body" |
+| stage4 set, stage5 null | "Auditing" |
+
+Pulse animation on the status dot for 'processing'. Failed banner
+surfaces last stage reached + cumulative cost + a re-claim hint.
+
+## Local E2E test
+
+`npm run test:integration:e2e` runs the full Stage 0 → 5 chain against
+`tests/fixtures/Holloway_Fact_Review_FILLED.docx` using the same
+per-stage caps. No DB / Storage; outputs land in
+`artifacts/integration_v2/`. Manifest at
+`artifacts/integration_v2/manifest.json` summarizes per-stage status /
+cost / duration plus cumulative totals.
+
+## Expected first live test cost
+
+~$23–$38 per plan, ~25–40 min wall-clock. Per-stage approximations
+(Holloway scale):
+
+| Stage | Cost | Wall-clock |
+| --- | --- | --- |
+| 0 | $0 | <1s |
+| 1 | $1.50–$3 | 2–3 min |
+| 2 | $3–$7 | 3–5 min |
+| 3a | $10–$15 | 12–18 min |
+| 3b | $0 | <1s |
+| 4 | $8–$10 | 4–6 min |
+| 5 | $1–$3 | 2–3 min |

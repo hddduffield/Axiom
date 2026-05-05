@@ -221,32 +221,58 @@ Plan detail.
 - **Response 200:** `Plan`.
 - **Errors:** `not_found`.
 
-#### 🪛 POST `/api/plans/generate`
+#### 🔌 POST `/api/plans/generate` (Phase 10B — dual mode)
 
-**Multipart/form-data only.** Accepts a `.docx` Fact Review and a
-`client_id`; queues a draft plan and returns immediately.
+**Multipart/form-data only.** Dual-mode dispatch by which file fields are
+present.
 
+**Mode A — Fact Review upload (default):**
 - **Body (form fields):**
-  - `client_id` (string, required)
-  - `fact_review` (File, required, MIME
-    `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
-    ≤ 25 MB)
+  - `client_id` (string UUID, required)
+  - `fact_review_filename` (string, required, for record-keeping)
+  - `fact_review` (File, required, .docx or .pdf, ≤ 25 MB)
+- **Server actions:** runs Stage 0 preflight against `/tmp/`. On
+  `failed` → 422 with `error.details = stage0Result.failures`. On
+  `passed`/`passed_with_warnings` → insert plans row, upload to
+  `plan-inputs/{plan_id}/fact_review.{ext}`, populate
+  `input_fact_review_path`.
+
+**Mode B — JSON fallback (power-user):**
+- **Body (form fields):**
+  - `client_id` (string UUID, required)
+  - `fact_review_filename` (string, required, for record-keeping)
+  - `clientprofile` (File, JSON, required)
+  - `selected_recommendations` (File, JSON, required)
+- **Server actions:** validates each JSON against its Zod schema
+  (`ClientProfileSchema`, `SelectedRecommendationsSchema`); inserts
+  plans row; uploads to `plan-inputs/{plan_id}/{name}.json`; populates
+  `input_clientprofile_path` + `input_selected_recs_path`. The CLI will
+  skip Stages 1 + 2 for this plan.
+
+Mode A wins if both `fact_review` and the JSON pair are present.
+
 - **Response 202:**
 
   ```json
   {
-    "plan_id": "uuid",
-    "status": "draft",
-    "queued_at": "2026-05-03T17:30:00.000Z"
+    "id": "uuid",
+    "status": "queued",
+    "queued_at": "2026-05-04T17:30:00.000Z"
   }
   ```
 
-- **Errors:** `validation_failed` (wrong MIME, missing fields), `not_found`
-  (client).
-- **Phase 5 plan:** the file lands in Supabase Storage; a background worker
-  fires Stages 0/1 → 3a → 4 → 5; the plan row's status transitions
-  `draft → ready_for_review` when complete. Clients poll
-  `GET /api/plans/[id]` for status updates.
+- **Errors:**
+  - `validation_failed` — wrong MIME, missing fields, file too large,
+    Stage 0 preflight failed (details = `Stage0Failure[]`),
+    JSON parse / schema failure.
+  - `not_found` — client_id not found.
+  - `internal_error` — Storage upload failed.
+
+- **CLI follow-up:** `npm run generate-pending` claims the queued plan
+  and runs the full Stage 0 → 5 chain (FR mode) or Stage 3a → 5 chain
+  (JSON fallback). Plan transitions `queued → processing →
+  ready_for_review` (or `→ failed`). Expected ~25–40 min wall-clock,
+  ~$23–38 per plan; per-stage budget caps prevent runaway spend.
 
 #### 🪛 POST `/api/plans/[id]/approve`
 
