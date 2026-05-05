@@ -69,7 +69,40 @@ function quarterOf(iso: string | null): string {
   return `Q${q} ${d.getFullYear()}`;
 }
 
-function PlanStatusBadge({ status }: { status: PlanStatus }) {
+// Phase 10B.8 — derive a finer sub-stage label from which stage outputs
+// are populated. Without a `current_stage` DB column, we infer:
+//   - status='processing' + stage1_output NULL + has FR path → "Parsing Fact Review" (Stage 1)
+//   - status='processing' + stage1_output set + stage3a_output NULL → "Selecting recs / Quantifying" (Stages 2-3a)
+//   - status='processing' + stage3a_output set + stage4_output NULL → "Generating plan body" (Stage 4)
+//   - status='processing' + stage4_output set + stage5_output NULL → "Auditing" (Stage 5)
+// JSON fallback path skips Stage 1; stage1_output stays NULL but has input_clientprofile_path.
+export function derivePipelineStageLabel(plan: {
+  status: PlanStatus;
+  stage1_output: unknown;
+  stage3a_output: unknown;
+  stage4_output: unknown;
+  stage5_output: unknown;
+  input_fact_review_path: string | null;
+  input_clientprofile_path: string | null;
+}): string | null {
+  if (plan.status !== "processing") return null;
+  const isJsonMode =
+    !plan.input_fact_review_path && !!plan.input_clientprofile_path;
+  if (!isJsonMode && plan.stage1_output === null) return "Parsing Fact Review";
+  if (plan.stage3a_output === null) {
+    return isJsonMode ? "Quantifying" : "Selecting recs / Quantifying";
+  }
+  if (plan.stage4_output === null) return "Generating plan body";
+  if (plan.stage5_output === null) return "Auditing";
+  return null;
+}
+
+interface PlanStatusBadgeProps {
+  status: PlanStatus;
+  subStageLabel?: string | null;
+}
+
+function PlanStatusBadge({ status, subStageLabel }: PlanStatusBadgeProps) {
   const tone =
     status === "approved"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)", label: "Approved" }
@@ -80,14 +113,21 @@ function PlanStatusBadge({ status }: { status: PlanStatus }) {
           : status === "failed"
             ? { fg: "var(--s-red)", bg: "var(--s-red-bg)", label: "Failed" }
             : status === "processing"
-              ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Processing" }
+              ? {
+                  fg: "var(--s-amber)",
+                  bg: "var(--s-amber-bg)",
+                  label: subStageLabel ? `Processing — ${subStageLabel}` : "Processing",
+                }
               : { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Queued" };
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
       style={{ background: tone.bg, color: tone.fg }}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone.fg }} />
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${status === "processing" ? "animate-pulse" : ""}`}
+        style={{ background: tone.fg }}
+      />
       {tone.label}
     </span>
   );
@@ -113,6 +153,7 @@ export default async function PlanPage({ params }: RouteContext) {
   const stage4 = plan.stage4_output as unknown as Stage4Result | null;
   const status = plan.status as PlanStatus;
   const householdName = plan.clients?.household_name ?? "Client";
+  const subStage = derivePipelineStageLabel(plan);
 
   return (
     <div className="flex flex-col gap-6">
@@ -148,7 +189,7 @@ export default async function PlanPage({ params }: RouteContext) {
               className="mt-1 flex flex-wrap items-center gap-2 text-sm"
               style={{ color: "var(--text-2)" }}
             >
-              <PlanStatusBadge status={status} />
+              <PlanStatusBadge status={status} subStageLabel={subStage} />
               <span style={{ color: "var(--text-3)" }}>·</span>
               <span>Generated {fmtDate(plan.generated_at)}</span>
               {plan.fact_review_filename ? (
@@ -172,27 +213,38 @@ export default async function PlanPage({ params }: RouteContext) {
       {!stage4 && (status === "queued" || status === "processing") ? (
         <BannerCard
           icon={<Clock className="h-4 w-4" />}
-          title="Plan content not yet generated"
+          title={
+            status === "processing" && subStage
+              ? `Pipeline running — ${subStage}`
+              : "Plan content not yet generated"
+          }
           body={
             <>
-              The orchestrator is queued to assemble this plan from the fact
-              review and selected recommendations. Sections below show the
-              document structure with field-path placeholders. Average run
-              time: ~12 minutes.
+              The orchestrator runs locally on Hayden&rsquo;s machine via{" "}
+              <code style={{ fontFamily: "var(--font-mono)" }}>
+                npm run generate-pending
+              </code>
+              . Stage 0 → 5 typically completes in ~25–40 min at ~$23–38 per plan.
+              {status === "processing" && plan.cost_cents != null && (
+                <>
+                  {" "}Cumulative cost so far:{" "}
+                  <strong>${(plan.cost_cents / 100).toFixed(2)}</strong>.
+                </>
+              )}
             </>
           }
         />
       ) : null}
 
-      {!stage4 && status === "failed" ? (
+      {status === "failed" ? (
         <BannerCard
           tone="error"
           icon={<AlertTriangle className="h-4 w-4" />}
           title="Plan generation failed"
           body={
-            plan.failure_reason ? (
-              <>
-                The orchestrator returned an error during plan assembly.
+            <>
+              The orchestrator aborted plan assembly.
+              {plan.failure_reason && (
                 <code
                   className="mt-2 block rounded px-2 py-1.5 text-[11px]"
                   style={{
@@ -203,10 +255,66 @@ export default async function PlanPage({ params }: RouteContext) {
                 >
                   {plan.failure_reason}
                 </code>
-              </>
-            ) : (
-              "The orchestrator returned an error during plan assembly."
-            )
+              )}
+              <dl
+                className="mt-3 grid grid-cols-[140px_1fr] gap-x-4 gap-y-1 text-[11px]"
+                style={{ color: "var(--text-2)" }}
+              >
+                <dt
+                  className="uppercase"
+                  style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
+                >
+                  Cumulative cost
+                </dt>
+                <dd>
+                  {plan.cost_cents != null
+                    ? `$${(plan.cost_cents / 100).toFixed(2)}`
+                    : "—"}
+                </dd>
+                <dt
+                  className="uppercase"
+                  style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
+                >
+                  Last stage reached
+                </dt>
+                <dd>
+                  {plan.stage5_output
+                    ? "Stage 5 (audit envelope persisted)"
+                    : plan.stage4_output
+                      ? "Stage 4 (plan body envelope persisted)"
+                      : plan.stage3a_output
+                        ? "Stage 3a (recommendations quantified)"
+                        : plan.stage1_output
+                          ? "Stage 1 (Fact Review parsed)"
+                          : "Stage 0 / 1 (parse not completed)"}
+                </dd>
+                <dt
+                  className="uppercase"
+                  style={{ color: "var(--text-3)", letterSpacing: "0.04em" }}
+                >
+                  Failed at
+                </dt>
+                <dd>
+                  {plan.processing_completed_at
+                    ? fmtDate(plan.processing_completed_at)
+                    : "—"}
+                </dd>
+              </dl>
+              <div
+                className="mt-3 text-[11px]"
+                style={{ color: "var(--text-3)" }}
+              >
+                Failure envelopes are persisted to{" "}
+                <span style={{ fontFamily: "var(--font-mono)" }}>
+                  stage{`{1,3a,4,5}`}_output
+                </span>{" "}
+                JSONB columns for diagnostic. Re-claim the plan via{" "}
+                <code style={{ fontFamily: "var(--font-mono)" }}>
+                  npm run generate-pending
+                </code>{" "}
+                after addressing the cause; cached stages will be skipped.
+              </div>
+            </>
           }
         />
       ) : null}
