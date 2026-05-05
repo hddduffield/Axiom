@@ -58,6 +58,19 @@ interface Stage0Failure {
   remediation?: string;
 }
 
+const STAGE0_CHECK_LABELS: Record<string, string> = {
+  file_integrity: "File integrity",
+  required_sections_present: "Required sections",
+  required_field_markers: "Required fields",
+  volatile_rates_freshness: "Volatile rates freshness",
+  content_hash: "Content hash",
+  unknown: "Validator",
+};
+
+function humanizeCheck(check: string): string {
+  return STAGE0_CHECK_LABELS[check] ?? check;
+}
+
 const FR_ACCEPT_EXTENSIONS = [".docx", ".pdf"];
 const FR_MAX_BYTES = 25 * 1024 * 1024; // 25 MB
 
@@ -416,22 +429,47 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
               <div className="flex-1 text-[13px]" style={{ color: "var(--text)" }}>
                 <strong>{topLevelError}</strong>
                 {stage0Failures.length > 0 && (
-                  <ul className="mt-2 space-y-1.5 pl-4 text-xs" style={{ listStyleType: "disc", color: "var(--text-2)" }}>
+                  <ul className="mt-2 space-y-2 pl-4 text-xs" style={{ listStyleType: "disc", color: "var(--text-2)" }}>
                     {stage0Failures.map((f, i) => (
                       <li key={i}>
-                        <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-                          {f.check}
-                        </span>
-                        {": "}
-                        {f.reason}
+                        <div>
+                          <span
+                            className="text-[10px] uppercase"
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              color: "var(--text-3)",
+                              letterSpacing: "0.06em",
+                            }}
+                          >
+                            {humanizeCheck(f.check)}
+                          </span>
+                          <span style={{ color: "var(--text)" }}>{" — "}{f.reason}</span>
+                        </div>
                         {f.remediation && (
-                          <div className="mt-0.5" style={{ color: "var(--text-3)" }}>
-                            → {f.remediation}
+                          <div
+                            className="mt-1 rounded-sm px-2 py-1 text-[11px]"
+                            style={{
+                              background: "var(--surface-2)",
+                              color: "var(--text-2)",
+                              borderLeft: "2px solid var(--accent)",
+                            }}
+                          >
+                            <strong style={{ color: "var(--text)" }}>Fix:</strong>{" "}
+                            {f.remediation}
                           </div>
                         )}
                       </li>
                     ))}
                   </ul>
+                )}
+                {stage0Failures.length > 0 && (
+                  <div
+                    className="mt-3 text-[11px]"
+                    style={{ color: "var(--text-2)" }}
+                  >
+                    Update the Fact Review document and re-upload — the client and
+                    filename are preserved.
+                  </div>
                 )}
               </div>
             </div>
