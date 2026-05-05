@@ -1,10 +1,16 @@
 # Axiom v1 — Ship State
 
-**Status:** v1 production-deployed, mid-internal-rollout to PSA Wealth's
-3-advisor team. Pending production sign-in verification (deferred ~12h
-due to Supabase free-tier email rate limit hit during build iteration).
+**Status:** v1.5 build complete. Full Stage 0 → 5 pipeline wired into
+production via Phase 10B (12 commits, all on main, all pushed). Holloway
+local E2E validated end-to-end at $35.60 / 25m 42s / 0 stage failures
+on 2026-05-04 (`artifacts/integration_v2/manifest.json`). Pending: first
+production live test on a real client Fact Review (Hayden's call) +
+manual application of migration `0004_input_fact_review_path.sql` to
+Supabase project `giukjljtruxygyzwvtiz` before that production run.
 
-**Demo target:** Will + Carl walkthrough.
+**Demo target:** Will + Carl walkthrough (v1 click-through still
+exercises every UI surface; v1.5 added FR upload as the new default
+generation path).
 
 ---
 
@@ -43,11 +49,31 @@ Invitation flow: Supabase Dashboard → Authentication → Users → "Invite use
 | Plan view (`/plans/[id]`) | 14-section long-form rendering with sticky section nav; Approve / Archive / Export PDF actions |
 | Plan generation (`/plans/generate`) | Multipart upload form: pick client, paste fact_review filename, upload ClientProfile JSON + SelectedRecommendations JSON → queues plan |
 
-### AI engine — Stage 3a → 4 → 5 live
+### AI engine — full Stage 0 → 5 live (Phase 10B / v1.5)
 
-- 81-rec Holloway plan generation validated end-to-end at $14.17 / 18.6 min wall-clock (3rd attempt; first two surfaced a Stage 4 schema-validation failure that the diagnostic patch in `baf60b7` resolved by persisting `Stage4ResultFailed._failure_context` to JSONB and skipping cached Stage 3a on re-claim).
-- Status state machine: `queued → processing → ready_for_review → approved` (or `→ failed` / `→ archived`).
-- Hard cost cap: $40 per plan, honored across re-claims (cumulative cost seeded from `plans.cost_cents` at claim time).
+- **Holloway end-to-end validation (2026-05-04):** $35.60 / 25m 42s
+  cumulative across Stages 0/1/2/3a/3b/4/5, all clean, 24/24 expected
+  Stage 4 sections present, 6 Stage 5 findings. Per-stage:
+  - Stage 0: $0 / <1s — `passed_with_warnings` (volatile-rates).
+  - Stage 1: $0.97 / 2m 9s — ClientProfile (archetype=PRE).
+  - Stage 2: $4.33 / 6m 9s — 62 recs selected.
+  - Stage 3a: $22.05 / 6m 24s — 62 recs quantified, 1 retry batch.
+  - Stage 3b: $0 / <1s — deterministic; 62 sequenced recs.
+  - Stage 4: $6.66 / 10m 15s — 2-pass tool-use; 286-row roadmap.
+  - Stage 5: $1.59 / 44s — 6 audit findings.
+- **Pre-Phase-10B baseline (v1):** 81-rec Holloway Stage 3a→5 at
+  $14.17 / 18.6 min — preserved at `artifacts/integration_v1/`.
+- Status state machine: `queued → processing → ready_for_review →
+  approved` (or `→ failed` / `→ archived`). Sub-stage labels derived
+  from which `stageN_output` JSONB columns are populated; rendered on
+  `/plans/[id]` ("Processing — Parsing Fact Review", etc.).
+- **Per-stage budget caps**: stage1 $5 / stage2 $10 / stage3a $30 /
+  stage4 $25 / stage5 $5; total per-run cap $150. Cumulative cost
+  honored across re-claims; skip-on-cache short-circuits already-
+  completed stages on a re-claim.
+- **Submission**: `/plans/generate` accepts `.docx` or `.pdf` Fact
+  Review by default; ClientProfile + SelectedRecommendations JSON
+  upload preserved as a power-user fallback (skips Stages 1+2).
 
 ### PDF export — React-PDF, ~290 KB / ~64 pages on Holloway
 
@@ -63,30 +89,45 @@ Invitation flow: Supabase Dashboard → Authentication → Users → "Invite use
 
 ---
 
-## End-to-end plan generation flow
+## End-to-end plan generation flow (Phase 10B / v1.5)
 
-This is the marquee v1 deliverable. Walkthrough:
+This is the marquee v1.5 deliverable. Full pipeline runs from a Fact
+Review .docx/.pdf, no manual JSON authoring required.
 
-1. Advisor goes to `/plans/generate`, selects a client, enters the Fact
-   Review filename (record-keeping), uploads the prepared
-   `ClientProfile.json` + `SelectedRecommendations.json`. Click submit.
-2. Web app validates the JSONs server-side (Zod schemas from the
-   orchestrator), uploads both to Supabase Storage at
-   `plan-inputs/{plan_id}/{name}.json`, inserts a `plans` row with
-   `status='queued'`. UI navigates back to the client detail page; the
-   dashboard widget updates to "1 queued".
+1. Advisor goes to `/plans/generate`, selects a client, uploads a
+   **Fact Review (.docx or .pdf, ≤25 MB)**. Filename auto-syncs from
+   the picked file. Click submit.
+2. Web app runs **Stage 0 preflight** server-side against `/tmp/`
+   (deterministic, <1s). On `failed` → 422 with the failures list
+   surfaced as a red bullet list above the form (humanized check
+   labels + remediation callouts; client + filename selection
+   preserved). On `passed`/`passed_with_warnings` → upload to
+   `plan-inputs/{plan_id}/fact_review.{ext}`, insert `plans` row with
+   `status='queued'` and `input_fact_review_path` populated.
 3. **Hayden runs the CLI locally:** `npm run generate-pending` claims
-   the oldest queued plan atomically, downloads inputs from Storage,
-   runs Stages 3a → 4 → 5 against Anthropic Opus 4.7, persists each
-   stage's output back to the `plans` row, flips `status` to
-   `ready_for_review`. Cost ≈ $14-18 per plan, wall-clock ≈ 15-25 min.
-4. Advisor opens `/plans/[id]`, reviews the 14-section body, clicks
-   **Approve** → status flips to `approved`.
+   the oldest queued plan atomically. Detects FR mode (`input_fact_review_path`
+   set) and runs the full chain Stage 0 → 1 → 2 → 3a → 3b → 4 → 5
+   against Anthropic Opus 4.7. Per-stage budget caps + skip-on-cache
+   make re-claims after a partial failure idempotent. Persists each
+   stage's output to JSONB + Storage. Flips `status` to
+   `ready_for_review`. Cost ≈ $23–38 per plan, wall-clock ≈ 25–40 min.
+4. Advisor opens `/plans/[id]`. Mid-flight the status badge derives
+   sub-stage from `stageN_output` columns ("Processing — Generating
+   plan body", etc., with a pulsed dot). Reviews the 14-section body,
+   clicks **Approve** → status flips to `approved`.
 5. Advisor clicks **Export PDF** → downloads `PSA-Plan-<client>-<date>.pdf`
    to email or hand to the client.
 
-The CLI runs on Hayden's laptop because v1 doesn't have a hosted worker
-yet. v1.5 path: Inngest or pg-boss processes queued plans automatically.
+The CLI runs on Hayden's laptop because v1.5 doesn't have a hosted
+worker yet. v2 path: Inngest or pg-boss processes queued plans
+automatically.
+
+**Power-user fallback path:** the form's collapsed "Or upload pre-built
+JSONs (advanced)" expander accepts `ClientProfile.json` +
+`SelectedRecommendations.json` directly; the CLI detects this mode via
+the `input_clientprofile_path` + `input_selected_recs_path` columns
+(with `input_fact_review_path` NULL) and skips Stages 1+2. Useful for
+re-running plans where the upstream parses already exist.
 
 ---
 
@@ -192,13 +233,20 @@ to show there's a roadmap.
 
 - [x] Web deployed to Vercel, sign-in page renders publicly
 - [x] All 7 web pages click-through end-to-end against real data
-- [x] Plan generation flow validated end-to-end on Holloway ($14.17, 18.6 min)
+- [x] Plan generation flow validated end-to-end on Holloway (v1: $14.17 / 18.6 min Stage 3a→5; v1.5: $35.60 / 25m 42s Stage 0→5)
 - [x] PDF export works (visually approved by Hayden)
 - [x] Mobile app structurally complete (auth + notes list + new-note)
-- [x] All 28 commits on `main`, pushed to GitHub
-- [ ] Production sign-in verified (deferred ~12h due to email rate limit; pre-demo morning)
+- [x] All commits on `main`, pushed to GitHub
+- [x] Phase 10B build complete (12 commits 10B.1 → 10B.12)
+- [ ] Migration 0004 applied to production Supabase (manual; paste SQL into Dashboard)
+- [ ] Production sign-in verified
 - [ ] Will + Carl invited and signed in
-- [ ] Demo delivered
+- [ ] First production live test (real client FR upload → Stage 0→5 → approved plan)
 
-The unchecked items don't require any more code — only operational
-follow-through.
+## v1.5 readiness statement
+
+**v1.5 is build-complete and ready for first production live test on a
+real client Fact Review.**
+
+The unchecked items above don't require any more code — only operational
+follow-through (one DB migration paste + one operator-driven test run).
