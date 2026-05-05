@@ -1,28 +1,52 @@
 import { NextResponse } from "next/server";
+import { writeFile, unlink, mkdtemp } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 import { ClientProfileSchema } from "@/lib/orchestrator/schemas/clientProfile";
 import { SelectedRecommendationsSchema } from "@/lib/orchestrator/schemas/selectedRecommendations";
+import { validateFactReview } from "@/lib/orchestrator/glue/stage0Validator";
 import type { PlansApi } from "@/lib/api/types";
 
 const STORAGE_BUCKET = "plan-inputs";
 const MAX_JSON_BYTES = 10 * 1024 * 1024; // 10 MB ceiling per JSON blob
+const MAX_FR_BYTES = 25 * 1024 * 1024; // 25 MB ceiling for the .docx/.pdf
+const FR_ACCEPT_EXTENSIONS = [".docx", ".pdf"];
 
-// POST /api/plans/generate (Phase 5b)
+function getFileExtension(filename: string): string | null {
+  const i = filename.lastIndexOf(".");
+  if (i === -1) return null;
+  return filename.slice(i).toLowerCase();
+}
+
+// POST /api/plans/generate (Phase 10B — dual mode)
 //
-// v1 skips Stages 0/1/2; the advisor uploads the already-prepared
-// ClientProfile + SelectedRecommendations JSON blobs. We store both in
-// Supabase Storage at plan-inputs/{plan_id}/{file}.json, insert a plans
-// row with status='queued', and return 202. The CLI script
-// `scripts/generatePending.ts` claims queued plans and runs Stage 3a → 4
-// → 5 against the Anthropic API.
+// Two submission modes, dispatched by which fields are present in the form:
+//
+// 1. FR mode (default, preferred): a .docx or .pdf Fact Review is uploaded
+//    in the `fact_review` field. Stage 0 runs server-side as a preflight
+//    against /tmp/. On Stage 0 failed, return 422 with the failures array
+//    so the form can surface actionable errors. On passed/passed_with_warnings,
+//    insert the plans row, upload the FR to Storage at
+//    plan-inputs/{plan_id}/fact_review.{ext}, populate input_fact_review_path.
+//    The CLI then runs Stages 1 → 2 → 3a → 3b → 4 → 5.
+//
+// 2. JSON fallback mode (power-user): pre-built ClientProfile +
+//    SelectedRecommendations JSONs are uploaded in the `clientprofile` +
+//    `selected_recommendations` fields. Validated against the orchestrator
+//    Zod schemas, uploaded to Storage as in Phase 5b. The CLI detects the
+//    cached input paths and skips Stages 1+2.
 //
 // Form fields (multipart/form-data):
 //   client_id (string UUID, required)
 //   fact_review_filename (string, required, for record-keeping)
-//   clientprofile (File, JSON, required) — ClientProfileSchema
-//   selected_recommendations (File, JSON, required) — SelectedRecommendationsSchema
+//   fact_review (File, .docx|.pdf, required for FR mode)
+//   clientprofile (File, JSON, required for JSON fallback mode)
+//   selected_recommendations (File, JSON, required for JSON fallback mode)
+//
+// FR mode wins when fact_review is present, even if JSONs are also provided.
 export async function POST(request: Request) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
@@ -41,6 +65,7 @@ export async function POST(request: Request) {
 
   const clientId = formData.get("client_id");
   const factReviewFilename = formData.get("fact_review_filename");
+  const frField = formData.get("fact_review");
   const cpField = formData.get("clientprofile");
   const recsField = formData.get("selected_recommendations");
 
@@ -50,23 +75,21 @@ export async function POST(request: Request) {
   if (typeof factReviewFilename !== "string" || factReviewFilename.length === 0) {
     return err("validation_failed", "Missing fact_review_filename form field.");
   }
-  // FormData.get returns FormDataEntryValue | null = string | File | null.
-  // `instanceof` on the union fails type-check; filter primitives + null first.
-  if (!cpField || typeof cpField === "string") {
-    return err("validation_failed", "Missing clientprofile file upload.");
-  }
-  if (!recsField || typeof recsField === "string") {
-    return err("validation_failed", "Missing selected_recommendations file upload.");
-  }
-  if (cpField.size > MAX_JSON_BYTES || recsField.size > MAX_JSON_BYTES) {
+
+  // Mode detection: FR wins.
+  const hasFr = !!frField && typeof frField !== "string";
+  const hasJson =
+    !!cpField && typeof cpField !== "string" &&
+    !!recsField && typeof recsField !== "string";
+
+  if (!hasFr && !hasJson) {
     return err(
       "validation_failed",
-      `JSON inputs must each be <= ${MAX_JSON_BYTES} bytes.`,
+      "Provide either a Fact Review file (.docx or .pdf) OR pre-built ClientProfile + SelectedRecommendations JSONs.",
     );
   }
 
-  // Verify client exists (RLS will also block unauthorized; this gives a
-  // clean 404 instead of a generic insert FK failure).
+  // Verify client exists.
   const { data: clientRow, error: clientErr } = await auth.supabase
     .from("clients")
     .select("id")
@@ -75,16 +98,132 @@ export async function POST(request: Request) {
   if (clientErr) return err(mapDbError(clientErr), dbErrorMessage(clientErr));
   if (!clientRow) return err("not_found", `No client with id ${clientId}.`);
 
-  // Parse JSON blobs.
+  // ────────────────────────────────────────────────────────────────────
+  // Path A: Fact Review mode
+  // ────────────────────────────────────────────────────────────────────
+  if (hasFr) {
+    const frFile = frField as File;
+    if (frFile.size === 0) {
+      return err("validation_failed", "Fact Review file is empty.");
+    }
+    if (frFile.size > MAX_FR_BYTES) {
+      return err(
+        "validation_failed",
+        `Fact Review file too large (${(frFile.size / 1024 / 1024).toFixed(1)} MB). Limit is ${MAX_FR_BYTES / 1024 / 1024} MB.`,
+      );
+    }
+    const ext = getFileExtension(frFile.name);
+    if (!ext || !FR_ACCEPT_EXTENSIONS.includes(ext)) {
+      return err(
+        "validation_failed",
+        `Unsupported file type "${ext ?? "(none)"}". Upload a .docx or .pdf.`,
+      );
+    }
+
+    // Stage 0 preflight — validateFactReview reads from a file path, so we
+    // write the upload to /tmp/ and clean up before responding.
+    const arrayBuffer = await frFile.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const tmpDir = await mkdtemp(join(tmpdir(), "plan-fr-"));
+    const tmpPath = join(tmpDir, `fact_review${ext}`);
+    let stage0Failed = false;
+    try {
+      await writeFile(tmpPath, buffer);
+      const stage0 = await validateFactReview(tmpPath);
+      if (stage0.status === "failed") {
+        stage0Failed = true;
+        return err(
+          "validation_failed",
+          `Fact Review failed Stage 0 validation (${stage0.failures.length} ${stage0.failures.length === 1 ? "issue" : "issues"}).`,
+          stage0.failures,
+        );
+      }
+      // passed or passed_with_warnings — proceed.
+    } catch (e) {
+      stage0Failed = true;
+      return err(
+        "validation_failed",
+        `Stage 0 preflight error: ${(e as Error).message}`,
+      );
+    } finally {
+      // Clean up the tmp file regardless. Best-effort; non-blocking.
+      try {
+        await unlink(tmpPath);
+      } catch {
+        /* ignore */
+      }
+      void stage0Failed;
+    }
+
+    // Insert the plans row first to mint a stable plan_id for the Storage path.
+    const { data: plan, error: planErr } = await auth.supabase
+      .from("plans")
+      .insert({
+        client_id: clientId,
+        generated_by_advisor_id: auth.advisor.id,
+        status: "queued",
+        fact_review_filename: factReviewFilename,
+      })
+      .select("id, status, generated_at")
+      .single();
+    if (planErr) return err(mapDbError(planErr), dbErrorMessage(planErr));
+
+    const frPath = `${plan.id}/fact_review${ext}`;
+    const frUpload = await auth.supabase.storage
+      .from(STORAGE_BUCKET)
+      .upload(frPath, buffer, {
+        contentType:
+          ext === ".pdf"
+            ? "application/pdf"
+            : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        upsert: false,
+      });
+    if (frUpload.error) {
+      // Storage upload failed: roll back the plans row.
+      await auth.supabase.from("plans").delete().eq("id", plan.id);
+      return err(
+        "internal_error",
+        `Fact Review storage upload failed: ${frUpload.error.message}`,
+      );
+    }
+
+    const fullFrPath = `${STORAGE_BUCKET}/${frPath}`;
+    const { error: pathErr } = await auth.supabase
+      .from("plans")
+      .update({ input_fact_review_path: fullFrPath })
+      .eq("id", plan.id);
+    if (pathErr) return err(mapDbError(pathErr), dbErrorMessage(pathErr));
+
+    const body: PlansApi.GenerateAcceptedResponse = {
+      id: plan.id,
+      status: "queued",
+      queued_at: plan.generated_at,
+    };
+    return NextResponse.json(body, { status: 202 });
+  }
+
+  // ────────────────────────────────────────────────────────────────────
+  // Path B: JSON fallback mode (power-user)
+  // ────────────────────────────────────────────────────────────────────
+  // hasJson === true; cpField/recsField are confirmed File-like.
+  const cpFile = cpField as File;
+  const recsFile = recsField as File;
+  if (cpFile.size > MAX_JSON_BYTES || recsFile.size > MAX_JSON_BYTES) {
+    return err(
+      "validation_failed",
+      `JSON inputs must each be <= ${MAX_JSON_BYTES} bytes.`,
+    );
+  }
+
   let cpRaw: unknown;
   let recsRaw: unknown;
   try {
-    cpRaw = JSON.parse(await cpField.text());
+    cpRaw = JSON.parse(await cpFile.text());
   } catch (e) {
     return err("validation_failed", `clientprofile is not valid JSON: ${(e as Error).message}`);
   }
   try {
-    recsRaw = JSON.parse(await recsField.text());
+    recsRaw = JSON.parse(await recsFile.text());
   } catch (e) {
     return err(
       "validation_failed",
@@ -92,10 +231,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Validate against the orchestrator's Zod schemas. This is the same
-  // validation Stage 3a will do later — we run it up-front so the advisor
-  // sees schema errors immediately rather than discovering them when the
-  // CLI tries to process.
   const cpParsed = ClientProfileSchema.safeParse(cpRaw);
   if (!cpParsed.success) {
     return err(
@@ -113,7 +248,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Insert the plans row first so we have a stable plan_id for Storage paths.
   const { data: plan, error: planErr } = await auth.supabase
     .from("plans")
     .insert({
@@ -126,7 +260,6 @@ export async function POST(request: Request) {
     .single();
   if (planErr) return err(mapDbError(planErr), dbErrorMessage(planErr));
 
-  // Upload both JSONs to Storage at plan-inputs/{plan_id}/{name}.json.
   const cpPath = `${plan.id}/clientprofile.json`;
   const recsPath = `${plan.id}/selected_recs.json`;
 
@@ -137,8 +270,6 @@ export async function POST(request: Request) {
       upsert: false,
     });
   if (cpUpload.error) {
-    // Storage upload failure: roll back the plans row so we don't leave a
-    // queued plan with no inputs to read.
     await auth.supabase.from("plans").delete().eq("id", plan.id);
     return err("internal_error", `clientprofile storage upload failed: ${cpUpload.error.message}`);
   }
@@ -158,7 +289,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Patch the plan row with the storage paths now that uploads succeeded.
   const fullCpPath = `${STORAGE_BUCKET}/${cpPath}`;
   const fullRecsPath = `${STORAGE_BUCKET}/${recsPath}`;
   const { error: pathErr } = await auth.supabase
@@ -170,7 +300,6 @@ export async function POST(request: Request) {
     .eq("id", plan.id);
   if (pathErr) return err(mapDbError(pathErr), dbErrorMessage(pathErr));
 
-  // TODO: Phase 5e — audit_log insert (entity='plan', action='created').
   const body: PlansApi.GenerateAcceptedResponse = {
     id: plan.id,
     status: "queued",
