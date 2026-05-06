@@ -1,7 +1,12 @@
-// Magic-link callback. Supabase Auth redirects here with a `code` query
-// param after the user clicks the email link; we exchange it for a
-// session via supabase.auth.exchangeCodeForSession() and then bounce to
-// the original destination.
+// Magic-link callback (legacy fallback path).
+//
+// Phase 12: the primary sign-in flow is now OTP code entry — see
+// src/app/(auth)/sign-in/sign-in-form.tsx. This route is kept for
+// backward compatibility so any magic link still in flight (in someone's
+// inbox from before the cutover, or from a future surface that opts back
+// into emailRedirectTo) continues to work. Supabase Auth redirects here
+// with a `code` query param; we exchange it for a session via
+// supabase.auth.exchangeCodeForSession() and bounce to the destination.
 //
 // Sits OUTSIDE the (auth) and (app) route groups so it isn't accidentally
 // gated by either layout.

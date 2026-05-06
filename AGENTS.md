@@ -1534,3 +1534,67 @@ itself is gated on the client side.
 - Action item lifecycle (Phase 5d spawn / auto-close hooks): unchanged.
   The archived filter only affects which items render, not how they
   behave when transitioned.
+
+# Phase 12: web sign-in migrated from magic-link to OTP code
+
+Corporate-email URL prefetchers (Microsoft Safe Links, Mimecast, Google
+Workspace's link-warming) consume the one-time code embedded in
+Supabase magic links *before* the user clicks. Three @psawealth.com
+accounts hit this in production. The fix is the same flow mobile has
+used since Phase 7: ship the 6-digit code in the email body and verify
+it via `verifyOtp` instead of `exchangeCodeForSession`.
+
+## User flow
+
+1. User enters email on `/sign-in` → form transitions to step 2.
+2. Email arrives with a 6-digit code (lives in the Magic Link
+   template's `{{ .Token }}` rendering — no link click required).
+3. User types the code into a single large input on the still-open
+   `/sign-in` tab (numeric inputmode for mobile keyboards).
+4. `verifyOtp({ email, token, type: 'email' })` succeeds → session
+   cookie set → full-page navigation to `/dashboard` lets `proxy.ts`
+   read the new cookie cleanly.
+
+## Supabase API shape
+
+- Send: `signInWithOtp({ email, options: { shouldCreateUser: false } })`.
+  **No `emailRedirectTo`** — its presence is what flips Supabase from
+  OTP-code mode to magic-link mode. Omitting it requests the code.
+- Verify: `verifyOtp({ email, token: code, type: 'email' })`.
+- Resend: same `signInWithOtp` call; client enforces a 60-second
+  cooldown on the Resend button to keep clear of Supabase's per-email
+  rate limit.
+
+## Backward compatibility
+
+`src/app/auth/callback/route.ts` is **kept** as a legacy fallback. Any
+magic link already sitting in someone's inbox (or from a surface that
+re-opts into `emailRedirectTo`) still exchanges the code via
+`exchangeCodeForSession`. The route is no longer the primary path; the
+file's header comment reflects this.
+
+No changes to: `advisors` table, `auth.users`, RLS policies,
+`is_active_advisor()`, `proxy.ts`. Only the form and its CSS shifted.
+
+## Email template
+
+Supabase Dashboard → Auth → Email Templates → Magic Link. The default
+template renders both a link and `{{ .Token }}`; the OTP code path
+needs `{{ .Token }}` to be visible. Polishing the template (PSA
+branding, removing the link block, etc.) is deferred to v1.6.
+
+## Rate limits unchanged
+
+3/hour per email + 30/hour project-wide (Supabase defaults). The
+client-side 60s Resend cooldown reduces accidental hits but doesn't
+change the server-enforced limits.
+
+## Files touched
+
+- `src/app/(auth)/sign-in/sign-in-form.tsx` — two-step state machine,
+  preserves Phase 9.21 sp-mglass2 styling.
+- `src/app/(auth)/sign-in/sign-in.css` — added `.sp-mglass2__code`
+  (large monospace input, letter-spacing 0.5em) + `.sp-mglass2__row`
+  (two-button cluster for "Use a different email" + "Resend code").
+- `src/app/auth/callback/route.ts` — header comment update, no logic
+  change.

@@ -1,27 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
 
-// Web auth — magic link via supabase.auth.signInWithOtp + emailRedirectTo
-// pointing at /auth/callback (which exchanges the code via
-// exchangeCodeForSession). Mobile takes a different path (OTP code, see
-// mobile/app/(auth)/sign-in.tsx); the web path stays click-the-link.
+// Phase 12: web sign-in migrated from magic-link to OTP code. Corporate
+// email URL prefetchers (Microsoft Safe Links, Mimecast, etc.) consume
+// the one-time code embedded in magic links before the user clicks; the
+// 6-digit code lives in the email body where prefetchers don't trigger
+// it. Mobile (mobile/app/(auth)/*.tsx) has been on this flow since
+// Phase 7 — same Supabase API (signInWithOtp + verifyOtp), now mirrored
+// on web.
 //
-// Phase 9.21: re-skinned for sp-mglass2 (modern-glass-v2) variant.
-// Floating-label field replaces the shadcn Form/Input stack — the
-// floating-label CSS in sign-in.css needs the bare <input> + sibling
-// <label> structure to drive `:focus + label` and `.is-filled label`
-// transitions. Arrow-icon CTA replaces the shadcn Button.
+// Flow:
+//   1. Email entry → signInWithOtp({ email, shouldCreateUser:false })
+//      with NO emailRedirectTo (its presence is what flips Supabase
+//      from OTP-code mode to magic-link mode).
+//   2. Code entry → verifyOtp({ email, token, type:'email' }). On
+//      success a full-page navigation to redirectTo lets the proxy
+//      read the new session cookie cleanly.
 //
-// The "Continue to demo dashboard →" button from the source mockup is
-// intentionally omitted (production users click the email link, not an
-// in-app button — see prior Phase 9.2 rationale).
+// Phase 9.21 sp-mglass2 (modern-glass-v2) styling preserved — bare
+// <input>+sibling<label> structure for the floating-label CSS hooks.
+//
+// /auth/callback still exists (legacy magic-link path) so any link
+// already in flight from a prior request keeps working.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CODE_RE = /^\d{6}$/;
+const RESEND_COOLDOWN_SECONDS = 60;
 
 interface SignInFormProps {
   redirectTo: string;
@@ -43,55 +52,131 @@ function ArrowRight() {
 }
 
 export function SignInForm({ redirectTo, errorMessage }: SignInFormProps) {
+  const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [sentEmail, setSentEmail] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const codeInputRef = useRef<HTMLInputElement>(null);
 
-  const valid = EMAIL_RE.test(email);
-  const showFieldError = email.length > 0 && !valid;
+  const validEmail = EMAIL_RE.test(email);
+  const validCode = CODE_RE.test(code);
+  const showEmailError = email.length > 0 && !validEmail;
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (step !== "code") return;
+    const id = setTimeout(() => codeInputRef.current?.focus(), 50);
+    return () => clearTimeout(id);
+  }, [step]);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const id = setInterval(
+      () => setResendCooldown((s) => Math.max(0, s - 1)),
+      1000,
+    );
+    return () => clearInterval(id);
+  }, [resendCooldown]);
+
+  async function sendCode(emailValue: string) {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email: emailValue,
+      options: { shouldCreateUser: false },
+    });
+    return error;
+  }
+
+  async function onEmailSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!valid || submitting) return;
+    if (!validEmail || submitting) return;
 
     setSubmitting(true);
-    const supabase = createClient();
-    const callbackUrl = new URL("/auth/callback", window.location.origin);
-    callbackUrl.searchParams.set("next", redirectTo);
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: callbackUrl.toString() },
-    });
-
+    const error = await sendCode(email);
     setSubmitting(false);
 
     if (error) {
-      toast.error("Couldn't send sign-in link", { description: error.message });
+      toast.error("Couldn't send code", { description: error.message });
       return;
     }
 
-    setSentEmail(email);
-    setSent(true);
-    toast.success("Check your email for a sign-in link");
+    setStep("code");
+    setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    toast.success("Code sent — check your email");
+  }
+
+  async function onCodeSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!validCode || submitting) return;
+
+    setSubmitting(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: code,
+      type: "email",
+    });
+
+    if (error) {
+      setSubmitting(false);
+      const msg = (error.message ?? "").toLowerCase();
+      if (msg.includes("expire")) {
+        toast.error("Code expired", {
+          description: "Tap Resend below for a new code.",
+        });
+      } else if (msg.includes("invalid") || msg.includes("token")) {
+        toast.error("Invalid code", {
+          description: "Double-check the email and try again.",
+        });
+        setCode("");
+        codeInputRef.current?.focus();
+      } else {
+        toast.error("Couldn't verify code", { description: error.message });
+      }
+      return;
+    }
+
+    // Full-page navigation so the proxy reads the freshly-set session
+    // cookie when routing to /dashboard.
+    window.location.assign(redirectTo);
+  }
+
+  async function onResend() {
+    if (resendCooldown > 0 || submitting) return;
+    setSubmitting(true);
+    const error = await sendCode(email);
+    setSubmitting(false);
+    if (error) {
+      toast.error("Couldn't resend code", { description: error.message });
+      return;
+    }
+    setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    setCode("");
+    codeInputRef.current?.focus();
+    toast.success("New code sent");
+  }
+
+  function backToEmail() {
+    setStep("email");
+    setCode("");
+    setResendCooldown(0);
   }
 
   return (
     <>
       <h1 className="sp-mglass2__title">
-        {sent ? "Check your inbox." : "Welcome back."}
+        {step === "email" ? "Welcome back." : "Enter your code."}
       </h1>
 
-      {errorMessage ? (
+      {errorMessage && step === "email" ? (
         <div className="sp-mglass2__error">{errorMessage}</div>
       ) : null}
 
-      {!sent ? (
-        <form onSubmit={onSubmit} className="sp-mglass2__form">
+      {step === "email" ? (
+        <form onSubmit={onEmailSubmit} className="sp-mglass2__form">
           <div
             className={`sp-mglass2__field${email ? " is-filled" : ""}${
-              showFieldError ? " is-err" : ""
+              showEmailError ? " is-err" : ""
             }`}
           >
             <input
@@ -106,44 +191,78 @@ export function SignInForm({ redirectTo, errorMessage }: SignInFormProps) {
             />
             <label htmlFor="mg2-email">Email</label>
           </div>
-          {showFieldError ? (
+          {showEmailError ? (
             <div className="sp-mglass2__err">Enter a valid email address.</div>
           ) : null}
           <button
             type="submit"
             className="sp-mglass2__cta"
-            disabled={!valid || submitting}
-            data-api="POST /api/auth/magic-link"
+            disabled={!validEmail || submitting}
           >
-            <span>{submitting ? "Sending…" : "Request one-time code"}</span>
+            <span>{submitting ? "Sending…" : "Send 6-digit code"}</span>
             <ArrowRight />
           </button>
         </form>
       ) : (
-        <div className="sp-mglass2__sent">
+        <form onSubmit={onCodeSubmit} className="sp-mglass2__form">
           <div className="sp-mglass2__sent-row">
             <div className="sp-mglass2__sent-icon">
               <Check className="h-4 w-4" strokeWidth={2.5} />
             </div>
             <div>
-              <div className="sp-mglass2__sent-title">One-time code sent</div>
+              <div className="sp-mglass2__sent-title">Code sent</div>
               <div className="sp-mglass2__sent-sub">
-                to <span className="mono">{sentEmail}</span>
+                to <span className="mono">{email}</span> — it may take a moment
+                to arrive.
               </div>
             </div>
           </div>
+          <input
+            ref={codeInputRef}
+            id="mg2-code"
+            type="text"
+            inputMode="numeric"
+            pattern="\d{6}"
+            autoComplete="one-time-code"
+            value={code}
+            onChange={(e) =>
+              setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
+            maxLength={6}
+            aria-label="Six-digit verification code"
+            placeholder="······"
+            className="sp-mglass2__code"
+            disabled={submitting}
+          />
           <button
-            type="button"
-            className="sp-mglass2__ghost"
-            onClick={() => {
-              setSent(false);
-              setSentEmail("");
-              setEmail("");
-            }}
+            type="submit"
+            className="sp-mglass2__cta"
+            disabled={!validCode || submitting}
           >
-            Use a different email
+            <span>{submitting ? "Verifying…" : "Verify and sign in"}</span>
+            <ArrowRight />
           </button>
-        </div>
+          <div className="sp-mglass2__row">
+            <button
+              type="button"
+              className="sp-mglass2__ghost"
+              onClick={backToEmail}
+              disabled={submitting}
+            >
+              Use a different email
+            </button>
+            <button
+              type="button"
+              className="sp-mglass2__ghost"
+              onClick={onResend}
+              disabled={resendCooldown > 0 || submitting}
+            >
+              {resendCooldown > 0
+                ? `Resend in ${resendCooldown}s`
+                : "Resend code"}
+            </button>
+          </div>
+        </form>
       )}
     </>
   );
