@@ -18,7 +18,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChevronRight, FileText, Plus } from "lucide-react";
+import { ChevronRight, FileText, Loader2, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tabs";
@@ -27,6 +28,7 @@ import { PanelCard } from "@/components/axiom/PanelCard";
 import { ClientEditDialog } from "./_ClientEditDialog";
 import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import { ClientRestoreDialog } from "./_ClientRestoreDialog";
+import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
   Client,
@@ -370,7 +372,7 @@ export function ClientDetailView({
 
         {/* ── Lens runs ── */}
         <TabsContent value="lenses" className="mt-4">
-          <LensesTab lenses={lensRuns} />
+          <LensesTab lenses={lensRuns} clientId={client.id} />
         </TabsContent>
 
         {/* ── Partners ── */}
@@ -751,10 +753,54 @@ function NotesTab({ notes }: { notes: NoteWithAuthor[] }) {
   );
 }
 
-function LensesTab({ lenses }: { lenses: LensRunRow[] }) {
+function LensesTab({
+  lenses,
+  clientId,
+}: {
+  lenses: LensRunRow[];
+  clientId: string;
+}) {
+  const router = useRouter();
+  const [creating, setCreating] = useState(false);
+
+  async function handleNewCashFlow() {
+    setCreating(true);
+    try {
+      const created = await api.lensRuns.cashFlow.create({ client_id: clientId });
+      router.push(`/clients/${clientId}/lens-runs/cash-flow/${created.id}`);
+    } catch (e) {
+      const msg = isApiError(e) ? e.message : "Failed to create lens";
+      toast.error(msg);
+      setCreating(false);
+    }
+  }
+
+  function handleRowClick(lens: LensRunRow) {
+    if (lens.lens_type === "cash_flow") {
+      router.push(`/clients/${clientId}/lens-runs/cash-flow/${lens.id}`);
+    }
+    // Other lens types have no detail page yet (Phase 5c). No-op for now.
+  }
+
+  const newCashFlowButton = (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleNewCashFlow}
+      disabled={creating}
+    >
+      {creating ? (
+        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+      ) : (
+        <Plus className="mr-1.5 h-3.5 w-3.5" />
+      )}
+      New Cash Flow Lens
+    </Button>
+  );
+
   if (lenses.length === 0) {
     return (
-      <PanelCard>
+      <PanelCard action={newCashFlowButton}>
         <p className="text-sm" style={{ color: "var(--text-2)" }}>
           No lens runs yet.
         </p>
@@ -762,7 +808,7 @@ function LensesTab({ lenses }: { lenses: LensRunRow[] }) {
     );
   }
   return (
-    <PanelCard title="Lens runs" count={lenses.length} flush>
+    <PanelCard title="Lens runs" count={lenses.length} flush action={newCashFlowButton}>
       <table className="w-full text-[13px]">
         <thead
           className="border-b"
@@ -773,34 +819,46 @@ function LensesTab({ lenses }: { lenses: LensRunRow[] }) {
             <ColHead width={130}>Type</ColHead>
             <ColHead width={110}>Status</ColHead>
             <ColHead width={130}>Generated</ColHead>
+            <ColHead width={50}> </ColHead>
           </tr>
         </thead>
         <tbody>
-          {lenses.map((l) => (
-            <tr
-              key={l.id}
-              className="border-b"
-              style={{ borderColor: "var(--border)" }}
-            >
-              <td className="px-3 py-2.5">
-                <div style={{ color: "var(--text)" }}>
-                  {l.context_input ?? "—"}
-                </div>
-              </td>
-              <td className="px-3 py-2.5">
-                <Tag>{l.lens_type.replace(/_/g, " ")}</Tag>
-              </td>
-              <td className="px-3 py-2.5">
-                <StatusBadge status={l.status} />
-              </td>
-              <td
-                className="px-3 py-2.5"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-2)" }}
+          {lenses.map((l) => {
+            const isCashFlow = l.lens_type === "cash_flow";
+            return (
+              <tr
+                key={l.id}
+                className={
+                  isCashFlow
+                    ? "cursor-pointer border-b transition-colors hover:bg-[var(--surface-2)]"
+                    : "border-b"
+                }
+                style={{ borderColor: "var(--border)" }}
+                onClick={isCashFlow ? () => handleRowClick(l) : undefined}
               >
-                {fmtDate(l.generated_at)}
-              </td>
-            </tr>
-          ))}
+                <td className="px-3 py-2.5">
+                  <div style={{ color: "var(--text)" }}>
+                    {l.context_input ?? (isCashFlow ? "Cash Flow Plan" : "—")}
+                  </div>
+                </td>
+                <td className="px-3 py-2.5">
+                  <Tag>{l.lens_type.replace(/_/g, " ")}</Tag>
+                </td>
+                <td className="px-3 py-2.5">
+                  <StatusBadge status={l.status} />
+                </td>
+                <td
+                  className="px-3 py-2.5"
+                  style={{ fontFamily: "var(--font-mono)", color: "var(--text-2)" }}
+                >
+                  {fmtDate(l.generated_at)}
+                </td>
+                <td className="px-3 py-2.5" style={{ color: "var(--text-3)" }}>
+                  {isCashFlow ? <ChevronRight className="h-4 w-4" /> : null}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </PanelCard>

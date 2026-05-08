@@ -56,6 +56,7 @@ export default async function ClientDetailPage({ params }: RouteContext) {
       .from("lens_runs")
       .select("id, lens_type, status, generated_at, cost_cents, context_input")
       .eq("client_id", id)
+      .neq("status", "archived")
       .order("generated_at", { ascending: false }),
     // Phase 11.1 — advisor list for the Edit dialog's lead-advisor dropdown.
     supabase

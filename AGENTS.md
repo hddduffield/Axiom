@@ -1598,3 +1598,242 @@ change the server-enforced limits.
   (two-button cluster for "Use a different email" + "Resend code").
 - `src/app/auth/callback/route.ts` — header comment update, no logic
   change.
+
+# Phase 13: Cash Flow Lens v1
+
+First of four lens generators in the v2 vision. The advisor inputs a
+client's cash-flow data via fixed fields (NOT another doc upload), the
+system models the resulting distribution + tax bill across three
+treatments, and Claude Haiku 4.5 generates allocation suggestions and
+year-by-year action recommendations on demand. Recommendations push
+into `action_items` with `source_lens_run_id` for traceability.
+
+## Schema (migration 0005)
+
+No new table — cash-flow lens data lives in the existing `lens_runs`
+table with `lens_type='cash_flow'` and the full state in `output`
+JSONB. Migration 0005 adds two utility columns to `lens_runs`:
+
+- `updated_at timestamptz` (with `update_updated_at()` trigger) — bumps
+  on each PATCH so the per-client list sorts by most-recently-touched
+- `archived_at timestamptz` — stamped when status transitions to
+  `archived` (soft delete; row is preserved)
+
+The `lens_runs.status` enum (already `'draft' | 'approved' | 'archived'`
+from migration 0001) maps cleanly to the spec's "draft / finalized /
+archived" lifecycle.
+
+**Apply manually**: `supabase/migrations/0005_cash_flow_lens.sql` via
+Supabase Dashboard SQL editor. Verifier:
+`tsx scripts/applyMigration0005.ts` reports column status + prints SQL
+on miss. Idempotent.
+
+## Canonical types + pure helpers
+
+`src/lib/api/cash_flow_lens.ts` owns:
+
+- `CashFlowLensOutput` — JSONB shape. All money in cents (integers, no
+  float drift). All allocation %s as 0..100 integers. Growth rates as
+  decimal (0.07 = 7%). `schema_version: 1` sentinel for future migrations.
+- `BUCKET_PRESETS` — five starter buckets: 401(k), Roth IRA, Brokerage,
+  Whole Life Insurance, Annuity. Custom buckets get `preset_id: null`
+  and the advisor picks `tax_treatment` manually.
+- `defaultCashFlowOutput()` — seeds a new lens with all five preset
+  buckets, three time horizons (5y / 10y / At Retirement), and standard
+  growth-rate / tax-rate assumptions.
+- Pure calculation helpers: `netIncomeAnnualCents`,
+  `emergencyFundTargetCents`, `availableMonthlyAllocationCents`,
+  `projectBucketBalanceCents` (FV with monthly contributions over n
+  years), `currentTaxMix` / `projectedTaxMixAtRetirement` (by
+  tax-treatment center-of-mass), `annualRetirementTaxBillCents`
+  (simplified federal+state+capital-gains model),
+  `buildYearlyDistribution` (30-year inflated drawdown bar-chart data),
+  `cumulativeTaxSavingsCents` (current-mix vs recommended-mix delta).
+
+## API surface
+
+| Endpoint | Method | Purpose |
+| --- | --- | --- |
+| `/api/lens-runs/cash-flow` | POST | Create new draft (returns the row) |
+| `/api/lens-runs/cash-flow/[id]` | PATCH | Full output JSONB replace (validates `schema_version: 1`) |
+| `/api/lens-runs/cash-flow/[id]/finalize` | POST | draft → approved |
+| `/api/lens-runs/cash-flow/[id]/suggest-allocation` | POST | Haiku 4.5 alloc rec |
+| `/api/lens-runs/cash-flow/[id]/generate-recommendations` | POST | Haiku 4.5 distribution recs |
+| `/api/lens-runs/cash-flow/[id]/push-action-items` | POST | Insert checked recs into `action_items` |
+| `/api/lens-runs/[id]/archive` | POST | Soft-delete (any lens type) |
+| `/api/lens-runs/[id]/pdf` | GET | Dispatches to `CashFlowLensDocument` for cash_flow type |
+
+Existing list endpoint `GET /api/clients/[id]/lens-runs` is unchanged
+and naturally surfaces cash flow lenses.
+
+Auth: every handler calls `requireAdvisor()` for defense in depth.
+Service-role bypass not used; advisors directly mutate via session
+cookie.
+
+PATCH only accepts mutations on draft-state lenses. Restoring an
+approved lens to draft is a v1.5 deferral.
+
+## AI suggestion flow (Haiku 4.5)
+
+Two on-demand calls. Both persist their result back into the
+`ai_suggestions` field of the lens output JSONB so the UI can
+re-render without re-rolling on every navigation.
+
+- **Suggest allocation** (Section H of Input tab): given current
+  buckets + goals + assumptions + available monthly cash, returns
+  whole-percentage allocation per bucket with a 1-2 sentence
+  reasoning. Sum to exactly 100. Renders alongside the manual
+  allocation inputs as an advisory column — never auto-applies.
+  Cost: ~$0.01-$0.05 per call (1500 max output tokens).
+
+- **Generate recommendations** (Distribution Plan tab): given current
+  bucket balances + slider state + tax-rate assumptions, returns 3-8
+  sequenced action items ("Year 1: Convert $X from 401(k) to Roth";
+  "Years 1-5: Backdoor $7K/yr") with year, action, estimated tax
+  impact (negative = savings), reason. Cost: ~$0.05-$0.20 per call
+  (3000 max output tokens). Generated only on explicit button click —
+  not slider-debounced — to keep cost in advisor's hands.
+
+Cost cents accumulate on `lens_runs.cost_cents` per call. No hard cap
+in v1; advisor monitors via the header pill.
+
+## Pages + tabs
+
+`/clients/[id]/lens-runs/cash-flow/[runId]` — single Server Component
+page hands off to `_CashFlowLensView` (Client). Tabs:
+
+- **Input** — only visible while `status='draft'`. 9 sections (A
+  Client info, B Income & expenses, C Goals, D Emergency fund, E Time
+  horizons, F Assumptions, G Buckets, H Allocation with AI button, I
+  Save/Finalize). Manual save via "Save draft" button + auto-save when
+  the Distribution tab moves a slider.
+- **Hub** — navy header band + 5-stat metrics row, cream EF tracker
+  with progress bar, white-center hub-and-spoke with Household icon →
+  Financial Foundation pillar → numbered bucket cards. Tax-treatment
+  colored tags. Per-bucket projection row uses the FIRST configured
+  time horizon. Bottom cream summary band.
+- **Tax Triangle** — side-by-side equilateral SVG triangles (Current
+  vs After Recommendations); dot positioned via barycentric
+  coordinates from (tax_free%, tax_deferred%, taxable%). Below: tax
+  bill projection table (Year 1/5/10/20 of retirement) for each mix.
+  Footer block surfaces 20-year cumulative tax differential (green =
+  savings, amber = additional tax).
+- **Distribution Plan** — three sliders (TF/TD/TX) auto-balance to
+  total 100. KPIs (Year-1 savings, 30-year cumulative, Year-1 tax
+  bill, Year-1 effective rate). SVG stacked bar chart over 30 years
+  with tax-bill overlay line. AI recommendations list with
+  default-checked checkboxes; "Push selected to action items" inserts
+  into `action_items` with `category='CASH_FLOW'`,
+  `source_lens_run_id`, owner = current advisor email,
+  `timing_bucket` derived from the rec's year.
+
+## Lens Runs tab integration
+
+`/clients/[id]` Lens Runs tab now:
+
+- Fetches lens runs with `status != 'archived'` filter (archived hidden
+  by default; v1.5 may add a toggle).
+- Surfaces a "+ New Cash Flow Lens" button that POSTs to
+  `/api/lens-runs/cash-flow` and navigates into the new draft.
+- Cash flow rows are clickable (navigate to detail page); other lens
+  types remain passive (no detail page until Phase 5c).
+
+## PDF export
+
+`CashFlowLensDocument` (`src/lib/pdf/`) renders a 7-page sequence:
+
+1. Cover (client + date + PSA branding).
+2. Hub view (navy stat band, EF tracker, bucket-row list).
+3. Tax Triangle — Current Allocation (SVG triangle + tax bill table).
+4. Tax Triangle — After Recommendations.
+5. Distribution Plan (year-by-year stacked bar chart).
+6. Recommendations & Timeline (advisor-selected recs).
+7. Disclosures.
+
+Pre-export modal (`_PdfExportDialog.tsx`): advisor picks which layouts
+to include + which recommendations. Selection encoded as query params
+(`?include_hub=1&include_triangle=1&...&recommendation_ids=<csv>`).
+Existing `/api/lens-runs/[id]/pdf` route now dispatches by `lens_type`:
+cash_flow goes through `CashFlowLensDocument`, others fall through to
+the existing `LensRunDocument` placeholder.
+
+## Decisions made autonomously (v1)
+
+- **One JSONB blob, not a normalized table**: spec said "use JSONB
+  extensively for flexibility" — built around `lens_runs.output`
+  rather than a dedicated `cash_flow_lenses` table to keep the
+  existing list/detail wiring + RLS unchanged.
+- **All money in cents (integers)**: no float drift on persistence
+  round-trips. Conversion to dollars happens only at the presentation
+  layer.
+- **Slider behavior is proportional auto-balance**: when one slider
+  moves, the other two scale by their existing ratio. Edge case (other
+  two are both 0) splits evenly. Final pass re-normalizes for
+  rounding.
+- **Tax-bill model is intentionally simple**: ordinary income rate on
+  tax-deferred withdrawals, capital gains × 50% on taxable (basis
+  approximation), $0 on tax-free. Real bracket engine is v1.5+.
+- **Compound growth assumptions are seeded but advisor-overridable**:
+  defaults (7% taxable / 6% tax-deferred / 6.5% tax-free / 4%
+  emergency-fund) match standard conservative planning. Sliders in
+  Section F update the lens's `assumptions` JSONB directly.
+- **AI calls are explicit-button only, never auto-fired**: spec
+  considered debounce-on-slider but cost control wins; advisor decides
+  when to spend.
+- **Backlog drop semantics on action-item push**: `category='CASH_FLOW'`
+  (uniform; no per-rec category inference). `owner` = current advisor's
+  email. `timing_bucket` mapped from rec year (current = `this_week`,
+  +1y = `next_30_days`, +2y = `next_90_days`, beyond = `this_year`).
+  Phase 5d derivative-reminder logic does NOT fire on these inserts
+  (no `auto_generated_reminder_template`, no `parent_action_item_id`).
+- **Lens runs hide archived in default view**: parallels the Phase 11.5
+  archived-clients pattern but at the lens-run level. Toggle to show
+  archived deferred to v1.5.
+- **Cost-cents tracking accumulates per-lens** in `lens_runs.cost_cents`
+  across all AI calls. No per-lens hard cap in v1 (the build-time $10
+  cap was self-imposed; not enforced at runtime).
+
+## Smoke test scope
+
+Programmatic checks performed:
+
+- `npx tsc --noEmit` — clean.
+- `npm run build` — full prod build: 44 routes compile (was 36 +
+  8 new), TypeScript clean.
+- HTTP smoke (`node fetch`) on key new routes — `/sign-in` 200,
+  `/clients/.../lens-runs/cash-flow/...` 307 to sign-in (proxy gate),
+  `/api/lens-runs/cash-flow` 401 (JSON; correct).
+- Manual click-through against an authenticated session NOT done
+  (autonomous build; AI testing self-budgeted to $0 for build phase).
+  Production parity will surface on Vercel auto-deploy.
+
+## v1.5 backlog created during Phase 13
+
+- **Migration 0005 manual-apply step**: must run via Supabase Dashboard
+  SQL editor before advisors can use the feature in production.
+- **Bracket-aware tax engine**: v1 uses flat effective rates per
+  treatment. A real bracket model (federal + Georgia state) would
+  improve cumulative-savings estimates for high-income clients.
+- **Re-open finalized lens**: PATCH currently rejects with 409 if
+  status != 'draft'. Add an `unfinalize` endpoint that flips back to
+  draft for advisors who want to iterate post-approval.
+- **Lens-run cost cap**: a runtime guard analogous to plans'
+  `TOTAL_CAP_PER_RUN_CENTS = 15000` that refuses further AI calls
+  beyond a configured ceiling.
+- **Per-rec category from AI**: instead of uniform `CASH_FLOW`, ask the
+  recommendation prompt to emit a category per item (`ESTATE`,
+  `INVESTMENT`, `INSURANCE`) so pushed action items align with the
+  Stage 3a recommendation taxonomy.
+- **Archive toggle on Lens Runs tab**: parallel to Phase 11.5
+  notes/action-items toggle.
+- **Slider-debounced AI (opt-in)**: a "live mode" toggle that fires
+  `generate-recommendations` 2 seconds after the slider settles.
+  Pre-set cost guard required.
+- **Lens templating from previous lens**: "Duplicate from prior" so
+  next-quarter or next-year cash flow updates start from the prior
+  state instead of `defaultCashFlowOutput`.
+- **Editable bucket-preset descriptions**: presets currently expose
+  hard-coded descriptions; add an admin-only override UI in v1.6.
+- **Push-back from action_items to lens**: when an advisor closes a
+  pushed action item, surface that completion on the originating lens
+  view.
