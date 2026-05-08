@@ -9,3 +9,4 @@
 
 export { PlanDocument } from "./PlanDocument";
 export { LensRunDocument } from "./LensRunDocument";
+export { CashFlowLensDocument } from "./CashFlowLensDocument";

@@ -1,16 +1,29 @@
 // GET /api/lens-runs/[id]/pdf — render a lens run as a PDF.
 //
-// v1 export is intentionally minimal (LensRunDocument is a placeholder
-// renderer until Phase 5c defines the per-lens-type output shape). Status
-// guard mirrors the plan endpoint: only `ready_for_review`, `approved`,
-// `archived` are exportable.
+// Phase 13.6 — Cash flow lenses dispatch to CashFlowLensDocument with
+// per-section include flags read from query params:
+//
+//   ?include_hub=1
+//   ?include_triangle=1
+//   ?include_distribution=1
+//   ?include_recommendations=1
+//   ?recommendation_ids=<comma-separated>   filter recs to include
+//
+// Defaults: all four sections included; all recommendations included.
+//
+// Other lens types (investment, insurance) still go through the
+// minimal LensRunDocument placeholder.
 
 import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
-import { LensRunDocument } from "@/lib/pdf";
+import { CashFlowLensDocument, LensRunDocument } from "@/lib/pdf";
+import {
+  isCashFlowLensOutput,
+  type CashFlowLensOutput,
+} from "@/lib/api/cash_flow_lens";
 import type { Database } from "@/lib/supabase/database.types";
 
 type LensRunStatus = Database["public"]["Tables"]["lens_runs"]["Row"]["status"];
@@ -20,10 +33,6 @@ interface RouteContext {
 }
 
 const EXPORTABLE_STATUSES: LensRunStatus[] = ["approved", "archived", "draft"];
-// `draft` is included for lens runs (unlike plans) because a draft lens
-// run typically has populated `output` even before approval — the lens
-// flow is "advisor reviews, then approves" rather than "system generates,
-// then advisor reviews".
 
 const PSA_FIRM_NAME = "PSA Wealth";
 const FIRM_COMPLIANCE_FALLBACK = "PSA-LENS";
@@ -41,12 +50,22 @@ function safeFilename(parts: string[]): string {
     .join("-");
 }
 
-export async function GET(_request: Request, { params }: RouteContext) {
+function readBoolFlag(
+  url: URL,
+  name: string,
+  defaultValue: boolean,
+): boolean {
+  const v = url.searchParams.get(name);
+  if (v === null) return defaultValue;
+  return v === "1" || v === "true";
+}
+
+export async function GET(request: Request, { params }: RouteContext) {
   const auth = await requireAdvisor();
   if (!auth.ok) return auth.response;
   const { id } = await params;
+  const url = new URL(request.url);
 
-  // Pull the lens run + the joined client name in one round-trip.
   const { data: row, error: fetchErr } = await auth.supabase
     .from("lens_runs")
     .select("*, clients(household_name)")
@@ -63,31 +82,71 @@ export async function GET(_request: Request, { params }: RouteContext) {
   }
 
   const clientName = row.clients?.household_name ?? "<unknown client>";
-  // Compliance ID for lens runs: derive a stable per-run identifier so
-  // the page footer is always populated (Phase 5c may add a real
-  // compliance_tracking_id column on lens_runs analogous to plans).
   const complianceId = `${FIRM_COMPLIANCE_FALLBACK}-${row.id.slice(0, 8)}`;
+  const generatedDate = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   let buffer: Buffer;
   try {
-    buffer = await renderToBuffer(
-      <LensRunDocument
-        lensRun={row}
-        clientHouseholdName={clientName}
-        firmName={PSA_FIRM_NAME}
-        complianceTrackingId={complianceId}
-      />,
-    );
+    if (row.lens_type === "cash_flow" && isCashFlowLensOutput(row.output)) {
+      const cfOutput = row.output as CashFlowLensOutput;
+      const includeHub = readBoolFlag(url, "include_hub", true);
+      const includeTriangle = readBoolFlag(url, "include_triangle", true);
+      const includeDistribution = readBoolFlag(url, "include_distribution", true);
+      const includeRecommendations = readBoolFlag(
+        url,
+        "include_recommendations",
+        true,
+      );
+      const recIdParam = url.searchParams.get("recommendation_ids");
+      const selectedRecommendationIds =
+        recIdParam !== null
+          ? new Set(
+              recIdParam
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            )
+          : undefined;
+
+      buffer = await renderToBuffer(
+        <CashFlowLensDocument
+          output={cfOutput}
+          clientHouseholdName={clientName}
+          generatedDate={generatedDate}
+          firmName={PSA_FIRM_NAME}
+          complianceTrackingId={complianceId}
+          includeHub={includeHub}
+          includeTriangle={includeTriangle}
+          includeDistribution={includeDistribution}
+          includeRecommendations={includeRecommendations}
+          selectedRecommendationIds={selectedRecommendationIds}
+        />,
+      );
+    } else {
+      buffer = await renderToBuffer(
+        <LensRunDocument
+          lensRun={row}
+          clientHouseholdName={clientName}
+          firmName={PSA_FIRM_NAME}
+          complianceTrackingId={complianceId}
+        />,
+      );
+    }
   } catch (e) {
     return err("internal_error", `PDF render failed: ${(e as Error).message}`);
   }
 
-  const filename = safeFilename([
-    "PSA-LensRun",
-    row.lens_type,
-    clientName,
-    row.generated_at.slice(0, 10),
-  ]) + ".pdf";
+  const filename =
+    safeFilename([
+      "PSA-LensRun",
+      row.lens_type,
+      clientName,
+      row.generated_at.slice(0, 10),
+    ]) + ".pdf";
 
   return new NextResponse(new Uint8Array(buffer), {
     status: 200,

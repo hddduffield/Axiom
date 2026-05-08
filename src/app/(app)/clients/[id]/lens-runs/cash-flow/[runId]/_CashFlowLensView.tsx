@@ -23,6 +23,7 @@ import { CashFlowInputTab } from "./_CashFlowInputTab";
 import { CashFlowHubTab } from "./_CashFlowHubTab";
 import { CashFlowTaxTriangleTab } from "./_CashFlowTaxTriangleTab";
 import { CashFlowDistributionTab } from "./_CashFlowDistributionTab";
+import { PdfExportDialog } from "./_PdfExportDialog";
 
 interface Client {
   id: string;
@@ -48,6 +49,7 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
   const [activeTab, setActiveTab] = useState(
     initialLens.status === "approved" ? "hub" : "input",
   );
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const isDraft = lensRun.status === "draft";
   const isApproved = lensRun.status === "approved";
@@ -115,9 +117,8 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
   }, [lensRun.id, router, client.id]);
 
   const exportPdf = useCallback(() => {
-    // Open the PDF endpoint directly — server streams the file.
-    window.open(`/api/lens-runs/${lensRun.id}/pdf`, "_blank");
-  }, [lensRun.id]);
+    setExportDialogOpen(true);
+  }, []);
 
   const headerStatusPill = useMemo(() => {
     const tone = isApproved
@@ -196,12 +197,10 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
               </Button>
             </>
           ) : null}
-          {isApproved ? (
-            <Button variant="outline" size="sm" onClick={exportPdf}>
-              <FileDown className="mr-1.5 h-3.5 w-3.5" />
-              Export PDF
-            </Button>
-          ) : null}
+          <Button variant="outline" size="sm" onClick={exportPdf}>
+            <FileDown className="mr-1.5 h-3.5 w-3.5" />
+            Export PDF
+          </Button>
           {!isArchived ? (
             <Button
               variant="outline"
@@ -279,6 +278,14 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
           />
         </TabsContent>
       </Tabs>
+
+      {exportDialogOpen ? (
+        <PdfExportDialog
+          lensId={lensRun.id}
+          output={output}
+          onClose={() => setExportDialogOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
