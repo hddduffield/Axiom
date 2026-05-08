@@ -222,7 +222,41 @@ export const api = {
         method: "POST",
         body,
       }),
+    archive: (id: string) =>
+      request<LensRunsApi.ArchiveResponse>(`/api/lens-runs/${id}/archive`, { method: "POST" }),
     exportPdf: (id: string) => requestBlob(`/api/lens-runs/${id}/pdf`),
+    cashFlow: {
+      create: (body: LensRunsApi.CashFlowCreateRequest) =>
+        request<LensRunsApi.CashFlowCreateResponse>("/api/lens-runs/cash-flow", {
+          method: "POST",
+          body,
+        }),
+      update: (id: string, body: LensRunsApi.CashFlowUpdateRequest) =>
+        request<LensRunsApi.CashFlowUpdateResponse>(`/api/lens-runs/cash-flow/${id}`, {
+          method: "PATCH",
+          body,
+        }),
+      finalize: (id: string) =>
+        request<LensRunsApi.CashFlowFinalizeResponse>(
+          `/api/lens-runs/cash-flow/${id}/finalize`,
+          { method: "POST" },
+        ),
+      suggestAllocation: (id: string) =>
+        request<LensRunsApi.CashFlowSuggestAllocationResponse>(
+          `/api/lens-runs/cash-flow/${id}/suggest-allocation`,
+          { method: "POST" },
+        ),
+      generateRecommendations: (id: string) =>
+        request<LensRunsApi.CashFlowGenerateRecommendationsResponse>(
+          `/api/lens-runs/cash-flow/${id}/generate-recommendations`,
+          { method: "POST" },
+        ),
+      pushActionItems: (id: string, body: LensRunsApi.CashFlowPushActionItemsRequest) =>
+        request<LensRunsApi.CashFlowPushActionItemsResponse>(
+          `/api/lens-runs/cash-flow/${id}/push-action-items`,
+          { method: "POST", body },
+        ),
+    },
   },
   partners: {
     listByClient: (clientId: string, q: PartnersApi.ListByClientQuery = {}) =>

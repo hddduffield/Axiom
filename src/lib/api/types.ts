@@ -276,6 +276,31 @@ export namespace LensRunsApi {
     status: LensRunStatus;
     queued_at: string;
   }
+
+  // Phase 13 — Cash Flow Lens specific endpoints.
+  export interface CashFlowCreateRequest {
+    client_id: string;
+  }
+  export type CashFlowCreateResponse = LensRun;
+
+  export interface CashFlowUpdateRequest {
+    output: unknown; // CashFlowLensOutput; full replacement; route validates schema_version
+  }
+  export type CashFlowUpdateResponse = LensRun;
+
+  export type CashFlowFinalizeResponse = LensRun;
+  export type ArchiveResponse = LensRun;
+
+  export type CashFlowSuggestAllocationResponse = LensRun;
+  export type CashFlowGenerateRecommendationsResponse = LensRun;
+
+  export interface CashFlowPushActionItemsRequest {
+    recommendation_ids: string[];
+  }
+  export interface CashFlowPushActionItemsResponse {
+    created: import("@/lib/supabase/database.types").Database["public"]["Tables"]["action_items"]["Row"][];
+    skipped: number;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────
