@@ -418,6 +418,8 @@ export const LIST_LENS_RUNS: LensRun[] = [
     generated_at: ISO(-15),
     output: null,
     cost_cents: 84,
+    updated_at: ISO(-15),
+    archived_at: null,
   },
   {
     id: "mock-lens-run-002",
@@ -429,6 +431,8 @@ export const LIST_LENS_RUNS: LensRun[] = [
     generated_at: ISO(-3),
     output: null,
     cost_cents: 76,
+    updated_at: ISO(-3),
+    archived_at: null,
   },
 ];
 

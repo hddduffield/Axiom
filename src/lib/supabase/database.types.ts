@@ -125,6 +125,9 @@ export interface Database {
           generated_at: string;
           output: Json | null;
           cost_cents: number | null;
+          // Phase 13.1 additions:
+          updated_at: string;
+          archived_at: string | null;
         };
         Insert: {
           id?: string;
@@ -136,6 +139,8 @@ export interface Database {
           generated_at?: string;
           output?: Json | null;
           cost_cents?: number | null;
+          updated_at?: string;
+          archived_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["lens_runs"]["Insert"]>;
         Relationships: [
