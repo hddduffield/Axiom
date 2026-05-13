@@ -167,6 +167,21 @@ export interface CashFlowClientSnapshot {
   age: number | null;
 }
 
+// Phase 16 — Source provenance from Fact Review-driven Plan generation.
+// When a Cash Flow Lens is created for a client that has a finalized plan
+// on file, the lens is pre-populated from plan.stage1_output (ClientProfile)
+// via extractCashFlowFromClientProfile. These three fields are bookkeeping
+// only; they don't drive any math.
+export interface CashFlowLensSource {
+  plan_id: string;
+  plan_generated_at: string;
+  /** Dotted-path field names that were filled by the extractor. */
+  sourced_fields: string[];
+  /** Dotted-path field names that the advisor has manually edited
+   *  AFTER the extraction. Refresh-from-plan preserves these. */
+  edited_fields: string[];
+}
+
 export interface CashFlowLensOutput {
   schema_version: 1;
   client_snapshot: CashFlowClientSnapshot;
@@ -181,6 +196,9 @@ export interface CashFlowLensOutput {
   distribution_plan: CashFlowDistributionPlan;
   ai_suggestions: CashFlowAiSuggestions;
   pushed_action_item_ids: string[];
+  /** Phase 16 — null when the advisor created the lens before any plan
+   *  was finalized for the client (manual-entry-only path). */
+  source: CashFlowLensSource | null;
 }
 
 // ────────────────────────────────────────────────────────────────────────
@@ -273,6 +291,7 @@ export function defaultCashFlowOutput(args: {
       distribution_recommendations: null,
     },
     pushed_action_item_ids: [],
+    source: null,
   };
 }
 

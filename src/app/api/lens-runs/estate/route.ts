@@ -9,7 +9,11 @@ import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { created, err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
-import { defaultEstateOutput } from "@/lib/estate-lens/types";
+import { defaultEstateOutput, type EstateLensOutput } from "@/lib/estate-lens/types";
+import {
+  extractEstateFromClientProfile,
+  getLatestFinalizedPlanForClient,
+} from "@/lib/lens-prefill";
 import type { Json } from "@/lib/supabase/database.types";
 
 const createSchema = z.object({
@@ -51,12 +55,38 @@ export async function POST(request: Request) {
   const scenarioName =
     parsed.data.scenario_name ?? `Scenario ${(count ?? 0) + 1}`;
 
-  const seed = defaultEstateOutput({
-    household_name: client.household_name,
-    archetype: client.archetype ?? null,
-    state_code: parsed.data.state_code ?? null,
-    scenario_name: scenarioName,
-  });
+  // Phase 16 — pre-fill from latest finalized plan if one exists.
+  let seed: EstateLensOutput;
+  const latest = await getLatestFinalizedPlanForClient(auth.supabase, client.id);
+  if (latest) {
+    const { output, sourced_fields } = extractEstateFromClientProfile({
+      profile: latest.client_profile,
+      household_name: client.household_name,
+      archetype: client.archetype ?? null,
+      scenario_name: scenarioName,
+    });
+    // Allow caller-supplied state_code to override the extracted one
+    // (useful for "what-if I move to FL" scenarios).
+    if (parsed.data.state_code) {
+      output.client_snapshot.state_code = parsed.data.state_code;
+    }
+    seed = {
+      ...output,
+      source: {
+        plan_id: latest.plan_id,
+        plan_generated_at: latest.generated_at,
+        sourced_fields,
+        edited_fields: [],
+      },
+    };
+  } else {
+    seed = defaultEstateOutput({
+      household_name: client.household_name,
+      archetype: client.archetype ?? null,
+      state_code: parsed.data.state_code ?? null,
+      scenario_name: scenarioName,
+    });
+  }
 
   const { data, error } = await auth.supabase
     .from("lens_runs")

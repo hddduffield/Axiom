@@ -258,6 +258,11 @@ export const api = {
           `/api/lens-runs/cash-flow/${id}/push-action-items`,
           { method: "POST", body },
         ),
+      refreshFromPlan: (id: string) =>
+        request<LensRunsApi.CashFlowRefreshResponse>(
+          `/api/lens-runs/cash-flow/${id}/refresh-from-plan`,
+          { method: "POST" },
+        ),
     },
     estate: {
       create: (body: LensRunsApi.EstateCreateRequest) =>
@@ -279,6 +284,11 @@ export const api = {
         request<LensRunsApi.EstatePushActionItemsResponse>(
           `/api/lens-runs/estate/${id}/push-action-items`,
           { method: "POST", body },
+        ),
+      refreshFromPlan: (id: string) =>
+        request<LensRunsApi.EstateRefreshResponse>(
+          `/api/lens-runs/estate/${id}/refresh-from-plan`,
+          { method: "POST" },
         ),
     },
   },

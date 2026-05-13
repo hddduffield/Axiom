@@ -289,6 +289,9 @@ export namespace LensRunsApi {
   export type CashFlowUpdateResponse = LensRun;
 
   export type CashFlowFinalizeResponse = LensRun;
+  // Phase 16 — refresh prefill from latest finalized plan
+  export type CashFlowRefreshResponse = LensRun;
+  export type EstateRefreshResponse = LensRun;
   export type ArchiveResponse = LensRun;
   export type RestoreResponse = LensRun;
 

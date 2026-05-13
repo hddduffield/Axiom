@@ -92,6 +92,14 @@ export interface EstateAiSuggestions {
   reserved: null;
 }
 
+// Phase 16 — source provenance bookkeeping (see CashFlowLensSource).
+export interface EstateLensSource {
+  plan_id: string;
+  plan_generated_at: string;
+  sourced_fields: string[];
+  edited_fields: string[];
+}
+
 export interface EstateLensOutput {
   schema_version: 1;
   client_snapshot: EstateClientSnapshot;
@@ -106,6 +114,8 @@ export interface EstateLensOutput {
   pushed_action_item_ids: string[];
   linked_to_main_plan: boolean;
   tracking_id: string; // compliance tracking, displayed on every screen + PDF
+  /** Phase 16 — null when no finalized plan existed at creation. */
+  source: EstateLensSource | null;
 }
 
 // ────────────────────────────────────────────────────────────────────────
@@ -179,6 +189,7 @@ export function defaultEstateOutput(args: {
     pushed_action_item_ids: [],
     linked_to_main_plan: false,
     tracking_id: args.tracking_id ?? generateTrackingId(),
+    source: null,
   };
 }
 

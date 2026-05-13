@@ -28,6 +28,7 @@ import {
   isEstateLensOutput,
   type EstateLensOutput,
 } from "@/lib/estate-lens/types";
+import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
 
 import { EstateProjectionTab } from "./_EstateProjectionTab";
 import { EstateTrustPlanningTab } from "./_EstateTrustPlanningTab";
@@ -238,6 +239,21 @@ export function EstateLensView({ lensRun: initialLens, client, initialOutput }: 
 
       {/* Tab nav — pixel-perfect with screenshot:
           01 ESTATE TAX PROJECTION (numbered, navy underline on active) */}
+      {output.source !== null || isDraft ? (
+        <LensSourceBanner
+          source={output.source}
+          onRefresh={async () => {
+            const updated = await api.lensRuns.estate.refreshFromPlan(lensRun.id);
+            setLensRun(updated);
+            if (isEstateLensOutput(updated.output)) {
+              setOutput(updated.output);
+            }
+          }}
+          refreshDisabled={!isDraft}
+          lensTypeLabel="Estate Lens"
+        />
+      ) : null}
+
       <div
         className="flex items-stretch gap-0 border-b"
         style={{ borderColor: "var(--border)" }}

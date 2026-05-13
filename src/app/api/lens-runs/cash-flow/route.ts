@@ -7,7 +7,11 @@ import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { created, err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
-import { defaultCashFlowOutput } from "@/lib/api/cash_flow_lens";
+import { defaultCashFlowOutput, type CashFlowLensOutput } from "@/lib/api/cash_flow_lens";
+import {
+  extractCashFlowFromClientProfile,
+  getLatestFinalizedPlanForClient,
+} from "@/lib/lens-prefill";
 import type { Json } from "@/lib/supabase/database.types";
 
 const createSchema = z.object({
@@ -38,11 +42,32 @@ export async function POST(request: Request) {
   if (clientErr) return err(mapDbError(clientErr), dbErrorMessage(clientErr));
   if (!client) return err("not_found", "Client not found.");
 
-  const seed = defaultCashFlowOutput({
-    household_name: client.household_name,
-    archetype: client.archetype ?? null,
-    age: null,
-  });
+  // Phase 16 — try to pre-fill from the latest finalized plan's
+  // ClientProfile. If none exists, fall back to the default seed.
+  let seed: CashFlowLensOutput;
+  const latest = await getLatestFinalizedPlanForClient(auth.supabase, client.id);
+  if (latest) {
+    const { output, sourced_fields } = extractCashFlowFromClientProfile({
+      profile: latest.client_profile,
+      household_name: client.household_name,
+      archetype: client.archetype ?? null,
+    });
+    seed = {
+      ...output,
+      source: {
+        plan_id: latest.plan_id,
+        plan_generated_at: latest.generated_at,
+        sourced_fields,
+        edited_fields: [],
+      },
+    };
+  } else {
+    seed = defaultCashFlowOutput({
+      household_name: client.household_name,
+      archetype: client.archetype ?? null,
+      age: null,
+    });
+  }
 
   const { data, error } = await auth.supabase
     .from("lens_runs")

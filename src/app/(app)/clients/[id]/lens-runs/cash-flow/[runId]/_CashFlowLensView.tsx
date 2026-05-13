@@ -18,6 +18,7 @@ import {
   isCashFlowLensOutput,
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
+import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
 
 import { CashFlowInputTab } from "./_CashFlowInputTab";
 import { CashFlowHubTab } from "./_CashFlowHubTab";
@@ -222,6 +223,24 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
           )}
         </div>
       </div>
+
+      {/* Phase 16 — source provenance banner. Hidden when source is null
+          AND the lens is finalized/archived (no point in showing a
+          "no plan available" hint on a read-only view). */}
+      {output.source !== null || isDraft ? (
+        <LensSourceBanner
+          source={output.source}
+          onRefresh={async () => {
+            const updated = await api.lensRuns.cashFlow.refreshFromPlan(lensRun.id);
+            setLensRun(updated);
+            if (isCashFlowLensOutput(updated.output)) {
+              setOutput(updated.output);
+            }
+          }}
+          refreshDisabled={!isDraft}
+          lensTypeLabel="Cash Flow Lens"
+        />
+      ) : null}
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v ?? "input")}>
