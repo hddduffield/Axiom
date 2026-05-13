@@ -16,15 +16,16 @@
 //     until the dedicated Notes hub (9.7) wires the dialog flow.
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { ChevronRight, FileText, Loader2, Plus } from "lucide-react";
+import { Archive, ChevronRight, FileText, Loader2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tabs";
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { Chip, Count } from "@/components/axiom/Chip";
 import { ClientEditDialog } from "./_ClientEditDialog";
 import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import { ClientRestoreDialog } from "./_ClientRestoreDialog";
@@ -76,6 +77,8 @@ interface Props {
   partners: Partner[];
   lensRuns: LensRunRow[];
   advisors: AdvisorOption[];
+  // Phase 15.3 — true when ?archived=1 in the URL. Lenses include archived rows.
+  includeArchivedLensRuns: boolean;
 }
 
 // ─────────────── Formatting helpers ───────────────
@@ -196,6 +199,7 @@ export function ClientDetailView({
   partners,
   lensRuns,
   advisors,
+  includeArchivedLensRuns,
 }: Props) {
   const [activeItem, setActiveItem] = useState<ActionItem | null>(null);
   const [items, setItems] = useState(actionItems); // local mutable copy for drawer
@@ -374,7 +378,11 @@ export function ClientDetailView({
 
         {/* ── Lens runs ── */}
         <TabsContent value="lenses" className="mt-4">
-          <LensesTab lenses={lensRuns} clientId={client.id} />
+          <LensesTab
+            lenses={lensRuns}
+            clientId={client.id}
+            includeArchived={includeArchivedLensRuns}
+          />
         </TabsContent>
 
         {/* ── Partners ── */}
@@ -758,13 +766,25 @@ function NotesTab({ notes }: { notes: NoteWithAuthor[] }) {
 function LensesTab({
   lenses,
   clientId,
+  includeArchived,
 }: {
   lenses: LensRunRow[];
   clientId: string;
+  includeArchived: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [creatingCf, setCreatingCf] = useState(false);
   const [creatingEst, setCreatingEst] = useState(false);
+
+  function toggleIncludeArchived() {
+    const next = !includeArchived;
+    // We're at /clients/[id]; both toggle states are URL-shareable.
+    const url = next ? `${pathname}?archived=1` : pathname;
+    router.replace(url);
+  }
+
+  const archivedCount = lenses.filter((l) => l.status === "archived").length;
 
   async function handleNewCashFlow() {
     setCreatingCf(true);
@@ -799,8 +819,25 @@ function LensesTab({
     // Other lens types have no detail page yet (Phase 5c). No-op for now.
   }
 
+  // Show the toggle whenever the client has any archived lens (when off,
+  // the data isn't fetched, so we surface it whenever it COULD be on:
+  // that is, always — the advisor can opt in to discover archived rows
+  // they didn't know about. Cheap server query, no harm if empty.).
+  const showArchivedChip = (
+    <Chip active={includeArchived} onClick={toggleIncludeArchived}>
+      <Archive className="h-3 w-3" />
+      <span className="ml-1">Show archived</span>
+      {includeArchived && archivedCount > 0 ? (
+        <span className="ml-1">
+          <Count n={archivedCount} onActive />
+        </span>
+      ) : null}
+    </Chip>
+  );
+
   const newCashFlowButton = (
     <div className="flex items-center gap-2">
+      {showArchivedChip}
       <Button
         variant="outline"
         size="sm"

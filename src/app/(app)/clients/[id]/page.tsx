@@ -8,10 +8,16 @@ import { ClientDetailView } from "./_ClientDetailView";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
+  // Phase 15.3 — ?archived=1 widens the Lens Runs tab query to include
+  // archived rows. The toggle Chip is on the Lens Runs tab; URL state
+  // makes it shareable and survives a refresh.
+  searchParams?: Promise<{ archived?: string }>;
 }
 
-export default async function ClientDetailPage({ params }: RouteContext) {
+export default async function ClientDetailPage({ params, searchParams }: RouteContext) {
   const { id } = await params;
+  const sp = (await searchParams) ?? {};
+  const includeArchivedLensRuns = sp.archived === "1";
   const supabase = await createClient();
 
   const [
@@ -52,12 +58,18 @@ export default async function ClientDetailPage({ params }: RouteContext) {
       .select("*")
       .eq("client_id", id)
       .order("created_at", { ascending: false }),
-    supabase
-      .from("lens_runs")
-      .select("id, lens_type, status, generated_at, cost_cents, context_input")
-      .eq("client_id", id)
-      .neq("status", "archived")
-      .order("generated_at", { ascending: false }),
+    includeArchivedLensRuns
+      ? supabase
+          .from("lens_runs")
+          .select("id, lens_type, status, generated_at, cost_cents, context_input")
+          .eq("client_id", id)
+          .order("generated_at", { ascending: false })
+      : supabase
+          .from("lens_runs")
+          .select("id, lens_type, status, generated_at, cost_cents, context_input")
+          .eq("client_id", id)
+          .neq("status", "archived")
+          .order("generated_at", { ascending: false }),
     // Phase 11.1 — advisor list for the Edit dialog's lead-advisor dropdown.
     supabase
       .from("advisors")
@@ -79,6 +91,7 @@ export default async function ClientDetailPage({ params }: RouteContext) {
       partners={partnersRes.data ?? []}
       lensRuns={lensRunsRes.data ?? []}
       advisors={advisorsRes.data ?? []}
+      includeArchivedLensRuns={includeArchivedLensRuns}
     />
   );
 }
