@@ -29,6 +29,7 @@ import {
   type EstateLensOutput,
 } from "@/lib/estate-lens/types";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
+import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { EstateProjectionTab } from "./_EstateProjectionTab";
 import { EstateTrustPlanningTab } from "./_EstateTrustPlanningTab";
@@ -98,14 +99,20 @@ export function EstateLensView({ lensRun: initialLens, client, initialOutput }: 
 
   const handleChange = useCallback(
     (next: EstateLensOutput) => {
-      setOutput(next);
+      // Phase 16.3 — track which sourced fields were just edited so
+      // refresh-from-plan preserves the advisor's overrides.
+      setOutput((prev) => {
+        const newlyEdited = diffSourcedFields(prev, next);
+        return applyEditedFields(next, newlyEdited);
+      });
       if (!isDraft) return;
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(() => {
-        saveDraft(next, { silent: true });
+        const newlyEdited = diffSourcedFields(output, next);
+        saveDraft(applyEditedFields(next, newlyEdited), { silent: true });
       }, 1500);
     },
-    [isDraft, saveDraft],
+    [isDraft, saveDraft, output],
   );
 
   useEffect(() => {

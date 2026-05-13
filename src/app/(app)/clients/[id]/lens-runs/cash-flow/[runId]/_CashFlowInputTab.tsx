@@ -30,7 +30,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { FieldStatus } from "@/components/axiom/FieldStatus";
 import { api, isApiError } from "@/lib/api/client";
+import { isEdited, isSourced } from "@/lib/lens-prefill";
 import {
   BUCKET_PRESETS,
   BUCKET_PRESETS_BY_ID,
@@ -404,7 +406,13 @@ export function CashFlowInputTab({
       <PanelCard title="Income &amp; expenses">
         <div className="flex flex-col gap-3">
           <div>
-            <Label className="text-[12px]">Gross income (annual)</Label>
+            <div className="flex items-center gap-2">
+              <Label className="text-[12px]">Gross income (annual)</Label>
+              <FieldStatus
+                sourced={isSourced(output, "gross_income_annual_cents")}
+                edited={isEdited(output, "gross_income_annual_cents")}
+              />
+            </div>
             <MoneyInput
               cents={output.gross_income_annual_cents}
               onChange={(v) => set({ gross_income_annual_cents: v })}
@@ -415,7 +423,13 @@ export function CashFlowInputTab({
             </p>
           </div>
           <div>
-            <Label className="text-[12px]">Total expenses (annual)</Label>
+            <div className="flex items-center gap-2">
+              <Label className="text-[12px]">Total expenses (annual)</Label>
+              <FieldStatus
+                sourced={isSourced(output, "expenses_annual_cents")}
+                edited={isEdited(output, "expenses_annual_cents")}
+              />
+            </div>
             <MoneyInput
               cents={output.expenses_annual_cents}
               onChange={(v) => set({ expenses_annual_cents: v })}

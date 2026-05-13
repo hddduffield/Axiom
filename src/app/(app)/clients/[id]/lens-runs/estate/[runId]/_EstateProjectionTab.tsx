@@ -35,6 +35,8 @@ import {
 import type { EstateLensOutput } from "@/lib/estate-lens/types";
 
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { FieldStatus } from "@/components/axiom/FieldStatus";
+import { isEdited, isSourced } from "@/lib/lens-prefill";
 import {
   Select,
   SelectContent,
@@ -118,14 +120,30 @@ export function EstateProjectionTab({ output, onChange, editable }: Props) {
           >
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <FieldLabel>Estate Today ($)</FieldLabel>
+                <FieldLabel>
+                  <span className="inline-flex items-center gap-2">
+                    Estate Today ($)
+                    <FieldStatus
+                      sourced={isSourced(output, "assumptions.estate_today_cents")}
+                      edited={isEdited(output, "assumptions.estate_today_cents")}
+                    />
+                  </span>
+                </FieldLabel>
                 <MoneyInput
                   cents={assumptions.estate_today_cents}
                   onChange={(c) => updateAssumptions({ estate_today_cents: c })}
                 />
               </div>
               <div>
-                <FieldLabel>Annual Spend ($)</FieldLabel>
+                <FieldLabel>
+                  <span className="inline-flex items-center gap-2">
+                    Annual Spend ($)
+                    <FieldStatus
+                      sourced={isSourced(output, "assumptions.annual_spend_cents")}
+                      edited={isEdited(output, "assumptions.annual_spend_cents")}
+                    />
+                  </span>
+                </FieldLabel>
                 <MoneyInput
                   cents={assumptions.annual_spend_cents}
                   onChange={(c) => updateAssumptions({ annual_spend_cents: c })}
@@ -173,7 +191,15 @@ export function EstateProjectionTab({ output, onChange, editable }: Props) {
                 />
               </div>
               <div>
-                <FieldLabel>Client Age Today</FieldLabel>
+                <FieldLabel>
+                  <span className="inline-flex items-center gap-2">
+                    Client Age Today
+                    <FieldStatus
+                      sourced={isSourced(output, "assumptions.client_age_today")}
+                      edited={isEdited(output, "assumptions.client_age_today")}
+                    />
+                  </span>
+                </FieldLabel>
                 <NumberInput
                   value={assumptions.client_age_today}
                   onChange={(v) =>
@@ -182,7 +208,15 @@ export function EstateProjectionTab({ output, onChange, editable }: Props) {
                 />
               </div>
               <div className="col-span-2">
-                <FieldLabel>State (auto-fills tax rate)</FieldLabel>
+                <FieldLabel>
+                  <span className="inline-flex items-center gap-2">
+                    State (auto-fills tax rate)
+                    <FieldStatus
+                      sourced={isSourced(output, "client_snapshot.state_code")}
+                      edited={isEdited(output, "client_snapshot.state_code")}
+                    />
+                  </span>
+                </FieldLabel>
                 <Select
                   value={output.client_snapshot.state_code ?? undefined}
                   onValueChange={(v) => updateState(v ?? "")}

@@ -20,3 +20,10 @@ export {
   getLatestFinalizedPlanForClient,
   type LatestFinalizedPlan,
 } from "./sourceLookup";
+
+export {
+  diffSourcedFields,
+  applyEditedFields,
+  isSourced,
+  isEdited,
+} from "./diff";

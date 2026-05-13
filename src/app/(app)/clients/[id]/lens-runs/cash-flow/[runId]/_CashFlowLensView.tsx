@@ -19,6 +19,7 @@ import {
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
+import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { CashFlowInputTab } from "./_CashFlowInputTab";
 import { CashFlowHubTab } from "./_CashFlowHubTab";
@@ -74,6 +75,19 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
       }
     },
     [lensRun.id],
+  );
+
+  // Phase 16.3 — wrap setOutput so every state change records any
+  // sourced-field edits into source.edited_fields. The refresh-from-plan
+  // endpoint reads this list and skips those paths on merge.
+  const trackedSetOutput = useCallback(
+    (next: CashFlowLensOutput) => {
+      setOutput((prev) => {
+        const newlyEdited = diffSourcedFields(prev, next);
+        return applyEditedFields(next, newlyEdited);
+      });
+    },
+    [],
   );
 
   const finalize = useCallback(async () => {
@@ -256,7 +270,7 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
             <CashFlowInputTab
               lensId={lensRun.id}
               output={output}
-              onChange={setOutput}
+              onChange={trackedSetOutput}
               onSaveDraft={() => saveDraft(output)}
               onFinalize={finalize}
               savingDraft={savingDraft}
@@ -284,7 +298,7 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
             lensId={lensRun.id}
             output={output}
             onChange={(next) => {
-              setOutput(next);
+              trackedSetOutput(next);
               if (isDraft) saveDraft(next, { silent: true });
             }}
             onAiUpdated={(updated) => {
