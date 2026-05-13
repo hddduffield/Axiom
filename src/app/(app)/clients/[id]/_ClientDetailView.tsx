@@ -28,6 +28,8 @@ import { PanelCard } from "@/components/axiom/PanelCard";
 import { ClientEditDialog } from "./_ClientEditDialog";
 import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import { ClientRestoreDialog } from "./_ClientRestoreDialog";
+import { LensRunArchiveDialog } from "./_LensRunArchiveDialog";
+import { LensRunRestoreDialog } from "./_LensRunRestoreDialog";
 import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
@@ -849,18 +851,27 @@ function LensesTab({
             <ColHead width={130}>Type</ColHead>
             <ColHead width={110}>Status</ColHead>
             <ColHead width={130}>Generated</ColHead>
+            <ColHead width={60}> </ColHead>
             <ColHead width={50}> </ColHead>
           </tr>
         </thead>
         <tbody>
           {lenses.map((l) => {
             const clickable = l.lens_type === "cash_flow" || l.lens_type === "estate";
+            const lensTypeLabel =
+              l.lens_type === "cash_flow"
+                ? "Cash Flow"
+                : l.lens_type === "estate"
+                  ? "Estate"
+                  : l.lens_type.replace(/_/g, " ");
             const fallbackTitle =
               l.lens_type === "cash_flow"
                 ? "Cash Flow Plan"
                 : l.lens_type === "estate"
                   ? "Estate Plan"
                   : "—";
+            const scenarioName = l.context_input ?? fallbackTitle;
+            const isArchived = l.status === "archived";
             return (
               <tr
                 key={l.id}
@@ -869,13 +880,14 @@ function LensesTab({
                     ? "cursor-pointer border-b transition-colors hover:bg-[var(--surface-2)]"
                     : "border-b"
                 }
-                style={{ borderColor: "var(--border)" }}
+                style={{
+                  borderColor: "var(--border)",
+                  opacity: isArchived ? 0.65 : 1,
+                }}
                 onClick={clickable ? () => handleRowClick(l) : undefined}
               >
                 <td className="px-3 py-2.5">
-                  <div style={{ color: "var(--text)" }}>
-                    {l.context_input ?? fallbackTitle}
-                  </div>
+                  <div style={{ color: "var(--text)" }}>{scenarioName}</div>
                 </td>
                 <td className="px-3 py-2.5">
                   <Tag>{l.lens_type.replace(/_/g, " ")}</Tag>
@@ -888,6 +900,21 @@ function LensesTab({
                   style={{ fontFamily: "var(--font-mono)", color: "var(--text-2)" }}
                 >
                   {fmtDate(l.generated_at)}
+                </td>
+                <td className="px-3 py-2.5 text-right">
+                  {isArchived ? (
+                    <LensRunRestoreDialog
+                      lensRunId={l.id}
+                      scenarioName={scenarioName}
+                      lensTypeLabel={lensTypeLabel}
+                    />
+                  ) : (
+                    <LensRunArchiveDialog
+                      lensRunId={l.id}
+                      scenarioName={scenarioName}
+                      lensTypeLabel={lensTypeLabel}
+                    />
+                  )}
                 </td>
                 <td className="px-3 py-2.5" style={{ color: "var(--text-3)" }}>
                   {clickable ? <ChevronRight className="h-4 w-4" /> : null}

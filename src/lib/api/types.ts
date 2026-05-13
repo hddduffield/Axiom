@@ -290,6 +290,7 @@ export namespace LensRunsApi {
 
   export type CashFlowFinalizeResponse = LensRun;
   export type ArchiveResponse = LensRun;
+  export type RestoreResponse = LensRun;
 
   export type CashFlowSuggestAllocationResponse = LensRun;
   export type CashFlowGenerateRecommendationsResponse = LensRun;
