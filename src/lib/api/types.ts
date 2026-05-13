@@ -301,6 +301,30 @@ export namespace LensRunsApi {
     created: import("@/lib/supabase/database.types").Database["public"]["Tables"]["action_items"]["Row"][];
     skipped: number;
   }
+
+  // Phase 14 — Estate Lens specific endpoints.
+  export interface EstateCreateRequest {
+    client_id: string;
+    scenario_name?: string;
+    state_code?: string;
+  }
+  export type EstateCreateResponse = LensRun;
+
+  export interface EstateUpdateRequest {
+    output: unknown; // EstateLensOutput
+    scenario_name?: string;
+  }
+  export type EstateUpdateResponse = LensRun;
+
+  export type EstateFinalizeResponse = LensRun;
+
+  export interface EstatePushActionItemsRequest {
+    recommendation_ids: string[];
+  }
+  export interface EstatePushActionItemsResponse {
+    created: import("@/lib/supabase/database.types").Database["public"]["Tables"]["action_items"]["Row"][];
+    skipped: number;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────

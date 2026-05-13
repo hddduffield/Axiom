@@ -761,41 +761,71 @@ function LensesTab({
   clientId: string;
 }) {
   const router = useRouter();
-  const [creating, setCreating] = useState(false);
+  const [creatingCf, setCreatingCf] = useState(false);
+  const [creatingEst, setCreatingEst] = useState(false);
 
   async function handleNewCashFlow() {
-    setCreating(true);
+    setCreatingCf(true);
     try {
       const created = await api.lensRuns.cashFlow.create({ client_id: clientId });
       router.push(`/clients/${clientId}/lens-runs/cash-flow/${created.id}`);
     } catch (e) {
       const msg = isApiError(e) ? e.message : "Failed to create lens";
       toast.error(msg);
-      setCreating(false);
+      setCreatingCf(false);
+    }
+  }
+
+  async function handleNewEstate() {
+    setCreatingEst(true);
+    try {
+      const created = await api.lensRuns.estate.create({ client_id: clientId });
+      router.push(`/clients/${clientId}/lens-runs/estate/${created.id}`);
+    } catch (e) {
+      const msg = isApiError(e) ? e.message : "Failed to create lens";
+      toast.error(msg);
+      setCreatingEst(false);
     }
   }
 
   function handleRowClick(lens: LensRunRow) {
     if (lens.lens_type === "cash_flow") {
       router.push(`/clients/${clientId}/lens-runs/cash-flow/${lens.id}`);
+    } else if (lens.lens_type === "estate") {
+      router.push(`/clients/${clientId}/lens-runs/estate/${lens.id}`);
     }
     // Other lens types have no detail page yet (Phase 5c). No-op for now.
   }
 
   const newCashFlowButton = (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleNewCashFlow}
-      disabled={creating}
-    >
-      {creating ? (
-        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-      ) : (
-        <Plus className="mr-1.5 h-3.5 w-3.5" />
-      )}
-      New Cash Flow Lens
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleNewCashFlow}
+        disabled={creatingCf}
+      >
+        {creatingCf ? (
+          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
+        )}
+        New Cash Flow Lens
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleNewEstate}
+        disabled={creatingEst}
+      >
+        {creatingEst ? (
+          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
+        )}
+        New Estate Lens
+      </Button>
+    </div>
   );
 
   if (lenses.length === 0) {
@@ -824,21 +854,27 @@ function LensesTab({
         </thead>
         <tbody>
           {lenses.map((l) => {
-            const isCashFlow = l.lens_type === "cash_flow";
+            const clickable = l.lens_type === "cash_flow" || l.lens_type === "estate";
+            const fallbackTitle =
+              l.lens_type === "cash_flow"
+                ? "Cash Flow Plan"
+                : l.lens_type === "estate"
+                  ? "Estate Plan"
+                  : "—";
             return (
               <tr
                 key={l.id}
                 className={
-                  isCashFlow
+                  clickable
                     ? "cursor-pointer border-b transition-colors hover:bg-[var(--surface-2)]"
                     : "border-b"
                 }
                 style={{ borderColor: "var(--border)" }}
-                onClick={isCashFlow ? () => handleRowClick(l) : undefined}
+                onClick={clickable ? () => handleRowClick(l) : undefined}
               >
                 <td className="px-3 py-2.5">
                   <div style={{ color: "var(--text)" }}>
-                    {l.context_input ?? (isCashFlow ? "Cash Flow Plan" : "—")}
+                    {l.context_input ?? fallbackTitle}
                   </div>
                 </td>
                 <td className="px-3 py-2.5">
@@ -854,7 +890,7 @@ function LensesTab({
                   {fmtDate(l.generated_at)}
                 </td>
                 <td className="px-3 py-2.5" style={{ color: "var(--text-3)" }}>
-                  {isCashFlow ? <ChevronRight className="h-4 w-4" /> : null}
+                  {clickable ? <ChevronRight className="h-4 w-4" /> : null}
                 </td>
               </tr>
             );

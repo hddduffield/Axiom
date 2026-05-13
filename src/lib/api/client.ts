@@ -257,6 +257,28 @@ export const api = {
           { method: "POST", body },
         ),
     },
+    estate: {
+      create: (body: LensRunsApi.EstateCreateRequest) =>
+        request<LensRunsApi.EstateCreateResponse>("/api/lens-runs/estate", {
+          method: "POST",
+          body,
+        }),
+      update: (id: string, body: LensRunsApi.EstateUpdateRequest) =>
+        request<LensRunsApi.EstateUpdateResponse>(`/api/lens-runs/estate/${id}`, {
+          method: "PATCH",
+          body,
+        }),
+      finalize: (id: string) =>
+        request<LensRunsApi.EstateFinalizeResponse>(
+          `/api/lens-runs/estate/${id}/finalize`,
+          { method: "POST" },
+        ),
+      pushActionItems: (id: string, body: LensRunsApi.EstatePushActionItemsRequest) =>
+        request<LensRunsApi.EstatePushActionItemsResponse>(
+          `/api/lens-runs/estate/${id}/push-action-items`,
+          { method: "POST", body },
+        ),
+    },
   },
   partners: {
     listByClient: (clientId: string, q: PartnersApi.ListByClientQuery = {}) =>
