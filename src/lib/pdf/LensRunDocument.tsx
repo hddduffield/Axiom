@@ -22,6 +22,7 @@ const LENS_TYPE_LABELS: Record<LensRun["lens_type"], string> = {
   investment: "Investment Lens",
   insurance: "Insurance Lens",
   cash_flow: "Cash Flow Lens",
+  estate: "Estate Lens",
 };
 
 interface LensRunDocumentProps {

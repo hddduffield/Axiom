@@ -34,7 +34,7 @@ export type PlanStatus =
   | "approved"
   | "archived"
   | "failed";
-export type LensRunLensType = "investment" | "insurance" | "cash_flow";
+export type LensRunLensType = "investment" | "insurance" | "cash_flow" | "estate";
 export type LensRunStatus = "draft" | "approved" | "archived";
 export type ActionItemDurationClass = "one_time" | "long_running";
 export type ActionItemStatus =
