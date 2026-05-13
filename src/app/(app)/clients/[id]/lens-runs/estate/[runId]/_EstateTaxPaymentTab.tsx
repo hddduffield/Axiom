@@ -33,6 +33,7 @@ import {
 import type { EstateLensOutput } from "@/lib/estate-lens/types";
 
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { useParams } from "next/navigation";
 import {
   ComplianceFooter,
   FieldLabel,
@@ -40,6 +41,7 @@ import {
   NumberInput,
   OutputRow,
 } from "./_atoms";
+import { EstateRecommendationsPanel } from "./_EstateRecommendations";
 
 interface Props {
   output: EstateLensOutput;
@@ -47,7 +49,9 @@ interface Props {
   editable: boolean;
 }
 
-export function EstateTaxPaymentTab({ output, onChange }: Props) {
+export function EstateTaxPaymentTab({ output, onChange, editable }: Props) {
+  const params = useParams<{ runId: string }>();
+  const lensId = params.runId;
   const { assumptions, life_insurance, planning_move } = output;
 
   // Effective tax bill: from Tab 2 (with planning) or Tab 1 (baseline).
@@ -573,6 +577,41 @@ export function EstateTaxPaymentTab({ output, onChange }: Props) {
               {cheapest.description}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Action item recommendations + push */}
+      <div className="mt-2 grid grid-cols-1 gap-5 xl:grid-cols-[1fr_320px]">
+        <EstateRecommendationsPanel
+          lensId={lensId}
+          output={output}
+          onChange={onChange}
+          editable={editable}
+        />
+        <div className="flex flex-col gap-4">
+          <PanelCard title="Plan Linkage">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                checked={output.linked_to_main_plan}
+                onChange={(e) =>
+                  onChange({ ...output, linked_to_main_plan: e.target.checked })
+                }
+                disabled={!editable}
+                className="mt-1"
+              />
+              <div>
+                <div className="text-[13px]" style={{ color: "var(--text)" }}>
+                  Link to main plan
+                </div>
+                <p className="mt-1 text-[11px]" style={{ color: "var(--text-3)" }}>
+                  Reference this scenario in the client&apos;s next generated
+                  plan body. Useful when this scenario will be presented
+                  alongside the full advisory plan.
+                </p>
+              </div>
+            </label>
+          </PanelCard>
         </div>
       </div>
 

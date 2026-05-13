@@ -19,11 +19,15 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { requireAdvisor } from "@/lib/api/auth";
 import { err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
-import { CashFlowLensDocument, LensRunDocument } from "@/lib/pdf";
+import { CashFlowLensDocument, EstateLensDocument, LensRunDocument } from "@/lib/pdf";
 import {
   isCashFlowLensOutput,
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
+import {
+  isEstateLensOutput,
+  type EstateLensOutput,
+} from "@/lib/estate-lens/types";
 import type { Database } from "@/lib/supabase/database.types";
 
 type LensRunStatus = Database["public"]["Tables"]["lens_runs"]["Row"]["status"];
@@ -123,6 +127,35 @@ export async function GET(request: Request, { params }: RouteContext) {
           includeTriangle={includeTriangle}
           includeDistribution={includeDistribution}
           includeRecommendations={includeRecommendations}
+          selectedRecommendationIds={selectedRecommendationIds}
+        />,
+      );
+    } else if (row.lens_type === "estate" && isEstateLensOutput(row.output)) {
+      const estateOutput = row.output as EstateLensOutput;
+      const includeProjection = readBoolFlag(url, "include_projection", true);
+      const includeTrustPlanning = readBoolFlag(url, "include_trust_planning", true);
+      const includeTaxPayment = readBoolFlag(url, "include_tax_payment", true);
+      const recIdParam = url.searchParams.get("recommendation_ids");
+      const selectedRecommendationIds =
+        recIdParam !== null
+          ? new Set(
+              recIdParam
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            )
+          : undefined;
+
+      buffer = await renderToBuffer(
+        <EstateLensDocument
+          output={estateOutput}
+          clientHouseholdName={clientName}
+          generatedDate={generatedDate}
+          firmName={PSA_FIRM_NAME}
+          complianceTrackingId={estateOutput.tracking_id || complianceId}
+          includeProjection={includeProjection}
+          includeTrustPlanning={includeTrustPlanning}
+          includeTaxPayment={includeTaxPayment}
           selectedRecommendationIds={selectedRecommendationIds}
         />,
       );
