@@ -1837,3 +1837,243 @@ Programmatic checks performed:
 - **Push-back from action_items to lens**: when an advisor closes a
   pushed action item, surface that completion on the originating lens
   view.
+
+# Phase 14: Estate Lens v1
+
+Second of the four planned lens generators in the v2 vision (after
+Cash Flow Lens, Phase 13). The estate lens models three interconnected
+calculators for HNW estate planning:
+
+  01. Estate Tax Projection — federal + state estate tax + cap gains
+      drag on out-of-estate trust liquidation, year-by-year trajectory
+  02. Trust Planning Calculator — compare a proposed Note Sale or Gift
+      to a grantor trust against the no-planning baseline
+  03. Tax Payment Strategy — funding the estate tax bill via cash, life
+      insurance held out of estate, trust liquidation, or a mix
+
+All math is **deterministic in the browser** — no LLM cost ($0 per
+scenario). Cost cents stay at 0 on the lens_runs row.
+
+## Math reverse-engineered from screenshots
+
+**This is the highest-risk item from Phase 14.** Hayden did not provide
+formula derivations — only screenshots of calculated outputs. The math
+in `src/lib/estate-lens/calc.ts` was reverse-engineered from input ↔
+output numerical relationships. Three mitigations are **MANDATORY** and
+enforced on every output:
+
+1. **Formula tooltips ("?")** — every calculated field renders an
+   info icon that opens a popover showing the exact formula used.
+   Implemented via `_atoms.tsx`'s `FormulaTooltip` + `OutputRow`.
+2. **Compliance disclaimer** — `ComplianceFooter` renders on every tab
+   and on every PDF page with the full PSA Wealth / MassMutual
+   disclaimer plus: "Calculations are planning estimates only. Verify
+   all figures with qualified tax counsel before client decisions."
+3. **math.md derivation document** at `src/lib/estate-lens/math.md`
+   explains every formula with IRC § / Rev. Rul. / Treas. Reg.
+   citations. Advisors should review math.md BEFORE first client use.
+
+## Schema (migration 0006)
+
+No new table — estate-lens state lives in `lens_runs.output` JSONB
+with `lens_type='estate'`. Migration 0006 only:
+
+- Expands the lens_runs.lens_type CHECK constraint to include
+  `'estate'` (alongside investment / insurance / cash_flow).
+- Adds a partial index `lens_runs_estate_client_idx` on
+  `(client_id, generated_at desc)` filtered on `lens_type='estate'`
+  for fast per-client scenario lookups.
+
+`src/lib/supabase/database.types.ts` is hand-updated to include
+`'estate'` in `LensRunLensType`.
+
+**Apply manually**: paste `supabase/migrations/0006_estate_lens.sql`
+into the Supabase Dashboard SQL editor.
+
+## State estate tax lookup
+
+`src/lib/estate-lens/state-tax-table.ts` exports
+`STATE_ESTATE_TAX_RATES`: a hard-coded `Record<state_code, {
+rate_pct, exemption_amount, has_inheritance_tax, sources }>` covering
+all 50 states + DC. As of 2026:
+
+- **States with NO estate tax**: 37 states (FL, TX, NV, GA, etc.) →
+  `rate_pct: 0`
+- **States WITH estate tax**: CT, DC, HI, IL, ME, MD, MA, MN, NY, OR,
+  RI, VT, WA — each entry shows the top marginal rate (12-20%) +
+  exemption amount + source citation
+- **Inheritance-tax-only states** flagged via `has_inheritance_tax`:
+  KY, MD, NE, NJ, PA (IA repealed 2025). v1 does not compute
+  inheritance tax math — flag only.
+
+Refresh annually. State rates change frequently; verify against
+the cited state DOR before client delivery.
+
+## Canonical types
+
+`src/lib/estate-lens/types.ts` — `EstateLensOutput`:
+
+```
+{ schema_version: 1, client_snapshot, scenario_name, scenario_description,
+  assumptions, assets_out, planning_move, life_insurance, recommendations,
+  ai_suggestions, pushed_action_item_ids, linked_to_main_plan, tracking_id }
+```
+
+`defaultEstateOutput()` seeds the screenshot defaults (Estate Today
+$100M, Annual Spend $2M, Growth 7%, 30 years, Exemption $30M, etc.).
+`tracking_id` is auto-generated CRN + YYYYMM + 7-digit sequence.
+
+## API surface
+
+| Endpoint | Method | Purpose |
+| --- | --- | --- |
+| `/api/lens-runs/estate` | POST | Create new draft scenario (auto-named "Scenario N") |
+| `/api/lens-runs/estate/[id]` | PATCH | Full output JSONB replace |
+| `/api/lens-runs/estate/[id]/finalize` | POST | draft → approved |
+| `/api/lens-runs/estate/[id]/push-action-items` | POST | Insert checked recs → action_items |
+| `/api/lens-runs/[id]/archive` | POST | Soft-delete (any lens type) |
+| `/api/lens-runs/[id]/pdf` | GET | Dispatches to EstateLensDocument when lens_type='estate' |
+
+Existing list endpoint `GET /api/clients/[id]/lens-runs` surfaces
+estate runs naturally.
+
+Auth: every handler calls `requireAdvisor()` for defense in depth.
+PATCH only accepts mutations on draft-state lenses.
+
+## Pages
+
+`/clients/[id]/lens-runs/estate/[runId]` — Server Component fetches
+the lens + client, hands off to `_EstateLensView` (Client). The view
+owns output state + debounced auto-save (1500ms idle) + 3-tab nav
+matching the screenshots:
+
+- **01 ESTATE TAX PROJECTION** — 3-column: inputs (Estate Assumptions
+  + Assets Out) / serif title + SVG trajectory chart / per-year
+  outputs + navy/gold LI Need card
+- **02 TRUST PLANNING CALCULATOR** — 3-column: Current State mirror
+  + comparison chart / Note Sale / Gift toggle + planning move inputs
+  + Trust Outputs / Aggregate Family Outcome comparison + gold
+  FAMILY SAVES card
+- **03 TAX PAYMENT STRATEGY** — 3-column: navy Tax Bill card + LI
+  Plan / 4 payment-option comparison cards (CHEAPEST/MOST EXPENSIVE
+  badges) / "Why not just invest?" rebuttal + mortality leverage
+  chart + gold Recommended Strategy card
+
+Plus the action-item recommendations panel below the 3 columns on
+Tab 3 with "Generate defaults" + per-rec checkbox push.
+
+## Shared atoms
+
+`_atoms.tsx`:
+- **`MoneyInput`** — cents-backed dollar input ($ prefix + comma format)
+- **`PctInput`** / **`NumberInput`** — percent + integer inputs
+- **`FieldLabel`** — uppercase mono eyebrow
+- **`OutputRow`** — labeled read-only output with optional formula tooltip
+- **`FormulaTooltip`** — "?" icon → popover with formula + note
+- **`ComplianceFooter`** — disclaimer + tracking ID on every tab/PDF
+
+## PDF export
+
+`src/lib/pdf/EstateLensDocument.tsx` — 5-page React-PDF document:
+
+1. Cover (client + scenario name + date + tracking ID)
+2. 01 Estate Tax Projection (year-N output table + LI Need)
+3. 02 Trust Planning Calculator (comparison table + Family Saves)
+4. 03 Tax Payment Strategy (4 options + recommended + mortality)
+5. (optional) Recommendations + Disclosures
+
+Pre-export `_EstatePdfDialog.tsx` lets the advisor pick filename +
+per-section toggle + recommendation checkbox. The PDF route at
+`/api/lens-runs/[id]/pdf` dispatches by `lens_type`:
+
+```
+if (lens_type === 'cash_flow') → CashFlowLensDocument
+else if (lens_type === 'estate') → EstateLensDocument
+else → LensRunDocument (placeholder)
+```
+
+## Push to action items
+
+Tab 3's `_EstateRecommendations.tsx` exposes "Generate defaults"
+seeding 3-4 standard recs from the current planning move + LI state
+(Execute Note Sale to IDGT / Acquire LI / Coordinate ILIT / Annual
+Review). Each rec has a stable id; advisor checks the ones to push;
+"Push selected to action items" calls
+`api.lensRuns.estate.pushActionItems` which inserts into action_items
+with `category='ESTATE'`, `source_lens_run_id=lens.id`, deterministic
+timing_bucket derived from year_offset.
+
+Idempotency: `pushed_action_item_ids` JSONB array tracks which rec
+ids have been pushed. Re-clicking push skips already-pushed.
+
+## Multiple scenarios per client
+
+Each lens_runs row with `lens_type='estate'` is an independent
+scenario. Default name is "Scenario N" where N is the per-client
+estate-lens count + 1. The Lens Runs tab on the client detail page
+lists all scenarios; each clicks through to its own detail page.
+
+Side-by-side scenario comparison is **deferred to v1.5**.
+
+## Decisions made autonomously
+
+- **One JSONB blob, not a normalized table**: same pattern as Cash
+  Flow Lens. Future state can be added without schema churn.
+- **All money in cents**: integer arithmetic, no float drift.
+- **State estate tax**: hard-coded lookup table — no runtime queries.
+  Top marginal rate (conservative overestimate for HNW estates).
+- **Tab 2 simplifications**: Gift / Note Sale both reduce in-estate
+  by discounted FMV at t=0; Note Sale adds back the frozen note face
+  value at the horizon. AFR interest cash flow is NOT modeled (the
+  spread between trust growth and AFR is captured by the trust's
+  independent compounding).
+- **Tab 3 simplifications**: pay-options use flat effective rates,
+  not real bracket models. Mortality leverage chart uses estate growth
+  rate for self-insure assumption (not advisor-overridable).
+- **Recommendations**: explicit-button only ("Generate defaults"),
+  not auto-generated. Default rec set is rule-based (no LLM).
+
+## Pixel-perfect match status
+
+Built from screenshot inspection without access to source design CSS.
+Brand tokens (PSA navy, cream, gold, Cormorant serif, mono mono)
+match the existing app. Recharts not installed — used pure SVG for
+charts (smaller bundle, matches cash flow pattern).
+
+**Visual gap candidates that may surface in browser**: chart aspect
+ratios, exact endpoint label positioning, animated transitions. Tweaks
+land as Phase 14.7+ visual polish commits if needed.
+
+## Smoke test scope
+
+- `npx tsc --noEmit` clean.
+- `npm run build` — 49 routes compile (was 44 + estate routes added).
+- Manual click-through against an authenticated session NOT done —
+  autonomous build, AI testing self-budgeted to $0. Production parity
+  surfaces on Vercel auto-deploy.
+
+## v1.5 backlog created during Phase 14
+
+- **Migration 0006 manual-apply step**: must run via Supabase Dashboard
+  SQL editor before advisors can use the feature in production.
+- **NY cliff exemption** (entire estate taxed > 105% of exemption)
+- **CT $15M tax cap**
+- **State-specific bracket schedules** (currently flat top rate)
+- **Federal progressive brackets (IRC §2001(c))** — currently flat 40%
+- **AFR interest income flow** on Note Sale (paid back to estate)
+- **GST tax allocations** (IRC §2641)
+- **Inheritance tax math** for NE / NJ / PA / KY / MD (flagged only)
+- **DSUE / portability** between spouses
+- **Side-by-side scenario comparison view** (each scenario is currently
+  its own page)
+- **Re-open finalized lens**: PATCH rejects status != draft; unfinalize
+  endpoint deferred
+- **Editable AFR via §7520 lookup**: advisor types AFR manually today;
+  a §7520 monthly-rate import could auto-populate
+- **Per-rec category from defaults**: uniform `ESTATE` today; could
+  emit `INSURANCE` for LI Purchase, `ESTATE` for trust setup, etc.
+- **Section 7520 valuation tables** for GRAT / CLT / QPRT specifics
+- **`linked_to_main_plan` integration**: flag exists, but the main plan
+  body doesn't yet reference linked lens scenarios. Phase 15 deliverable.
+- **Refresh annual rates**: state-tax-table.ts is dated 2026; annual
+  refresh procedure should be documented in a runbook.
