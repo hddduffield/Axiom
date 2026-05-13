@@ -2140,3 +2140,151 @@ status-transition semantics explicit.
 - **Bulk archive** for a multi-scenario cleanup workflow.
 - **Re-open finalized lens** is still separately deferred from Phase
   13 — restore goes archived → draft, not approved → draft.
+
+# Phase 16: Fact Review → Lens auto-population
+
+Cash Flow Lens (Phase 13) and Estate Lens (Phase 14) shipped with
+manual-entry-only flows. Phase 16 closes the loop: when an advisor
+creates a new lens for a client that already has a finalized plan,
+the lens pre-fills from `plans.stage1_output` (the ClientProfile
+Stage 1 extracted from the Fact Review). $0 LLM cost — all
+deterministic mapping.
+
+## Where ClientProfile lives
+
+ClientProfile is the JSONB at `plans.stage1_output`, NOT
+`plans.client_profile`. Schema reference:
+`src/lib/orchestrator/schemas/clientProfile.ts`. State (e.g. "GA") is
+at `profile.client_and_family.primary_owner.state_of_residence` — the
+`clients` table does NOT have a state field.
+
+## Extractor library — `src/lib/lens-prefill/`
+
+| File | Purpose |
+| --- | --- |
+| `extractors.ts` | `extractCashFlowFromClientProfile` + `extractEstateFromClientProfile`. Pure functions. |
+| `sourceLookup.ts` | `getLatestFinalizedPlanForClient(supabase, client_id)` — `WHERE status IN (ready_for_review, approved, archived) AND stage1_output IS NOT NULL ORDER BY generated_at DESC LIMIT 1`. |
+| `merge.ts` | `mergeRefresh<T>` — dotted-path overlay used by both refresh endpoints. |
+| `diff.ts` | `diffSourcedFields(prev, next)` — detects edits by walking sourced paths. `applyEditedFields` / `isSourced` / `isEdited` helpers. |
+| `index.ts` | Barrel export. |
+
+### NumericValueSchema gotchas
+
+ClientProfile uses a wrapped `{ value, unit, is_annual, ... }` shape
+for every monetary field. The extractor handles:
+
+- `value: null` → field omitted (no source path stamped)
+- `value: [low, high]` tuple → midpoint used
+- `unit !== "USD"` for USD-expected fields → rejected (null fallback)
+- AGI / net_worth / monthly_outflows have stable section conventions
+  (income is annual, cash_flow.monthly_* is monthly × 12)
+
+### Cash Flow field map
+
+| ClientProfile path | CashFlowLensOutput field |
+| --- | --- |
+| `income.agi.value` | `gross_income_annual_cents` |
+| `cash_flow.monthly_outflows.value × 12` | `expenses_annual_cents` |
+| `goals_and_values.financial_goals` | `goals_narrative` |
+| `client_and_family.primary_owner.age` | `client_snapshot.age` |
+| `tax_status.federal_marginal_rate.value` | `assumptions.effective_tax_rate_now` |
+| `personal_balance_sheet.retirement_accounts[]` | `buckets[]` (classified into 401k / Roth / IRA / SEP / 403b / Annuity by regex on description+category) |
+| `personal_balance_sheet.liquid_assets[]` where category includes broker/taxable/investment | `buckets[]` (brokerage preset) |
+| `insurance.life_insurance_policies[]` where cash_value > 0 | `buckets[]` (whole_life preset) |
+| `liquid_assets[]` where category includes emergency/savings/checking/money market | `emergency_fund.current_balance_cents` (summed) |
+
+### Estate field map
+
+| ClientProfile path | EstateLensOutput field |
+| --- | --- |
+| `client_and_family.primary_owner.state_of_residence` | `client_snapshot.state_code` (normalized full-name → 2-letter via `STATE_NAME_TO_CODE`) |
+| (state code) → `STATE_ESTATE_TAX_RATES` lookup | `assumptions.state_estate_tax_pct` |
+| `personal_balance_sheet.net_worth.value` | `assumptions.estate_today_cents` |
+| `cash_flow.monthly_outflows.value × 12` | `assumptions.annual_spend_cents` |
+| `client_and_family.primary_owner.age` | `assumptions.client_age_today` |
+| (derived 85 − age, clamp 15..50) | `assumptions.years_out` |
+| Constant $30M (2026 married snapshot) | `assumptions.combined_exemption_cents` |
+| `tax_status.federal_marginal_rate.value` → bracket proxy 0/15/20 | `assets_out.federal_ltcg_pct` + `planning_move.federal_ltcg_pct` |
+
+Funded irrevocable trust assets are NOT extracted (TrustRecord has no
+balance field). The banner surfaces "Some fields blank" when this
+matters and the advisor fills `fmv_out_today` manually.
+
+## Schema impact
+
+Both lens output JSONB shapes gained a `source` field:
+
+```
+{
+  plan_id: string;
+  plan_generated_at: string;
+  sourced_fields: string[];   // dotted paths the extractor filled
+  edited_fields: string[];    // paths the advisor has hand-edited
+} | null
+```
+
+`null` = manual-entry path (no finalized plan available at creation).
+No DB migration required — JSONB rolls forward. `defaultXxxOutput()`
+seeds set `source: null` so existing rows without the field still
+type-check on read.
+
+## API surface (Phase 16 additions)
+
+| Endpoint | Behavior |
+| --- | --- |
+| `POST /api/lens-runs/cash-flow` | If `getLatestFinalizedPlanForClient` returns a row, run extractor and stamp `source` on the seed. Else fall back to `defaultCashFlowOutput`. |
+| `POST /api/lens-runs/estate` | Same pattern. Caller-supplied `state_code` overrides extracted state (what-if scenarios). |
+| `POST /api/lens-runs/cash-flow/[id]/refresh-from-plan` | Re-extract + merge. Preserves `edited_fields`. 409 if lens ≠ draft or no plan exists. |
+| `POST /api/lens-runs/estate/[id]/refresh-from-plan` | Same. Preserves `tracking_id` (not part of extraction). |
+
+Client wrappers: `api.lensRuns.cashFlow.refreshFromPlan(id)` /
+`api.lensRuns.estate.refreshFromPlan(id)`.
+
+## UI surfaces
+
+- **`src/components/axiom/LensSourceBanner.tsx`** — gold-tinted banner
+  at the top of every lens view. Shows source plan id-prefix + date,
+  field counts (sourced + edited), partial-data warning, "View plan"
+  deep link, "Refresh from plan" button with confirm dialog. Quieter
+  "Manual entry" muted variant when `source === null`.
+- **`src/components/axiom/FieldStatus.tsx`** — small 9pt mono badge
+  shown beside input labels: "from plan" (gold FileText) when sourced
+  + unedited; "edited" (text-3 Pencil) when advisor has overridden.
+  Wired into 4 representative inputs in 16.3 (gross income, expenses,
+  estate today, annual spend, age, state). Pattern can be extended to
+  any input by importing FieldStatus + isSourced/isEdited.
+- Edit-tracking: `diffSourcedFields(prev, next)` runs on every
+  `setOutput` in both lens views and appends newly-edited paths into
+  `source.edited_fields`. The refresh endpoint reads this list and
+  skips those paths on merge.
+
+## Edge cases handled
+
+| Case | Behavior |
+| --- | --- |
+| No finalized plan for client | Lens creates with default seed, `source: null`, banner shows "Manual entry" variant. |
+| Plan exists, ClientProfile partial | Extractor fills what it can; banner shows amber "Some fields blank" warning when `sourced_fields.length < expectedFieldCount` (threshold 6). |
+| Multiple finalized plans | Always picks most-recent by `generated_at`. Plan-selector at create time is a v1.5 backlog item. |
+| Advisor edits a sourced field then hits Refresh | The edit is preserved; the rest of `sourced_fields` re-pulls from the current plan. |
+| Lens is finalized/archived | Refresh button is disabled (refresh endpoint 409s). Source banner still shows for auditability. |
+| Bucket regeneration on refresh | `merge.ts` replaces the whole `buckets[]` array wholesale unless the advisor has edited any element of it (paths like `buckets[2].current_balance_cents`). |
+
+## v1.5 backlog from Phase 16
+
+- **Plan selector** at lens creation — pick which finalized plan to
+  source from instead of always "most recent".
+- **Per-field badge coverage** — only 6 inputs got `<FieldStatus />`
+  in 16.3. Wire it into the rest (time horizons, assumptions,
+  emergency fund inputs, each bucket card, estate planning move
+  inputs, life insurance plan inputs).
+- **Funded trust balances** — `TrustRecord.funded` is boolean only.
+  Add an asset-side join (e.g. `category="irrevocable_trust"` in
+  liquid_assets) to populate `assets_out.fmv_out_today_cents`
+  automatically.
+- **Effective tax rate at retirement** — currently uses default 24%.
+  Could derive from a retirement bracket assumption against the AGI.
+- **Refresh-from-plan history** — keep a log of when each refresh
+  fired and which fields changed.
+- **Stage 1 archetype → cash-flow assumptions** — POST archetype
+  could swap default growth_rate / capital_gains_rate to PSA's
+  archetype-tuned defaults.

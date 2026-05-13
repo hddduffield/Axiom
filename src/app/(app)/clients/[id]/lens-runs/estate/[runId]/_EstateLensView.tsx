@@ -258,6 +258,10 @@ export function EstateLensView({ lensRun: initialLens, client, initialOutput }: 
           }}
           refreshDisabled={!isDraft}
           lensTypeLabel="Estate Lens"
+          // Full extraction fills: state, state_estate_tax_pct, estate_today,
+          // annual_spend, age, years_out, combined_exemption, federal_ltcg
+          // (×2 surfaces). Threshold of 6 captures most-fields-present.
+          expectedFieldCount={6}
         />
       ) : null}
 

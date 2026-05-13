@@ -253,6 +253,10 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
           }}
           refreshDisabled={!isDraft}
           lensTypeLabel="Cash Flow Lens"
+          // Typical Holloway-class extraction fills ~6 paths: income,
+          // expenses, age, goals, marginal-rate, ≥1 bucket. Below this
+          // the banner surfaces a "Some fields blank" amber warning.
+          expectedFieldCount={6}
         />
       ) : null}
 
