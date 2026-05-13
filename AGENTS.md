@@ -2077,3 +2077,66 @@ land as Phase 14.7+ visual polish commits if needed.
   body doesn't yet reference linked lens scenarios. Phase 15 deliverable.
 - **Refresh annual rates**: state-tax-table.ts is dated 2026; annual
   refresh procedure should be documented in a runbook.
+
+# Phase 15: Lens run archive + restore UI
+
+Database has supported `lens_runs.status='archived'` + `archived_at`
+since Phase 13.1 (migration 0005). UI to drive it landed in Phase 15
+across three commits. Mirrors the client-level Phase 11 pattern.
+
+## Endpoints
+
+| Endpoint | Phase | Notes |
+| --- | --- | --- |
+| `POST /api/lens-runs/[id]/archive` | 13 | Already existed — flips status to archived, stamps archived_at |
+| `POST /api/lens-runs/[id]/restore` | 15.1 | New — inverse: archived → draft, clears archived_at. 409 if not currently archived |
+
+`api.lensRuns.archive(id)` and `api.lensRuns.restore(id)` are the
+client wrappers. Both return the updated `LensRun` row.
+
+## UI surfaces (Lens Runs tab on /clients/[id])
+
+- **Archive trigger** — small red destructive Archive icon button at
+  the end of each non-archived row. Click opens `_LensRunArchiveDialog`
+  with a typo-confirm guard (advisor must type the scenario name
+  verbatim — identical UX to Phase 11.2 ClientArchiveDialog). Click
+  propagation is stopped so the row's open-on-click navigation doesn't
+  fire when the icon is clicked.
+- **Restore trigger** — same slot, RotateCcw icon, on archived rows.
+  Click opens `_LensRunRestoreDialog` — simple confirmation, no typo
+  guard (non-destructive). Calls `api.lensRuns.restore` then
+  `router.refresh()` so the parent server data re-fetches in place.
+- **Show archived chip** — alongside the New Cash Flow / New Estate
+  Lens buttons on the table header. Toggles `?archived=1` on the URL
+  (state is shareable + survives refresh). When on AND archived rows
+  exist, a Count badge appears in the chip.
+- **Archived row treatment** — opacity 0.65 when displayed. Click-to-
+  open still navigates to the lens detail page so the advisor can read
+  historical state without restoring first.
+
+## Server-side filtering
+
+`/clients/[id]/page.tsx` reads `searchParams.archived`. When `==='1'`,
+the lens_runs query drops `.neq("status","archived")`; otherwise the
+default-hide filter applies. Same query-time filter pattern as Phase
+11.5 (notes / action-items archived toggles).
+
+## Why these aren't generic PATCH calls
+
+The existing `/archive` endpoint POSTs (not PATCH) and stamps
+`archived_at` server-side. For symmetry I added a dedicated `/restore`
+POST that clears `archived_at` server-side. A generic PATCH endpoint
+on `/api/lens-runs/[id]` doesn't exist (the per-lens-type PATCH on
+cash-flow + estate is intentionally narrow); adding one would require
+designing what other fields are mutable through it. The dedicated
+archive/restore pair keeps the surface area small and the
+status-transition semantics explicit.
+
+## v1.5 backlog from Phase 15
+
+- **Audit log**: archive + restore mutations are not yet written to
+  `audit_log`. Phase 5e marker still applies — wire whenever the
+  audit_log surface lands across other mutations.
+- **Bulk archive** for a multi-scenario cleanup workflow.
+- **Re-open finalized lens** is still separately deferred from Phase
+  13 — restore goes archived → draft, not approved → draft.
