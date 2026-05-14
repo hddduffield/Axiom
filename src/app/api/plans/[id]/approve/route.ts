@@ -2,6 +2,7 @@ import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
+import { promotePlanRecsToActionItems } from "@/lib/plan-execution/promoteRecsToActionItems";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -42,8 +43,7 @@ export async function POST(_request: Request, { params }: RouteContext) {
   if (error) return err(mapDbError(error), dbErrorMessage(error));
   // TODO: Phase 5e — audit_log insert (entity='plan', action='approved').
 
-  // Phase 17.3 — plan approval is a meaningful touch. Phase 17.5 will
-  // additionally call promotePlanRecsToActionItems here.
+  // Phase 17.3 — plan approval is a meaningful touch.
   await recordMeaningfulTouch(
     auth.supabase,
     data.client_id,
@@ -51,5 +51,17 @@ export async function POST(_request: Request, { params }: RouteContext) {
     auth.advisor.id,
   );
 
-  return ok(data);
+  // Phase 17.5 — auto-promote each recommendation in stage3a_output to
+  // a first-class action_items row. Idempotent — re-approval after a
+  // status flip will skip already-promoted recs via the (plan, rec_id)
+  // unique index. Errors are surfaced in the response but do not roll
+  // back the approval (the plan transition already committed).
+  const promotion = await promotePlanRecsToActionItems(auth.supabase, id);
+
+  return ok({
+    plan: data,
+    action_items_created: promotion.count,
+    action_items_skipped_existing: promotion.skipped_existing,
+    promotion_errors: promotion.errors,
+  });
 }

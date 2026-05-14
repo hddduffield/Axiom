@@ -7,7 +7,7 @@
 // category + partner-blocked + long-running tags). Phase 9.19 adds
 // the draggable wrapper via @dnd-kit/core's useDraggable hook.
 
-import { Link as LinkIcon } from "lucide-react";
+import { FileText, Layers, Link as LinkIcon } from "lucide-react";
 import * as React from "react";
 import type { ActionItem } from "@/lib/api/types";
 
@@ -124,6 +124,36 @@ export const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(
               >
                 <LinkIcon className="h-2.5 w-2.5" />
                 {item.partner_type?.toLowerCase()}-blocked
+              </span>
+            ) : null}
+            {item.source_plan_id ? (
+              <span
+                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px]"
+                style={{
+                  background: "var(--s-amber-bg)",
+                  color: "var(--s-amber)",
+                }}
+                title={
+                  item.source_recommendation_id
+                    ? `From plan recommendation ${item.source_recommendation_id}`
+                    : "Spawned from a plan approval"
+                }
+              >
+                <FileText className="h-2.5 w-2.5" />
+                from plan
+              </span>
+            ) : null}
+            {item.source_lens_run_id ? (
+              <span
+                className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px]"
+                style={{
+                  background: "var(--s-blue-bg)",
+                  color: "var(--s-blue)",
+                }}
+                title="Spawned from a lens finalization"
+              >
+                <Layers className="h-2.5 w-2.5" />
+                from lens
               </span>
             ) : null}
           </div>

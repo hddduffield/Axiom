@@ -19,8 +19,24 @@ export function PlanActions({ planId, status }: Props) {
   async function approve() {
     setBusy(true);
     try {
-      await api.plans.approve(planId);
-      toast.success("Plan approved");
+      const res = await api.plans.approve(planId);
+      // Phase 17.5 — surface the auto-promotion result.
+      const n = res.action_items_created;
+      const skipped = res.action_items_skipped_existing;
+      const errs = res.promotion_errors.length;
+      let msg = "Plan approved";
+      if (n > 0) {
+        msg = `Plan approved · ${n} action item${n === 1 ? "" : "s"} created`;
+      } else if (skipped > 0) {
+        msg = `Plan approved · ${skipped} recommendation${skipped === 1 ? "" : "s"} already in action items`;
+      }
+      toast.success(msg);
+      if (errs > 0) {
+        toast.warning(
+          `${errs} recommendation${errs === 1 ? "" : "s"} could not be promoted; check console.`,
+        );
+        for (const e of res.promotion_errors) console.warn("[approve]", e);
+      }
       router.refresh();
     } catch (e) {
       toast.error(isApiError(e) ? e.message : "Could not approve");

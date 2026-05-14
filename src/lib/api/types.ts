@@ -163,7 +163,15 @@ export namespace PlansApi {
   }
   export type QueuedListResponse = CursorList<QueuedPlanRow>;
 
-  export type ApproveResponse = Plan;
+  // Phase 17.5 — approval also auto-promotes recommendations into
+  // action_items. The response carries the count so the UI can toast
+  // "N action items created". errors[] is empty on a clean approval.
+  export interface ApproveResponse {
+    plan: Plan;
+    action_items_created: number;
+    action_items_skipped_existing: number;
+    promotion_errors: string[];
+  }
   export type ArchiveResponse = Plan;
 }
 
