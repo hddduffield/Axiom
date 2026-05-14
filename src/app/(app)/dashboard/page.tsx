@@ -30,9 +30,14 @@ export default async function DashboardPage() {
   // Pre-fetch clients to derive activeClientIds for downstream filters.
   // Cheap (small set) and unblocks the dashboard's "no archived data"
   // contract without per-query JOINs.
+  // Phase 17.8 — also reads cadence_target_days +
+  // last_meaningful_contact_at so the Going Stale module can compute
+  // overdue rows without an extra query.
   const { data: allClients } = await supabase
     .from("clients")
-    .select("id, household_name, status")
+    .select(
+      "id, household_name, status, cadence_target_days, cadence_custom_label, last_meaningful_contact_at",
+    )
     .order("household_name");
   const visibleClients = (allClients ?? []).filter(
     (c) => c.status !== "inactive",
@@ -40,6 +45,34 @@ export default async function DashboardPage() {
   const activeClientIds = visibleClients.map((c) => c.id);
   // Sentinel for the empty-set edge case so .in() stays well-formed.
   const inFilter = activeClientIds.length > 0 ? activeClientIds : ["__none__"];
+
+  // Phase 17.8 — derive "going stale" rows: visible clients whose last
+  // meaningful touch is older than their cadence target days. Null
+  // last_meaningful_contact_at counts as infinitely stale (never
+  // touched). Cap to 20 most-overdue.
+  const nowMs = Date.now();
+  const staleRows = visibleClients
+    .map((c) => {
+      const target = c.cadence_target_days;
+      if (!target || target <= 0) return null;
+      const lastMs = c.last_meaningful_contact_at
+        ? new Date(c.last_meaningful_contact_at).getTime()
+        : 0;
+      const dueAt = lastMs + target * 86_400_000;
+      const diffDays = Math.floor((nowMs - dueAt) / 86_400_000);
+      if (diffDays < 1) return null;
+      return {
+        id: c.id,
+        household_name: c.household_name,
+        cadence_target_days: c.cadence_target_days,
+        cadence_custom_label: c.cadence_custom_label,
+        last_meaningful_contact_at: c.last_meaningful_contact_at,
+        days_overdue: diffDays,
+      };
+    })
+    .filter(<T,>(r: T | null): r is T => r !== null)
+    .sort((a, b) => b.days_overdue - a.days_overdue)
+    .slice(0, 20);
 
   const [
     myItemsRes,
@@ -95,6 +128,7 @@ export default async function DashboardPage() {
       recentNotes={recentNotesRes.data ?? []}
       recentLensRuns={lensRunsRes.data ?? []}
       recentCompletes={completedRecentRes.data ?? []}
+      goingStale={staleRows}
     />
   );
 }

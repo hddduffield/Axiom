@@ -41,6 +41,7 @@ import {
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PanelCard } from "@/components/axiom/PanelCard";
+import { GoingStaleModule, type StaleClientRow } from "./_GoingStaleModule";
 import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
@@ -69,6 +70,8 @@ interface Props {
   recentNotes: NoteWithAuthor[];
   recentLensRuns: LensRunLite[];
   recentCompletes: CompleteEvent[];
+  // Phase 17.8 — going-stale rows pre-computed server-side.
+  goingStale: StaleClientRow[];
 }
 
 const NOTE_TAGS = [
@@ -112,6 +115,7 @@ export function DashboardView({
   recentNotes,
   recentLensRuns,
   recentCompletes,
+  goingStale,
 }: Props) {
   const me = { id: advisor.id, email: advisor.email };
   const [items, setItems] = useState<ActionItem[]>(myItems);
@@ -243,6 +247,9 @@ export function DashboardView({
         clients={clients}
         onSavedNote={() => setComposing(false)}
       />
+
+      {/* Phase 17.8 — Going Stale: clients past their contact cadence */}
+      <GoingStaleModule rows={goingStale} />
 
       {/* ── Stat tiles ── */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr]">
