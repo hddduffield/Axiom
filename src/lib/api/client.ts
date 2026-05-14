@@ -235,6 +235,8 @@ export const api = {
       request<LensRunsApi.RestoreResponse>(`/api/lens-runs/${id}/restore`, { method: "POST" }),
     setCurrent: (id: string) =>
       request<LensRunsApi.SetCurrentResponse>(`/api/lens-runs/${id}/set-current`, { method: "POST" }),
+    reopen: (id: string) =>
+      request<LensRunsApi.ReopenResponse>(`/api/lens-runs/${id}/reopen`, { method: "POST" }),
     exportPdf: (id: string) => requestBlob(`/api/lens-runs/${id}/pdf`),
     cashFlow: {
       create: (body: LensRunsApi.CashFlowCreateRequest) =>

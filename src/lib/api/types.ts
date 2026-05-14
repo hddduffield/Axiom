@@ -323,6 +323,10 @@ export namespace LensRunsApi {
   // lens_type pair. Returns the updated LensRun row. Other 'current'
   // rows for the same pair are auto-demoted to 'superseded' server-side.
   export type SetCurrentResponse = LensRun;
+  // Phase 18.2 — reopen a finalized (non-draft, non-archived) lens
+  // back to draft for editing. Existing pushed action items are NOT
+  // deleted.
+  export type ReopenResponse = LensRun;
 
   export type CashFlowSuggestAllocationResponse = LensRun;
   export type CashFlowGenerateRecommendationsResponse = LensRun;

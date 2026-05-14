@@ -19,6 +19,7 @@ import {
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
+import { LensReopenDialog } from "@/components/axiom/LensReopenDialog";
 import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { CashFlowInputTab } from "./_CashFlowInputTab";
@@ -216,6 +217,14 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
             <FileDown className="mr-1.5 h-3.5 w-3.5" />
             Export PDF
           </Button>
+          {/* Phase 18.2 — Reopen finalized lens for editing. Shown for
+              any non-draft, non-archived status. */}
+          {!isDraft && !isArchived ? (
+            <LensReopenDialog
+              lensRunId={lensRun.id}
+              lensTypeLabel="Cash Flow Lens"
+            />
+          ) : null}
           {!isArchived ? (
             <Button
               variant="outline"

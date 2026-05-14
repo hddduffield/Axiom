@@ -29,6 +29,7 @@ import {
   type EstateLensOutput,
 } from "@/lib/estate-lens/types";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
+import { LensReopenDialog } from "@/components/axiom/LensReopenDialog";
 import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { EstateProjectionTab } from "./_EstateProjectionTab";
@@ -227,6 +228,13 @@ export function EstateLensView({ lensRun: initialLens, client, initialOutput }: 
             <FileDown className="mr-1.5 h-3.5 w-3.5" />
             Export PDF
           </Button>
+          {/* Phase 18.2 — Reopen finalized scenario for editing. */}
+          {!isDraft && !isArchived ? (
+            <LensReopenDialog
+              lensRunId={lensRun.id}
+              lensTypeLabel="Estate scenario"
+            />
+          ) : null}
           {!isArchived ? (
             <Button variant="outline" size="sm" onClick={archive} disabled={archiving}>
               <Archive className="mr-1.5 h-3.5 w-3.5" />
