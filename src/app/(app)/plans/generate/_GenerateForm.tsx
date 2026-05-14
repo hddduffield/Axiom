@@ -39,7 +39,7 @@ interface ClientOption {
   id: string;
   household_name: string;
   archetype: string | null;
-  status: "active" | "inactive" | "prospect";
+  status: "active" | "inactive" | "prospect" | "dormant";
   advisors: { first_name: string; last_name: string } | null;
 }
 

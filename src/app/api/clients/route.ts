@@ -13,13 +13,16 @@ import { defaultCadenceForArchetype } from "@/lib/cadence/defaults";
 const createSchema = z.object({
   lead_advisor_id: z.string().uuid().optional(),
   household_name: z.string().min(1),
-  status: z.enum(["active", "inactive", "prospect"]).optional(),
+  status: z.enum(["active", "inactive", "prospect", "dormant"]).optional(),
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]).nullable().optional(),
   notes: z.string().nullable().optional(),
   // Phase 17.2 — contact cadence. Range 1..3650 (10y) is a sanity guard;
   // actual UI surfaces 30..365 presets but custom integers are allowed.
   cadence_target_days: z.number().int().min(1).max(3650).nullable().optional(),
   cadence_custom_label: z.string().max(120).nullable().optional(),
+  // Phase 18.4 — initial context paragraph (rare on create; usually
+  // edited later).
+  context_paragraph: z.string().nullable().optional(),
 });
 
 // GET /api/clients — list clients with filters + cursor pagination.
@@ -44,7 +47,9 @@ export async function GET(request: Request) {
     .limit(limit + 1);
 
   if (status) {
-    const parsedStatus = z.enum(["active", "inactive", "prospect"]).safeParse(status);
+    const parsedStatus = z
+      .enum(["active", "inactive", "prospect", "dormant"])
+      .safeParse(status);
     if (parsedStatus.success) q = q.eq("status", parsedStatus.data);
   }
   if (leadAdvisorId) q = q.eq("lead_advisor_id", leadAdvisorId);

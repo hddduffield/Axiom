@@ -6,11 +6,14 @@ import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
 const updateSchema = z.object({
   lead_advisor_id: z.string().uuid().optional(),
   household_name: z.string().min(1).optional(),
-  status: z.enum(["active", "inactive", "prospect"]).optional(),
+  status: z.enum(["active", "inactive", "prospect", "dormant"]).optional(),
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]).nullable().optional(),
   notes: z.string().nullable().optional(),
   cadence_target_days: z.number().int().min(1).max(3650).nullable().optional(),
   cadence_custom_label: z.string().max(120).nullable().optional(),
+  // Phase 18.4 — context paragraph + auto-stamp updated_at server-side
+  // when supplied (advisor PATCHes with the new text).
+  context_paragraph: z.string().nullable().optional(),
 });
 
 interface RouteContext {
@@ -50,9 +53,18 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return err("validation_failed", "Invalid client patch.", parsed.error.issues);
   }
 
+  // Phase 18.4 — server-side stamp context_updated_at whenever the
+  // context_paragraph is supplied (even if to null, indicating a clear).
+  const updateBody: typeof parsed.data & { context_updated_at?: string } = {
+    ...parsed.data,
+  };
+  if ("context_paragraph" in parsed.data) {
+    updateBody.context_updated_at = new Date().toISOString();
+  }
+
   const { data, error } = await auth.supabase
     .from("clients")
-    .update(parsed.data)
+    .update(updateBody)
     .eq("id", id)
     .select("*")
     .maybeSingle();

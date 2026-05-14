@@ -18,7 +18,10 @@ export type Json =
   | Json[];
 
 // Status / enum aliases — match CHECK constraints in the SQL migration.
-export type ClientStatus = "active" | "inactive" | "prospect";
+// Phase 18.3 — 'dormant' added for maintenance-mode clients (engaged
+// but not in active planning work). Treated as visible by default,
+// with a longer default cadence (180 days).
+export type ClientStatus = "active" | "inactive" | "prospect" | "dormant";
 export type ClientArchetype = "PRE" | "MID" | "POST" | "NONE";
 // PlanStatus state machine (Phase 5b):
 //   queued (created via POST /api/plans/generate)
@@ -117,6 +120,9 @@ export interface Database {
           cadence_target_days: number | null;
           cadence_custom_label: string | null;
           last_meaningful_contact_at: string | null;
+          // Phase 18.4 — written context paragraph
+          context_paragraph: string | null;
+          context_updated_at: string | null;
         };
         Insert: {
           id?: string;
@@ -130,6 +136,8 @@ export interface Database {
           cadence_target_days?: number | null;
           cadence_custom_label?: string | null;
           last_meaningful_contact_at?: string | null;
+          context_paragraph?: string | null;
+          context_updated_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
         Relationships: [

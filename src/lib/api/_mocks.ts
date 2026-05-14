@@ -89,6 +89,8 @@ export const MOCK_CLIENT_HOLLOWAY: Client = {
   cadence_target_days: 30,
   cadence_custom_label: null,
   last_meaningful_contact_at: ISO(-7),
+  context_paragraph: null,
+  context_updated_at: null,
 };
 
 // Phase 9.22: removed MOCK_CLIENT_PROSPECT (Burke) + MOCK_CLIENT_INACTIVE

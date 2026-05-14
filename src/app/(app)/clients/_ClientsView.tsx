@@ -100,12 +100,16 @@ function fmtRelative(iso: string | null): string {
 function statusBadge(s: ClientStatus) {
   // Phase 11.3 — surface "inactive" as "Archived" everywhere user-facing.
   // Same DB value; clearer label for the soft-delete semantic.
+  // Phase 18.3 — dormant gets a gold/amber treatment between active
+  // (green) and archived (slate) to convey maintenance-mode.
   const tone =
     s === "active"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)", label: "Active" }
       : s === "prospect"
         ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Prospect" }
-        : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Archived" };
+        : s === "dormant"
+          ? { fg: "var(--gold)", bg: "var(--s-amber-bg)", label: "Dormant" }
+          : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Archived" };
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
@@ -127,10 +131,10 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
   const filtered = useMemo(() => {
     let rows = clients.filter((c) => {
       // Phase 11.3 — Archived clients (status='inactive') are hidden by
-      // default. The "All" filter shows active + prospect only;
-      // Archived only appears when its filter chip is explicitly
-      // selected. This matches CRM convention — archived is reachable
-      // but doesn't clutter the working view.
+      // default. The "All" filter shows active + prospect + dormant
+      // (Phase 18.3); Archived only appears when its filter chip is
+      // explicitly selected. This matches CRM convention — archived is
+      // reachable but doesn't clutter the working view.
       if (statusFilter === "all" && c.status === "inactive") return false;
       if (statusFilter !== "all" && c.status !== statusFilter) return false;
       if (archetypeFilter !== "all" && c.archetype !== archetypeFilter) return false;
@@ -202,6 +206,9 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
           </Chip>
           <Chip active={statusFilter === "prospect"} onClick={() => setStatusFilter("prospect")}>
             Prospect <Count n={cnt("prospect")} />
+          </Chip>
+          <Chip active={statusFilter === "dormant"} onClick={() => setStatusFilter("dormant")}>
+            Dormant <Count n={cnt("dormant")} />
           </Chip>
           <Chip active={statusFilter === "inactive"} onClick={() => setStatusFilter("inactive")}>
             Archived <Count n={cnt("inactive")} />

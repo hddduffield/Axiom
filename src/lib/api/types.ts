@@ -94,6 +94,8 @@ export namespace ClientsApi {
     // handler defaults from CADENCE_DEFAULTS_BY_ARCHETYPE.
     cadence_target_days?: number | null;
     cadence_custom_label?: string | null;
+    // Phase 18.4 — initial context paragraph (rare on create).
+    context_paragraph?: string | null;
   }
   export type CreateResponse = Client;
 
@@ -107,6 +109,9 @@ export namespace ClientsApi {
     notes?: string | null;
     cadence_target_days?: number | null;
     cadence_custom_label?: string | null;
+    // Phase 18.4 — context paragraph. Server stamps context_updated_at
+    // whenever this field is in the patch body.
+    context_paragraph?: string | null;
   }
   export type UpdateResponse = Client;
 

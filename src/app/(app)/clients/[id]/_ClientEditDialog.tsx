@@ -61,7 +61,9 @@ interface AdvisorOption {
 const editClientSchema = z.object({
   household_name: z.string().min(1, "Required"),
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]),
-  status: z.enum(["active", "prospect"]),
+  // Phase 18.3 — 'dormant' added; 'inactive' is still owned by the
+  // Archive flow.
+  status: z.enum(["active", "prospect", "dormant"]),
   lead_advisor_id: z.string().uuid("Pick a lead advisor"),
   notes: z.string(),
   cadence_target_days: z
@@ -100,10 +102,14 @@ export function ClientEditDialog({
   const [open, setOpen] = useState(false);
 
   // Status guard — if a client is currently inactive ("archived"), the
-  // form's status dropdown only offers active / prospect. The Restore
-  // flow handles inactive→active transitions explicitly.
-  const initialStatus: "active" | "prospect" =
-    client.status === "active" ? "active" : "prospect";
+  // form's status dropdown only offers active / prospect / dormant.
+  // The Restore flow handles inactive→active transitions explicitly.
+  const initialStatus: "active" | "prospect" | "dormant" =
+    client.status === "active"
+      ? "active"
+      : client.status === "dormant"
+        ? "dormant"
+        : "prospect";
 
   const form = useForm<EditClientValues>({
     resolver: zodResolver(editClientSchema),
@@ -244,6 +250,7 @@ export function ClientEditDialog({
                         <SelectContent>
                           <SelectItem value="active">Active</SelectItem>
                           <SelectItem value="prospect">Prospect</SelectItem>
+                          <SelectItem value="dormant">Dormant</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -252,6 +259,7 @@ export function ClientEditDialog({
                       style={{ color: "var(--text-3)" }}
                     >
                       To archive, use the Archive button on the page header.
+                      Dormant = engaged but maintenance-mode (longer cadence).
                     </p>
                     <FormMessage />
                   </FormItem>

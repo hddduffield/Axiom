@@ -26,6 +26,12 @@ export const CADENCE_DEFAULTS_BY_ARCHETYPE: Record<
 // Default for clients with no archetype set (newly created prospects, etc.)
 export const CADENCE_DEFAULT_FALLBACK = 90;
 
+// Phase 18.3 — dormant clients get a longer default cadence regardless
+// of archetype. Used when a client transitions to 'dormant' status if
+// their cadence was still on the archetype default. Advisors can
+// override via the cadence picker.
+export const CADENCE_DORMANT_DEFAULT = 180;
+
 // Preset day-counts surfaced in the UI dropdown.
 export const CADENCE_PRESETS: ReadonlyArray<{
   days: number;

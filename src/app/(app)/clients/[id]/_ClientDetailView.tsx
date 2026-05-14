@@ -160,12 +160,15 @@ function TimingBadge({ bucket }: { bucket: string | null }) {
   );
 }
 function ClientStatusBadge({ s }: { s: string }) {
+  // Phase 18.3 — dormant tone surfaces maintenance-mode.
   const tone =
     s === "active"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)", label: "Active" }
       : s === "prospect"
         ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Prospect" }
-        : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Inactive" };
+        : s === "dormant"
+          ? { fg: "var(--gold)", bg: "var(--s-amber-bg)", label: "Dormant" }
+          : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: "Inactive" };
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
