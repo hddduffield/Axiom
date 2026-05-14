@@ -180,6 +180,13 @@ export const api = {
       request<PlansApi.ApproveResponse>(`/api/plans/${id}/approve`, { method: "POST" }),
     archive: (id: string) =>
       request<PlansApi.ArchiveResponse>(`/api/plans/${id}/archive`, { method: "POST" }),
+    // Phase 18.1 — retroactively promote REC- recommendations into
+    // action items on an already-approved plan. Idempotent.
+    promoteRecommendations: (id: string) =>
+      request<PlansApi.PromoteRecommendationsResponse>(
+        `/api/plans/${id}/promote-recommendations`,
+        { method: "POST" },
+      ),
     // Phase 6: returns a PDF Blob. Caller can pipe to a download with
     // URL.createObjectURL + an <a download> element, or trigger
     // window.open against the URL directly.

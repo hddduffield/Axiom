@@ -173,6 +173,17 @@ export namespace PlansApi {
     promotion_errors: string[];
   }
   export type ArchiveResponse = Plan;
+
+  // Phase 18.1 — POST /api/plans/[id]/promote-recommendations.
+  // Returns the count of newly-inserted action items + the number that
+  // already existed from a prior approval. Idempotent.
+  export interface PromoteRecommendationsResponse {
+    new_count: number;
+    existing_count: number;
+    total_recs: number;
+    action_item_ids: string[];
+    promotion_errors: string[];
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────

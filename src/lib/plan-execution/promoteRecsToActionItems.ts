@@ -145,6 +145,10 @@ interface PromoteResult {
   count: number;
   action_item_ids: string[];
   skipped_existing: number;
+  // Phase 18.1 — total REC- entries in the plan's stage3a_output.
+  // `count + skipped_existing` should equal this on a clean run; a
+  // mismatch indicates Stage3a structure variance or a bug.
+  total_recs: number;
   errors: string[];
 }
 
@@ -174,6 +178,7 @@ export async function promotePlanRecsToActionItems(
     count: 0,
     action_item_ids: [],
     skipped_existing: 0,
+    total_recs: 0,
     errors: [],
   };
 
@@ -201,6 +206,7 @@ export async function promotePlanRecsToActionItems(
 
   const stage3a = plan.stage3a_output as Stage3aShape | null;
   const recs = stage3a?.result?.recommendations ?? [];
+  result.total_recs = recs.length;
   if (recs.length === 0) {
     result.errors.push(
       "Plan has no stage3a_output.result.recommendations to promote.",

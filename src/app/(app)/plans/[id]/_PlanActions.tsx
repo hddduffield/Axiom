@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { api, isApiError } from "@/lib/api/client";
 import type { PlanStatus } from "@/lib/api/types";
+import { PromoteRecommendationsDialog } from "./_PromoteRecommendationsDialog";
 
 interface Props {
   planId: string;
@@ -83,6 +84,10 @@ export function PlanActions({ planId, status }: Props) {
         <Button onClick={approve} disabled={busy} size="sm">
           Approve
         </Button>
+      ) : null}
+      {/* Phase 18.1 — retroactive promotion on already-approved plans. */}
+      {status === "approved" ? (
+        <PromoteRecommendationsDialog planId={planId} />
       ) : null}
       {status !== "archived" ? (
         <Button onClick={archive} disabled={busy} variant="outline" size="sm">
