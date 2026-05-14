@@ -30,6 +30,7 @@ import {
 } from "@/lib/estate-lens/types";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
 import { LensReopenDialog } from "@/components/axiom/LensReopenDialog";
+import { LensSummaryBanner } from "@/components/axiom/LensSummaryBanner";
 import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { EstateProjectionTab } from "./_EstateProjectionTab";
@@ -251,6 +252,15 @@ export function EstateLensView({ lensRun: initialLens, client, initialOutput }: 
           )}
         </div>
       </div>
+
+      {/* Phase 18.5 — executive summary banner on non-draft lenses. */}
+      {!isDraft ? (
+        <LensSummaryBanner
+          lensRunId={lensRun.id}
+          summary={output.executive_summary ?? null}
+          canEdit={!isArchived}
+        />
+      ) : null}
 
       {/* Tab nav — pixel-perfect with screenshot:
           01 ESTATE TAX PROJECTION (numbered, navy underline on active) */}

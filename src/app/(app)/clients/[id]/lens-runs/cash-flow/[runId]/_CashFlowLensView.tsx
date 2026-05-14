@@ -20,6 +20,7 @@ import {
 } from "@/lib/api/cash_flow_lens";
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
 import { LensReopenDialog } from "@/components/axiom/LensReopenDialog";
+import { LensSummaryBanner } from "@/components/axiom/LensSummaryBanner";
 import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { CashFlowInputTab } from "./_CashFlowInputTab";
@@ -246,6 +247,16 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
           )}
         </div>
       </div>
+
+      {/* Phase 18.5 — executive summary banner. Visible on every
+          non-draft status. */}
+      {!isDraft ? (
+        <LensSummaryBanner
+          lensRunId={lensRun.id}
+          summary={output.executive_summary ?? null}
+          canEdit={!isArchived}
+        />
+      ) : null}
 
       {/* Phase 16 — source provenance banner. Hidden when source is null
           AND the lens is finalized/archived (no point in showing a

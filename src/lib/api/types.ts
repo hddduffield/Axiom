@@ -345,6 +345,11 @@ export namespace LensRunsApi {
   // back to draft for editing. Existing pushed action items are NOT
   // deleted.
   export type ReopenResponse = LensRun;
+  // Phase 18.5 — "What this concludes" executive summary lifecycle.
+  // generate calls Haiku and persists the result; update accepts an
+  // advisor-edited string and marks generated_by='manual'.
+  export type GenerateSummaryResponse = LensRun;
+  export type UpdateSummaryResponse = LensRun;
 
   export type CashFlowSuggestAllocationResponse = LensRun;
   export type CashFlowGenerateRecommendationsResponse = LensRun;

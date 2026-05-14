@@ -100,6 +100,14 @@ export interface EstateLensSource {
   edited_fields: string[];
 }
 
+// Phase 18.5 — Executive summary (mirror of LensExecutiveSummary in
+// cash_flow_lens.ts; duplicated here to avoid cross-lens-type imports).
+export interface EstateExecutiveSummary {
+  text: string;
+  generated_at: string;
+  generated_by: "ai" | "manual";
+}
+
 export interface EstateLensOutput {
   schema_version: 1;
   client_snapshot: EstateClientSnapshot;
@@ -116,6 +124,9 @@ export interface EstateLensOutput {
   tracking_id: string; // compliance tracking, displayed on every screen + PDF
   /** Phase 16 — null when no finalized plan existed at creation. */
   source: EstateLensSource | null;
+  /** Phase 18.5 — null until generated; populated on finalize or
+   *  explicit advisor regenerate. */
+  executive_summary?: EstateExecutiveSummary | null;
 }
 
 // ────────────────────────────────────────────────────────────────────────

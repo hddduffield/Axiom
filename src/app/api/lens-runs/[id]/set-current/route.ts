@@ -8,6 +8,7 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import { autoGenerateLensSummaryIfMissing } from "@/lib/lens-execution/autoSummary";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -66,5 +67,16 @@ export async function POST(_request: Request, { params }: RouteContext) {
     .single();
   if (error) return err(mapDbError(error), dbErrorMessage(error));
 
-  return ok(data);
+  // Phase 18.5 — auto-generate the executive summary if missing.
+  // Best-effort; failures log and don't roll back the promotion.
+  await autoGenerateLensSummaryIfMissing(auth.supabase, id);
+
+  // Re-fetch so the response carries the freshly-stamped summary.
+  const { data: fresh } = await auth.supabase
+    .from("lens_runs")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  return ok(fresh ?? data);
 }

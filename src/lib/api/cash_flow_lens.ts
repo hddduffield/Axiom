@@ -182,6 +182,17 @@ export interface CashFlowLensSource {
   edited_fields: string[];
 }
 
+// Phase 18.5 — Executive summary ("What this concludes").
+//
+// 2-3 sentence plain-English summary generated when a lens transitions
+// to a non-draft status. Editable inline; marks generated_by='manual'
+// when the advisor edits.
+export interface LensExecutiveSummary {
+  text: string;
+  generated_at: string; // ISO timestamp
+  generated_by: "ai" | "manual";
+}
+
 export interface CashFlowLensOutput {
   schema_version: 1;
   client_snapshot: CashFlowClientSnapshot;
@@ -199,6 +210,9 @@ export interface CashFlowLensOutput {
   /** Phase 16 — null when the advisor created the lens before any plan
    *  was finalized for the client (manual-entry-only path). */
   source: CashFlowLensSource | null;
+  /** Phase 18.5 — null until the lens is finalized (or until an
+   *  advisor manually generates it). */
+  executive_summary?: LensExecutiveSummary | null;
 }
 
 // ────────────────────────────────────────────────────────────────────────

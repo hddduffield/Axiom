@@ -245,6 +245,17 @@ export const api = {
       request<LensRunsApi.SetCurrentResponse>(`/api/lens-runs/${id}/set-current`, { method: "POST" }),
     reopen: (id: string) =>
       request<LensRunsApi.ReopenResponse>(`/api/lens-runs/${id}/reopen`, { method: "POST" }),
+    // Phase 18.5 — executive summary lifecycle
+    generateSummary: (id: string) =>
+      request<LensRunsApi.GenerateSummaryResponse>(
+        `/api/lens-runs/${id}/generate-summary`,
+        { method: "POST" },
+      ),
+    updateSummary: (id: string, body: { text: string }) =>
+      request<LensRunsApi.UpdateSummaryResponse>(
+        `/api/lens-runs/${id}/update-summary`,
+        { method: "POST", body },
+      ),
     exportPdf: (id: string) => requestBlob(`/api/lens-runs/${id}/pdf`),
     cashFlow: {
       create: (body: LensRunsApi.CashFlowCreateRequest) =>
