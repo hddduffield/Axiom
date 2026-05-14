@@ -35,7 +35,27 @@ export type PlanStatus =
   | "archived"
   | "failed";
 export type LensRunLensType = "investment" | "insurance" | "cash_flow" | "estate";
-export type LensRunStatus = "draft" | "approved" | "archived";
+// Phase 17.4 — Lens status taxonomy expanded from draft/approved/archived
+// to model the full advisor workflow:
+//   draft       — editing in-app, not yet shareable
+//   reviewed    — advisor has self-reviewed; internal sign-off
+//   presented   — shown to the client; locked for record
+//   current     — promoted as the live scenario for this lens type;
+//                 only one current per (client, lens_type)
+//   superseded  — automatically demoted when another scenario is
+//                 promoted to current
+//   archived    — soft-deleted from the working view
+// The 'approved' legacy value still flows through existing finalize
+// endpoints (they emit 'approved'); migration 0007 keeps it in the
+// CHECK so older rows + the existing finalize semantics stay valid.
+export type LensRunStatus =
+  | "draft"
+  | "reviewed"
+  | "presented"
+  | "current"
+  | "superseded"
+  | "approved"
+  | "archived";
 export type ActionItemDurationClass = "one_time" | "long_running";
 export type ActionItemStatus =
   | "not_started"

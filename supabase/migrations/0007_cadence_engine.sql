@@ -66,3 +66,23 @@ create index if not exists idx_action_items_source_lens
 create unique index if not exists idx_action_items_plan_rec_unique
   on public.action_items (source_plan_id, source_recommendation_id)
   where source_plan_id is not null and source_recommendation_id is not null;
+
+-- ────────────────────────────────────────────────────────────────────────
+-- 4. lens_runs status taxonomy expansion (Phase 17.4)
+--    From: draft | approved | archived
+--    To:   draft | reviewed | presented | current | superseded |
+--          approved | archived
+--    'approved' is retained so existing rows + the legacy finalize
+--    endpoints keep working without a data migration. UI surfaces the
+--    full workflow; finalize endpoints still emit 'approved' today.
+-- ────────────────────────────────────────────────────────────────────────
+
+alter table public.lens_runs drop constraint if exists lens_runs_status_check;
+alter table public.lens_runs add constraint lens_runs_status_check
+  check (status in ('draft', 'reviewed', 'presented', 'current', 'superseded', 'approved', 'archived'));
+
+comment on column public.lens_runs.status is
+  'Workflow state — draft (in progress), reviewed (self sign-off), '
+  'presented (shown to client, locked), current (live scenario for the '
+  'client+lens_type pair), superseded (auto-demoted by promote-to-current), '
+  'approved (legacy finalize value, still valid), archived (soft-deleted).';

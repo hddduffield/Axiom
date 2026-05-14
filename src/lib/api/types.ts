@@ -300,6 +300,10 @@ export namespace LensRunsApi {
   export type EstateRefreshResponse = LensRun;
   export type ArchiveResponse = LensRun;
   export type RestoreResponse = LensRun;
+  // Phase 17.4 — promote a lens to status='current' for its client +
+  // lens_type pair. Returns the updated LensRun row. Other 'current'
+  // rows for the same pair are auto-demoted to 'superseded' server-side.
+  export type SetCurrentResponse = LensRun;
 
   export type CashFlowSuggestAllocationResponse = LensRun;
   export type CashFlowGenerateRecommendationsResponse = LensRun;

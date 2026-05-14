@@ -31,6 +31,7 @@ import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import { ClientRestoreDialog } from "./_ClientRestoreDialog";
 import { LensRunArchiveDialog } from "./_LensRunArchiveDialog";
 import { LensRunRestoreDialog } from "./_LensRunRestoreDialog";
+import { LensSetCurrentButton } from "./_LensSetCurrentButton";
 import { api, isApiError } from "@/lib/api/client";
 import type {
   ActionItem,
@@ -120,12 +121,15 @@ function ownerLabel(o: string | null): string {
 // ─────────────── Status / timing badges ───────────────
 
 function StatusBadge({ status }: { status: string }) {
+  // Phase 17.4 — also recognizes the expanded lens taxonomy
+  // (reviewed / presented / current / superseded) plus the legacy
+  // 'approved' value. Falls through to slate for unknown values.
   const tone =
-    status === "complete"
+    status === "complete" || status === "current" || status === "approved"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)" }
-      : status === "in_progress"
+      : status === "in_progress" || status === "presented"
         ? { fg: "var(--s-blue)", bg: "var(--s-blue-bg)" }
-        : status === "pending_decision"
+        : status === "pending_decision" || status === "reviewed"
           ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)" }
           : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)" };
   return (
@@ -888,6 +892,7 @@ function LensesTab({
             <ColHead width={130}>Type</ColHead>
             <ColHead width={110}>Status</ColHead>
             <ColHead width={130}>Generated</ColHead>
+            <ColHead width={130}> </ColHead>
             <ColHead width={60}> </ColHead>
             <ColHead width={50}> </ColHead>
           </tr>
@@ -937,6 +942,18 @@ function LensesTab({
                   style={{ fontFamily: "var(--font-mono)", color: "var(--text-2)" }}
                 >
                   {fmtDate(l.generated_at)}
+                </td>
+                <td
+                  className="px-3 py-2.5 text-right"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {!isArchived ? (
+                    <LensSetCurrentButton
+                      lensRunId={l.id}
+                      scenarioName={scenarioName}
+                      status={l.status}
+                    />
+                  ) : null}
                 </td>
                 <td className="px-3 py-2.5 text-right">
                   {isArchived ? (
