@@ -1,0 +1,1391 @@
+{
+  "_partial_metadata": {
+    "batch_index": 8,
+    "rec_ids": [
+      "REC-RET-009",
+      "REC-FAM-001",
+      "REC-FAM-002",
+      "REC-FAM-003",
+      "REC-FAM-005",
+      "REC-FAM-007",
+      "REC-FAM-008",
+      "REC-FAM-006"
+    ],
+    "resolved_at": "2026-05-03T01:38:10.234Z"
+  },
+  "result": {
+    "batch_index": 8,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-RET-009",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-009_db_plan_termination.md",
+        "category": "Retirement",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Pre-Transaction Sequence",
+        "co_triggered_with": [
+          "REC-RET-002"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-009_db_plan_termination.md",
+          "computation_inputs": {
+            "current_db_or_cash_balance_plan_balance_usd": null,
+            "transaction_window_years": "3-5",
+            "termination_process_duration_months": "6-12",
+            "reversion_tax_rate_percent": 50
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Pre-transaction termination of any cash-balance plan (REC-RET-002) is required to keep buyer diligence clean; reversion-tax avoidance saves up to 50% of any over-funded excess versus inadvertent reversion.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": [
+            {
+              "input_name": "cash_balance_plan_funded_status",
+              "blocked_reason": "Cash-balance plan does not yet exist; depends on REC-RET-002 establishment",
+              "source": "REC-RET-002 outcome",
+              "would_unblock_when": "Cash-balance plan funded with 2-3 years of contributions before termination"
+            },
+            {
+              "input_name": "termination_date",
+              "blocked_reason": "Tied to transaction close which is 3-5 years out",
+              "source": "Client / M&A Counsel",
+              "would_unblock_when": "LOI signed and target close date set"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-009-1",
+            "description": "Coordinate cash-balance plan termination timeline with anticipated transaction close (target: complete 6-12 months before close).",
+            "sub_steps": [
+              "Confirm board termination date",
+              "Engage TPA/actuary for final valuation",
+              "Map termination calendar to LOI/close timing"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-009",
+            "source_phase_or_step": "Step 1 — Decide termination date",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Check in with {{partner_type}} on cash-balance plan termination timing vs transaction close"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-009-2",
+            "description": "Issue Notice of Intent to Terminate to participants 60 days before termination date and complete final actuarial valuation.",
+            "sub_steps": [
+              "Draft NOIT",
+              "Distribute to participants",
+              "Engage actuary for final valuation",
+              "Top-up funding if under-funded"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-009",
+            "source_phase_or_step": "Steps 3-5 — Notice & valuation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-RET-009-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-009-3",
+            "description": "File PBGC Form 500 (if covered) and IRS Form 5310 request for determination.",
+            "sub_steps": [
+              "Determine PBGC coverage status",
+              "Prepare and file Form 500",
+              "Prepare and file Form 5310"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-009",
+            "source_phase_or_step": "Steps 7-8 — Regulatory filings",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-RET-009-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-009-4",
+            "description": "Distribute participant benefits via lump-sum rollovers to IRAs and file final Form 5500.",
+            "sub_steps": [
+              "Coordinate rollover destinations with participants",
+              "Process distributions",
+              "Issue 1099-Rs",
+              "File final Form 5500"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-009",
+            "source_phase_or_step": "Steps 9-10 — Distributions and final filing",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-RET-009-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-009-5",
+            "description": "Decide handling for any excess assets — qualified replacement plan vs. pro-rata distribution to avoid 50% reversion tax.",
+            "sub_steps": [
+              "Quantify excess (if any)",
+              "Model reversion vs replacement vs pro-rata",
+              "Execute chosen path"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-009",
+            "source_phase_or_step": "Step 11 — Handle excess assets",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-RET-009-4"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Contingent on REC-RET-002 cash-balance plan being established; no plan to terminate today. Quantification deferred (State D with all_inputs_qualitative); scenario-dependent on future funded status."
+      },
+      {
+        "recommendation_id": "REC-FAM-001",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-001_529_with_5yr_frontload.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Education Funding",
+        "co_triggered_with": [
+          "REC-EST-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 380000,
+            "unit": "USD",
+            "narrative_context": "Year-1 deployment: $190K front-load each for James (16) and Sophie (12), gift-split between Marcus and Catherine; Olivia (19, sophomore) likely receives smaller annual contribution rather than full front-load given short remaining horizon.",
+            "is_approximate": true,
+            "is_annual": false
+          },
+          "formula_id": "529_frontload_deployment_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-001_529_funding.md",
+          "computation_inputs": {
+            "annual_exclusion_2026_usd": 19000,
+            "frontload_multiplier_years": 5,
+            "gift_split_donors": 2,
+            "frontload_per_beneficiary_usd": 190000,
+            "beneficiaries_eligible_for_frontload": [
+              "James (16)",
+              "Sophie (12)"
+            ],
+            "olivia_partial": "smaller annual contribution; short college horizon"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 700000,
+          "midpoint_value": 800000,
+          "high_value": 900000,
+          "computation_method": "13-year compound at 7% on $380K front-load deployed at year 1 (Sophie & James); range reflects market variability"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-001-1",
+            "description": "Open Georgia Path2College 529 accounts — one per beneficiary (Olivia, James, Sophie) with parent owners.",
+            "sub_steps": [
+              "Confirm GA Path2College vs out-of-state choice",
+              "Open three accounts",
+              "Designate beneficiaries and successor owners"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 1 — Open accounts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-2",
+            "description": "Execute year-1 front-load: $190K each to James and Sophie's 529s (gift-split); appropriate annual amount to Olivia's 529.",
+            "sub_steps": [
+              "Wire $190K to James 529",
+              "Wire $190K to Sophie 529",
+              "Annual contribution to Olivia 529 sized to remaining college horizon"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 2 — Front-load contribution",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-FAM-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-3",
+            "description": "File Form 709 with 5-year averaging election for James and Sophie front-loads.",
+            "sub_steps": [
+              "CPA prepares Form 709",
+              "Elect 5-year averaging",
+              "File with 2026 returns"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 3 — Form 709",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-FAM-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-4",
+            "description": "Select age-based investment portfolios in each 529 and schedule annual review.",
+            "sub_steps": [
+              "Pick age-based glidepath",
+              "Confirm allocation per beneficiary",
+              "Annual rebalance/review"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Steps 5-6 — Investment & review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-FAM-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual 529 portfolio review for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "GA Path2College state deduction $8K MFJ per beneficiary annually (modest). Front-load fully consumes Marcus+Catherine combined annual exclusion to James and Sophie for years 2026-2030; coordinate with REC-EST-003 to avoid double-counting."
+      },
+      {
+        "recommendation_id": "REC-FAM-002",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-002_529_to_roth_secure2.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Education Funding",
+        "co_triggered_with": [
+          "REC-FAM-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 105000,
+            "unit": "USD",
+            "narrative_context": "Lifetime 529-to-Roth rollover capacity: $35K per beneficiary × 3 children = $105K of next-gen Roth seed capital, accruing tax-free over 30-50 years.",
+            "is_approximate": true
+          },
+          "formula_id": "529_to_roth_rollover_capacity_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-002_529_to_roth_rollover.md",
+          "computation_inputs": {
+            "lifetime_rollover_cap_per_beneficiary_usd": 35000,
+            "beneficiary_count": 3,
+            "annual_roth_limit_2026_usd": 7500,
+            "account_age_required_years": 15
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 800000,
+          "midpoint_value": 1500000,
+          "high_value": 2500000,
+          "computation_method": "Combined $105K rolled over years 15-20 (per beneficiary), then 35-45 years compound growth at 7% tax-free in next-gen Roth IRAs"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-002-1",
+            "description": "Track 15-year clock on each new 529 account; calendar year-15 milestone per beneficiary.",
+            "sub_steps": [
+              "Record account open date per 529",
+              "Calendar 15-year unlock dates",
+              "Set reminders 6 months before each milestone"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Step 1 — Confirm 529 age",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual check on 529-to-Roth eligibility milestones for {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-FAM-002-2",
+            "description": "When eligible, verify each beneficiary's earned income annually before initiating direct rollover up to Roth limit.",
+            "sub_steps": [
+              "Confirm earned income from W-2 / self-employment",
+              "Open beneficiary Roth IRA if not existing",
+              "Execute direct rollover (not indirect)",
+              "Track lifetime $35K cap"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Steps 2-5 — Rollover execution",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-FAM-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Verify beneficiary earned income and execute annual 529-to-Roth rollover"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "15-year clock starts from new 529 account opening (REC-FAM-001). First eligibility window ~2041. Coordinate with REC-FAM-003 (custodial Roth via family employment) — separate vehicles, both Roth-bound."
+      },
+      {
+        "recommendation_id": "REC-FAM-003",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-003_custodial_roth_via_employment.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Education Funding",
+        "co_triggered_with": [
+          "REC-TAX-004"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 230000,
+            "unit": "USD",
+            "narrative_context": "Per-year-of-contribution future value at age 65: $7,500 contributed at age ~16, compounded at 7% for ~49 years = ~$230K tax-free per year of contribution. Across multiple years per child this scales to six-figure-plus per child.",
+            "is_approximate": true
+          },
+          "formula_id": "custodial_roth_compound_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-003_custodial_roth.md",
+          "computation_inputs": {
+            "annual_roth_limit_2026_usd": 7500,
+            "standard_deduction_single_2026_usd": 16100,
+            "growth_rate_assumption_percent": 7,
+            "horizon_years_james": 49,
+            "horizon_years_olivia": 46,
+            "eligible_children": [
+              "James (16)",
+              "Olivia (19)"
+            ],
+            "fica_treatment": "Family-management LLC structure exempts wages to <18 children under sole-prop / parent-owned partnership rules; coordinate with REC-FAM family-mgmt-LLC structuring"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 150000,
+          "midpoint_value": 230000,
+          "high_value": 350000,
+          "computation_method": "Single-year $7,500 Roth contribution × 7% compound for 46-49 years; range reflects market sensitivity and child age"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-003-1",
+            "description": "Document legitimate job descriptions and reasonable wage rates for James (16) and Olivia (19) within HIS or family-management LLC.",
+            "sub_steps": [
+              "Identify real tasks (admin, social media, photo work, scanning)",
+              "Document hours and rate",
+              "Confirm child-labor compliance for James (under 18)"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-003",
+            "source_phase_or_step": "Step 1 — Establish role",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-003-2",
+            "description": "Add children to Paychex payroll at documented wage; issue W-2 at year end.",
+            "sub_steps": [
+              "Coordinate with Paychex on payroll setup",
+              "Process payroll periodically",
+              "Issue W-2"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-003",
+            "source_phase_or_step": "Step 2 — W-2 wages via payroll",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-FAM-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-003-3",
+            "description": "Open Custodial Roth IRA at Schwab for James and Olivia; fund up to earned income (max $7,500) annually.",
+            "sub_steps": [
+              "Open custodial Roth at Schwab",
+              "Fund initial contribution",
+              "Set annual contribution cadence"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-003",
+            "source_phase_or_step": "Steps 3-4 — Roth setup and contribution",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-FAM-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual custodial Roth funding for {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-FAM-003-4",
+            "description": "File children's tax returns where required (typically $0 federal due under standard deduction).",
+            "sub_steps": [
+              "Determine filing requirement",
+              "CPA prepares simple return",
+              "File annually"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-003",
+            "source_phase_or_step": "Step 5 — Child tax return",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-FAM-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "FICA-free treatment via family-management LLC depends on REC-ENT-002 family-mgmt-LLC structure; otherwise S-Corp wages incur FICA. Olivia (19) at college; remote-friendly tasks. Sophie (12) generally too young; reassess at 14."
+      },
+      {
+        "recommendation_id": "REC-FAM-005",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-005_aging_parent_ltc.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Aging-Parent Support",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-005_aging_parent_support.md",
+          "computation_inputs": {
+            "eleanor_age": 78,
+            "expected_support_horizon_years": "5-10",
+            "care_cost_range_total_usd": [
+              300000,
+              1000000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Late-life care for Eleanor projected at $300K-$1M+ over multi-year horizon; family contribution gap and LTC insurance feasibility require Eleanor's financial discovery before quantification.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": [
+            {
+              "input_name": "eleanor_assets_and_income",
+              "blocked_reason": "Eleanor's balance sheet and income not documented in client profile",
+              "source": "Client",
+              "would_unblock_when": "Discovery conversation with Eleanor and Marcus completed"
+            },
+            {
+              "input_name": "eleanor_existing_ltc_insurance",
+              "blocked_reason": "Profile notes LTC believed absent but unverified",
+              "source": "Client",
+              "would_unblock_when": "LTC verification completed"
+            }
+          ]
+        },
+        "scenario_range": {
+          "low_value": 300000,
+          "midpoint_value": 600000,
+          "high_value": 1000000,
+          "computation_method": "Industry-standard care-cost projection range for assisted living / in-home care / skilled nursing scenarios over 3-7 year care horizons in Georgia"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-005-1",
+            "description": "Schedule discovery conversation with Marcus and Eleanor on Eleanor's wishes, current finances, and existing care planning.",
+            "sub_steps": [
+              "Frame conversation sensitively",
+              "Document her assets/income/insurance",
+              "Identify decision-makers"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-005",
+            "source_phase_or_step": "Step 1 — Conversation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-005-2",
+            "description": "Build cost projection scenarios (home care / assisted living / skilled nursing) and gap analysis vs Eleanor's resources.",
+            "sub_steps": [
+              "Project costs in $300K-$1M+ range",
+              "Map to Eleanor's resources",
+              "Identify Marcus/Catherine contribution gap"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-005",
+            "source_phase_or_step": "Steps 2-3 — Financial picture & projections",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-FAM-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-005-3",
+            "description": "Evaluate LTC insurance for Eleanor while still potentially insurable at age 78.",
+            "sub_steps": [
+              "Engage LTC broker",
+              "Underwriting application",
+              "Compare hybrid vs traditional LTC"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-005",
+            "source_phase_or_step": "Step 4 — LTC evaluation",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-FAM-005-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-005-4",
+            "description": "Coordinate Eleanor's POA, healthcare directive, and HIPAA authorization with estate attorney.",
+            "sub_steps": [
+              "Draft / update POA",
+              "Healthcare directive",
+              "HIPAA"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-005",
+            "source_phase_or_step": "Step 5 — Legal documentation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-FAM-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-005-5",
+            "description": "Schedule annual review of Eleanor's situation and family contribution plan.",
+            "sub_steps": [
+              "Calendar annual touchpoint",
+              "Refresh cost projections",
+              "Adjust plan as Eleanor ages"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-005",
+            "source_phase_or_step": "Step 6 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review of aging-parent support plan for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Sensitive family conversation; Marcus is sole decision partner per profile (father deceased 2018). Insurability at 78 marginal — explore but do not assume."
+      },
+      {
+        "recommendation_id": "REC-FAM-007",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-007_family_meeting_cadence.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Family Governance",
+        "co_triggered_with": [
+          "REC-FAM-008",
+          "REC-CHR-007"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-007_family_meetings.md",
+          "computation_inputs": {
+            "participants": [
+              "Marcus",
+              "Catherine",
+              "Olivia (19)",
+              "James (16, age-gated)",
+              "Sophie (12, age-gated)"
+            ],
+            "cadence_recommended": "annual"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Annual family meeting cadence builds shared multi-generational understanding ahead of post-liquidity wealth and foundation governance prep by year 5; benefit is governance and conflict-reduction, not directly dollar-quantified.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-007-1",
+            "description": "Define family meeting participants, age-gating, and cadence with Marcus and Catherine.",
+            "sub_steps": [
+              "Decide who participates by age",
+              "Pick cadence (annual vs semi-annual)",
+              "Define spouse-inclusion norms"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-007",
+            "source_phase_or_step": "Step 1 — Define participants and cadence",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-007-2",
+            "description": "Plan and facilitate first family meeting (PSA-led; agenda includes wealth context, philanthropy, values intro).",
+            "sub_steps": [
+              "Draft agenda",
+              "Coordinate logistics",
+              "Facilitate first meeting",
+              "Document decisions and norms"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-007",
+            "source_phase_or_step": "Steps 2-4 — First meeting & norms",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-FAM-007-1",
+              "AI-FAM-006-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-007-3",
+            "description": "Establish ongoing annual family meeting cadence and review structure.",
+            "sub_steps": [
+              "Calendar annual meeting",
+              "Rotate facilitation as family matures",
+              "Annual review of meeting structure"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-007",
+            "source_phase_or_step": "Step 5 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual family meeting cadence check-in for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Sequenced after REC-FAM-006 mission statement (must_come_before per batch). Catherine prefers cautious pacing on briefing James and Sophie."
+      },
+      {
+        "recommendation_id": "REC-FAM-008",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-008_next_gen_education.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Family Governance",
+        "co_triggered_with": [
+          "REC-FAM-007",
+          "REC-EST-005",
+          "REC-CHR-007"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-008_next_gen_education.md",
+          "computation_inputs": {
+            "children": [
+              "Olivia (19)",
+              "James (16)",
+              "Sophie (12)"
+            ],
+            "trust_distribution_age_threshold": 35,
+            "curriculum_scaling": "age-banded: teen, college, early-20s, mid-20s+"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Age-scaled multi-year curriculum (Olivia immediate 1-on-1, James intermediate, Sophie introductory) prepares each child for material trust distributions deferred to age 35 per family hard rule; risk-mitigation benefit not directly dollar-quantified.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-008-1",
+            "description": "Design age-banded curriculum and topics for each of Olivia, James, and Sophie.",
+            "sub_steps": [
+              "Olivia: investment, tax-filing intro, family-context briefing",
+              "James: budgeting, investing basics, role in business",
+              "Sophie: budgeting, saving fundamentals"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-008",
+            "source_phase_or_step": "Step 1 — Curriculum design",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-008-2",
+            "description": "Begin 1-on-1 advisor relationship with Olivia (age 19, generally aware) on age-appropriate topics.",
+            "sub_steps": [
+              "Initial relationship meeting",
+              "Quarterly touchpoints during college",
+              "Coordinate with custodial Roth (REC-FAM-003)"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-008",
+            "source_phase_or_step": "Steps 2-4 — Implementation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-FAM-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly 1-on-1 with Olivia for {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-FAM-008-3",
+            "description": "Schedule annual age-appropriate touchpoints with James and Sophie, increasing engagement over time.",
+            "sub_steps": [
+              "Annual session with James scaling up at 18",
+              "Annual exposure for Sophie scaling at 14",
+              "Coordinate with Catherine's preferred pacing"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-008",
+            "source_phase_or_step": "Steps 2-4 — Annual touchpoints",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual financial-education touchpoint for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Coordinate carefully with Catherine's pacing preference — James and Sophie not yet briefed on family wealth. Curriculum should match readiness, not rush disclosure."
+      },
+      {
+        "recommendation_id": "REC-FAM-006",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-006_family_mission_statement.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": "Family Governance",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-006_family_mission_statement.md",
+          "computation_inputs": {
+            "anticipated_multi_gen_wealth_usd": ">10000000",
+            "values_articulated": [
+              "dignity of skilled trades (Marcus)",
+              "community health access (Catherine)",
+              "wealth-stewardship education for children",
+              "Derek operating-partner relationship"
+            ],
+            "facilitation_mode": "external facilitator candidate"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Codifying Holloway family values (trades dignity, community health, stewardship) into a mission statement gives trustees discretion language and aligns next-gen decisions; benefit is governance, not dollar-quantified.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-006-1",
+            "description": "Hold initial family values-discussion meeting with Marcus and Catherine (and possibly Olivia).",
+            "sub_steps": [
+              "Frame purpose",
+              "Surface origin story and values",
+              "Identify external facilitator candidate"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-006",
+            "source_phase_or_step": "Step 1 — Initial values discussion",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-006-2",
+            "description": "Engage facilitator (if pursued) and draft mission statement document (1-3 pages).",
+            "sub_steps": [
+              "Select family-governance facilitator",
+              "Draft document",
+              "Review with family",
+              "Refine"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-006",
+            "source_phase_or_step": "Steps 2-3 — Draft and refine",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-FAM-006-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-006-3",
+            "description": "Adopt mission statement and reference in trust documents (coordinate with estate attorney).",
+            "sub_steps": [
+              "Family adoption",
+              "Provide to estate attorney for trust integration",
+              "Reference in advisor relationships"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-006",
+            "source_phase_or_step": "Step 4 — Adopt and integrate",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-FAM-006-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-006-4",
+            "description": "Schedule annual review of mission statement at family meeting.",
+            "sub_steps": [
+              "Calendar annual review",
+              "Refresh as family evolves"
+            ],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-006",
+            "source_phase_or_step": "Step 5 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual mission-statement review for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Borderline match per batch (facilitator availability triggers_partial); proceeding as Active with facilitator engagement as a decision point. must_come_before REC-FAM-007 — sequenced upstream of family meeting cadence."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-RET-009-1",
+          "inferred_bucket": "12-24 months",
+          "source_signal": "Cash-balance termination tied to 3-5 year transaction window; 6-12 month process to be completed pre-close"
+        },
+        {
+          "action_item_id": "AI-FAM-005-1",
+          "inferred_bucket": "60-120 days",
+          "source_signal": "Eleanor 78; advisor flagged 5-10yr support horizon; modeling is near-term discovery work"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-RET-009",
+          "phrasing_used": "Process-cost qualitative; reversion-tax avoidance dependent on plan funded status not yet quantified",
+          "reason": "No DB/cash-balance plan currently exists in client profile (HIS 401(k) only); rec is contingent on REC-RET-002 cash-balance establishment — no funded balance to compute reversion or distribution against"
+        },
+        {
+          "rec_id": "REC-FAM-005",
+          "phrasing_used": "Projected care cost range $300K-$1M+ scenario-based; family contribution gap not yet modeled",
+          "reason": "Eleanor's financial picture (assets, income, existing LTC) not in client profile; gap analysis pending discovery"
+        },
+        {
+          "rec_id": "REC-FAM-007",
+          "phrasing_used": "Governance benefit qualitative; no direct dollar quantification",
+          "reason": "intentionally_qualitative"
+        },
+        {
+          "rec_id": "REC-FAM-008",
+          "phrasing_used": "Risk-mitigation benefit qualitative; reduced wealth-shock probability not numerically modeled",
+          "reason": "intentionally_qualitative"
+        },
+        {
+          "rec_id": "REC-FAM-006",
+          "phrasing_used": "Governance/stewardship benefit qualitative",
+          "reason": "intentionally_qualitative"
+        }
+      ],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-RET-009",
+          "blocked_inputs": [
+            "cash_balance_plan_funded_status",
+            "termination_date",
+            "excess_assets_estimate"
+          ],
+          "awaiting": [
+            "REC-RET-002 cash-balance plan establishment and funding history",
+            "Transaction close date confirmation"
+          ]
+        },
+        {
+          "rec_id": "REC-FAM-005",
+          "blocked_inputs": [
+            "eleanor_assets",
+            "eleanor_income",
+            "eleanor_existing_ltc"
+          ],
+          "awaiting": [
+            "Discovery conversation with Eleanor and Marcus on her financial picture"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 45587,
+      "output_token_count": 17361,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 187558,
+          "input_tokens": 45587,
+          "output_tokens": 17361
+        }
+      ],
+      "duration_ms": 187577,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:38:10.234Z",
+      "batch_index": 8,
+      "total_batches": 11
+    }
+  }
+}

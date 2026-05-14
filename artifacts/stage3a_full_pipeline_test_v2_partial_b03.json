@@ -1,0 +1,1595 @@
+{
+  "_partial_metadata": {
+    "batch_index": 3,
+    "rec_ids": [
+      "REC-TAX-009",
+      "REC-TAX-010",
+      "REC-TAX-011",
+      "REC-RSK-001",
+      "REC-RSK-004",
+      "REC-RSK-005",
+      "REC-RSK-006",
+      "REC-RSK-007"
+    ],
+    "resolved_at": "2026-05-03T01:41:22.225Z"
+  },
+  "result": {
+    "batch_index": 3,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-TAX-009",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-009_rd_credit_study.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Specialty",
+        "subsection_within_section": "Specialty Credits Review",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              40000,
+              120000
+            ],
+            "unit": "USD",
+            "narrative_context": "Estimated annual federal R&D credit range for HIS based on $42.8M revenue and proprietary engineering work (custom controls, process piping). Net of specialty firm 25% contingent fee.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "rd_credit_annual_benefit_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-009_rd_credit_study.md",
+          "computation_inputs": {
+            "estimated_qres_usd": 1500000,
+            "federal_credit_rate_low_pct": 0.04,
+            "federal_credit_rate_high_pct": 0.12,
+            "specialty_firm_fee_pct": 0.25,
+            "revenue_2024_usd": 42800000,
+            "qualifying_work_descriptor": "custom controls and process-piping engineering for data center, healthcare, and advanced manufacturing"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 40000,
+          "midpoint_value": 80000,
+          "high_value": 120000,
+          "computation_method": "Range from rec file QUANTIFIED IMPACT FRAMEWORK; applied to HIS revenue tier"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-009-1",
+            "description": "Engage specialty R&D credit firm for no-cost feasibility review of HIS engineering activities.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-009",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Specialty Tax Credits",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-009-2",
+            "description": "If feasibility positive, commission full R&D study including engineering interviews and QRE quantification.",
+            "sub_steps": [
+              "Engineering interviews",
+              "Document collection",
+              "QRE quantification"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-009",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-009-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Specialty Tax Credits",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on R&D study progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-009-3",
+            "description": "CPA files Form 6765 incorporating R&D credit on federal return; coordinate state R&D credit form.",
+            "sub_steps": [
+              "Form 6765",
+              "Form 8974 if payroll-tax election",
+              "Georgia R&D credit form"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-009",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-009-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-009-4",
+            "description": "Maintain contemporaneous documentation of qualifying activities for audit defensibility.",
+            "sub_steps": [
+              "Employee time records",
+              "Project records",
+              "Invoices"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-009",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-009-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Confirm R&D contemporaneous documentation is current for {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-009-5",
+            "description": "Renew R&D credit study annually as qualifying activities continue.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-009",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-009-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Specialty Tax Credits",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Renew R&D credit study with {{partner_type}} for current tax year"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Range computed at 4-12% federal credit rate net of 25% specialty firm fee, scaled to HIS revenue. Georgia state R&D credit conformity flagged [VERIFY] in KB."
+      },
+      {
+        "recommendation_id": "REC-TAX-010",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-010_withholding_adjustment.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Implement This Year",
+        "co_triggered_with": [
+          "REC-TAX-001"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 40000,
+            "unit": "USD",
+            "narrative_context": "Estimated §6654 underpayment penalty avoidable by adjusting withholding/estimates against current-year projection (W-2 $480K + K-1 $3.4M). Computed at ~$1M underpayment × 0.5 half-year average × 8% federal underpayment rate.",
+            "is_approximate": true,
+            "is_annual": false
+          },
+          "formula_id": "underpayment_penalty_avoided_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-010_withholding_adjustment.md",
+          "computation_inputs": {
+            "projected_underpayment_usd": 1000000,
+            "half_year_factor": 0.5,
+            "federal_underpayment_rate_pct": 0.08,
+            "current_w2_usd": 480000,
+            "current_k1_usd": 3400000,
+            "agi_usd": 3600000,
+            "safe_harbor_pct_required": 1.1,
+            "structure_changes_pending": "PTET election, cost seg, cash-balance plan"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-010-1",
+            "description": "CPA produces current-year federal and Georgia tax projection reflecting PTET, cost-seg, cash-balance, and projected K-1.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-010",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-010-2",
+            "description": "Compute required withholding/estimates against 110% prior-year safe harbor (AGI > $150K).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-010",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-010-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-010-3",
+            "description": "Submit updated Form W-4 to HIS payroll (Paychex).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-010",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-010-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-010-4",
+            "description": "Establish quarterly estimated-payment schedule (April 15, June 15, September 15, January 15).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-010",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-010-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Confirm quarterly estimated payment with {{partner_type}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-010-5",
+            "description": "Mid-year (September) reconciliation of withholding-and-estimates pace against updated projection.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-010",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-010-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Underpayment penalty estimate is illustrative; actual exposure depends on safe-harbor election and timing. Penalty rate ~8% per rec file."
+      },
+      {
+        "recommendation_id": "REC-TAX-011",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-011_multi_state_planning.md",
+        "category": "Tax",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Multi-State Coordination",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {
+            "states_of_nexus": [
+              "Georgia",
+              "Tennessee",
+              "Alabama",
+              "North Carolina",
+              "South Carolina",
+              "Northern Florida"
+            ],
+            "residence_state": "Georgia",
+            "residence_change_contemplated": false
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Low-priority module for Holloway given GA-only residence; coordinate per-state PTET, apportionment, and nexus across the 5+ states of HIS operations to avoid double-counting and capture state-specific optimizations.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-011-1",
+            "description": "Inventory all states of HIS nexus (GA, TN, AL, Carolinas, N.FL) and document per-state filing posture.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-011",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-011-2",
+            "description": "Per-state analysis of PTET availability, conformity, estate tax, and residency rules.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-011",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-011-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-011-3",
+            "description": "Identify optimization opportunities (PTET stacking, trust situs, residency change feasibility).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-011",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-011-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-011-4",
+            "description": "Coordinate ongoing compliance with state-experienced specialty CPA.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-011",
+            "source_phase_or_step": "Implementation Steps 4-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-011-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Refresh multi-state nexus analysis with {{partner_type}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Rec file explicitly states this is low-priority for GA-only residence/Southeast operations. State D (qualitative) — savings depend on residency change which client is not contemplating."
+      },
+      {
+        "recommendation_id": "REC-RSK-001",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-001_cross_purchase_buy_sell.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Buy/Sell Funding",
+        "co_triggered_with": [
+          "REC-EST-004",
+          "REC-ENT-004",
+          "REC-RSK-007"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              8000,
+              30000
+            ],
+            "unit": "USD",
+            "narrative_context": "Aggregate annual term-life premium for two cross-purchase policies (Marcus on Derek ~$5M face; Derek on Marcus ~$5M starting layer), age 50-52 preferred non-smoker, 20-year convertible term. Larger Derek-on-Marcus face funded via entity-level bonus-and-loan.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "cross_purchase_buysell_premium_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-001_cross_purchase_buy_sell.md",
+          "computation_inputs": {
+            "primary_owner_pct": 0.88,
+            "co_owner_pct": 0.12,
+            "business_value_midpoint_usd": 42000000,
+            "primary_policy_face_usd": 5040000,
+            "co_owner_policy_face_starting_layer_usd": 5000000,
+            "marcus_age": 52,
+            "term_years": 20,
+            "asymmetric_premium_burden": true,
+            "premium_funding_mechanism": "entity-level bonus-and-loan to Derek for the larger Derek-on-Marcus policy",
+            "ilit_layer_handles_residual": "REC-EST-004 ILIT covers residual estate liquidity exposure on Marcus's $36.96M stake"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 8000,
+          "midpoint_value": 18000,
+          "high_value": 30000,
+          "computation_method": "Aggregate of two ~$5M 20-year term policies at age 50-52 preferred rates per rec file ($8K-$15K each)"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-001-1",
+            "description": "M&A counsel drafts cross-purchase buy/sell agreement with trigger events, valuation methodology, and payment terms.",
+            "sub_steps": [
+              "Trigger events: death, disability, retirement, departure, divorce, bankruptcy",
+              "Valuation: trailing 3-year EBITDA × multiple with floor/ceiling",
+              "Annual update mechanism"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on buy/sell agreement drafting progress"
+            }
+          },
+          {
+            "action_item_id": "AI-RSK-001-2",
+            "description": "Each owner completes underwriting (medical exam, financial questionnaire) for cross-purchase policies.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-3",
+            "description": "Each owner applies for policy on the other (Marcus owns ~$5M on Derek; Derek owns ~$5M starting layer on Marcus).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-4",
+            "description": "Establish entity-level bonus-and-loan premium funding for Derek's policy on Marcus; document AFR-compliant terms.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-5",
+            "description": "Coordinate buy/sell terms with replacement HIS operating agreement (REC-ENT-004).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-RSK-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-6",
+            "description": "Annual review of valuation formula and coverage adequacy.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review of buy/sell valuation and coverage adequacy"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Cross-purchase policies are owner-owned, NOT ILIT-owned (per rec file). Asymmetric premium burden flag fires (88% > 60% threshold) — bonus-and-loan funding required. Residual estate-liquidity exposure on Marcus's $36.96M stake addressed in REC-EST-004 ILIT layer."
+      },
+      {
+        "recommendation_id": "REC-RSK-004",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-004_estate_liquidity_life.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Liquidity Planning",
+        "co_triggered_with": [
+          "REC-EST-004"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 8000000,
+            "unit": "USD",
+            "narrative_context": "Projected federal estate tax due 9 months after second death. Estate projected ~$50M at second death; after $30M MFJ exemption (2026 OBBBA), $20M taxable × 40% = $8M. GA has no estate tax. Recommend $10M survivorship UL owned by ILIT to fund.",
+            "is_approximate": true,
+            "is_annual": false
+          },
+          "formula_id": "estate_liquidity_life_insurance_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-004_estate_liquidity_life.md",
+          "computation_inputs": {
+            "projected_estate_at_2nd_death_usd": 50000000,
+            "federal_exemption_mfj_2026_usd": 30000000,
+            "taxable_estate_usd": 20000000,
+            "federal_estate_tax_rate": 0.4,
+            "ga_estate_tax_rate": 0,
+            "tax_due_usd": 8000000,
+            "recommended_face_amount_usd": 10000000,
+            "annual_premium_estimate_usd_low": 80000,
+            "annual_premium_estimate_usd_high": 120000,
+            "marcus_age": 52,
+            "catherine_age": 49,
+            "policy_type": "Survivorship UL",
+            "owner": "ILIT (REC-EST-004)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 80000,
+          "midpoint_value": 100000,
+          "high_value": 120000,
+          "computation_method": "Annual premium range for $10M survivorship UL on Marcus 52 / Catherine 49, both healthy preferred"
+        },
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-004-1",
+            "description": "Project estate-tax exposure at first and second death given current and expected asset growth.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-004-2",
+            "description": "Confirm ILIT formation (REC-EST-004) is complete and ILIT will be policyowner from inception.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-004-3",
+            "description": "Underwrite both Marcus and Catherine for survivorship UL; both must be qualifiable.",
+            "sub_steps": [
+              "Health questionnaires",
+              "Paramed exams",
+              "Financial documentation"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-004-4",
+            "description": "Issue $10M survivorship UL with ILIT as policyowner and beneficiary.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-RSK-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-004-5",
+            "description": "Fund premium via annual Crummey-noticed gifts to ILIT; document notices for each beneficiary each year.",
+            "sub_steps": [
+              "Crummey notice template",
+              "Notice delivery",
+              "Acknowledgment receipt",
+              "File copies"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-004-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Issue annual Crummey notices and fund ILIT premium with {{partner_type}}"
+            }
+          },
+          {
+            "action_item_id": "AI-RSK-004-6",
+            "description": "Annual review: estate projection update, coverage adequacy, premium status.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-RSK-004",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-004-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual estate-liquidity coverage review"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Estate projection assumes growth from current ~$35-50M net worth to ~$50M at second death. Tax estimate uses 2026 OBBBA $30M MFJ exemption. New policy issued directly to ILIT — avoids 3-year §2035 lookback."
+      },
+      {
+        "recommendation_id": "REC-RSK-005",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-005_individual_disability.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Personal Disability",
+        "co_triggered_with": [
+          "REC-RSK-006"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 25000,
+            "unit": "USD",
+            "narrative_context": "Estimated annual premium for max-issue individual DI on Marcus age 52, own-occ to age 65/67, $25K-$35K/month benefit. Premium paid personally to keep benefits tax-free under IRC §104(a)(3).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "individual_di_premium_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-005_individual_di.md",
+          "computation_inputs": {
+            "marcus_age": 52,
+            "household_annual_spend_usd_low": 420000,
+            "household_annual_spend_usd_high": 480000,
+            "group_ltd_replacement_pct": 0.6,
+            "group_ltd_taxability": "taxable (employer-paid premium)",
+            "target_monthly_benefit_usd": 30000,
+            "annual_target_replacement_usd": 360000,
+            "policy_features": "own-occupation full benefit period, non-cancelable, to age 65/67"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 15000,
+          "midpoint_value": 22500,
+          "high_value": 30000,
+          "computation_method": "Range from rec file ($15K-$25K/year) adjusted upward slightly for max-issue / age 52"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-005-1",
+            "description": "Audit Marcus's current group LTD: monthly cap, own-occ definition, benefit period, taxability.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-005-2",
+            "description": "Document coverage gap to current and projected household spending.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RSK-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-005-3",
+            "description": "Underwrite Marcus for max-issue individual DI (medical exam, income documentation, occupation classification).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-005-4",
+            "description": "Select product with own-occ to age 65/67 (typically MassMutual max-issue program); issue policy.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-005-5",
+            "description": "Coordinate with buy/sell disability trigger (REC-RSK-001).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-005-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-005-6",
+            "description": "Pay premium personally (post-tax) to preserve tax-free benefit under §104(a)(3).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-005",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-005-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm individual DI premium paid personally and review coverage vs. income"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Group LTD inadequate per FR (60% replacement, 24-month own-occ then any-occ; HNW-inappropriate cap). Premium must be paid personally to preserve tax-free benefit."
+      },
+      {
+        "recommendation_id": "REC-RSK-006",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-006_business_overhead_expense.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Business Continuity",
+        "co_triggered_with": [
+          "REC-RSK-005"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 6000,
+            "unit": "USD",
+            "narrative_context": "Estimated annual BOE premium for HIS, ~1-2% of covered overhead. Coverage continuity preserves enterprise value during owner disability — material given $4M revolver, 87 FTE, $48M backlog.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "boe_premium_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-006_boe_disability.md",
+          "computation_inputs": {
+            "marcus_age": 52,
+            "his_fte_count": 87,
+            "his_revolver_usd": 4000000,
+            "estimated_monthly_overhead_usd": 250000,
+            "monthly_max_recommended_usd": 250000,
+            "benefit_period_months": 24,
+            "coverage_premium_pct_low": 0.01,
+            "coverage_premium_pct_high": 0.02,
+            "premium_payer": "HIS (deductible business expense)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 3000,
+          "midpoint_value": 5500,
+          "high_value": 8000,
+          "computation_method": "Range from rec file ($3K-$8K) for HIS-scale overhead at 1-2% premium ratio"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-006-1",
+            "description": "Inventory and document covered HIS overhead expenses (rent, payroll, utilities, professional fees, loan payments).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-006",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-006-2",
+            "description": "Underwrite Marcus for BOE coverage.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-006",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-006-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-006-3",
+            "description": "Issue BOE policy with appropriate monthly maximum and 24-month benefit period; HIS as owner and beneficiary.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-006",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-006-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-006-4",
+            "description": "Premium paid by HIS as deductible business expense (§162); confirm CPA treatment.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-006",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-006-5",
+            "description": "Annual review: overhead expense growth, owner age impact on premium and coverage limits.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-006",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual BOE overhead recheck and coverage review"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Monthly overhead estimate $250K is illustrative pending detailed monthly P&L (FR notes 2024 detailed monthly P&L is outstanding). Refine post-engagement with controller."
+      },
+      {
+        "recommendation_id": "REC-RSK-007",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-007_key_person_life.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Business Continuity",
+        "co_triggered_with": [
+          "REC-RSK-001"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 6000,
+            "unit": "USD",
+            "narrative_context": "Estimated aggregate annual term-life premium for two key-person policies (Derek and HIS controller) at ~$2.5M each, term coverage. Note: Derek is also covered under cross-purchase buy/sell — key-person layer covers DIFFERENT economic loss (revenue/transition gap).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "key_person_life_premium_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-007_key_person_life.md",
+          "computation_inputs": {
+            "key_persons": [
+              "Derek Chen (12% owner, key continuity person)",
+              "HIS controller"
+            ],
+            "estimated_replacement_cost_each_usd": 2000000,
+            "policy_face_each_usd": 2500000,
+            "term_years": 20,
+            "annual_premium_each_usd_low": 1500,
+            "annual_premium_each_usd_high": 4000,
+            "policy_owner": "Holloway Industrial Solutions, LLC",
+            "section_101j_compliance_required": true
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 3000,
+          "midpoint_value": 6000,
+          "high_value": 10000,
+          "computation_method": "Aggregate of two term policies at rec-file premium range ($1.5K-$5K each)"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-007-1",
+            "description": "Identify key persons (Derek, controller) and quantify replacement-cost economic impact for each.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-007",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-007-2",
+            "description": "Execute §101(j) notice-and-consent with each key employee BEFORE policy issuance — non-negotiable.",
+            "sub_steps": [
+              "Attorney drafts consent template",
+              "Each key employee signs",
+              "Document filed with policy records"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-007",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-007-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-007-3",
+            "description": "Underwrite each key person and issue policies with HIS as policyowner and beneficiary.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-007",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-007-4",
+            "description": "File Form 8925 annually for employer-owned life insurance reporting.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-RSK-007",
+            "source_phase_or_step": "Implementation Step 4 (annual compliance)",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-007-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "File Form 8925 with {{partner_type}} for employer-owned life insurance"
+            }
+          },
+          {
+            "action_item_id": "AI-RSK-007-5",
+            "description": "Annual review of key-person bench; update or replace policies as roles evolve.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-007",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-007-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual key-person bench and coverage review"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "§101(j) consent must be signed BEFORE policy issuance — failure makes proceeds taxable. Form 8925 annual filing is mandatory. Derek has dual role (owner/key person) — coordinate with REC-RSK-001 buy/sell."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [
+        {
+          "rec_id": "REC-RSK-001",
+          "source_metadata_text": "Plan section placement: Recommendations — Business → Risk & Liability",
+          "candidate_sections": [
+            "Recommendations — Risk & Insurance",
+            "Recommendations — Business Tax",
+            "Recommendations — Succession & Continuity"
+          ]
+        },
+        {
+          "rec_id": "REC-RSK-004",
+          "source_metadata_text": "Plan section placement: Estate Planning → Liquidity Planning",
+          "candidate_sections": [
+            "Recommendations — Estate Planning",
+            "Recommendations — Risk & Insurance"
+          ]
+        }
+      ],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-TAX-009-1",
+          "inferred_bucket": "60-120 days",
+          "source_signal": "Rec file does not specify explicit timing; engagement of specialty firm typical 60-120 day window"
+        },
+        {
+          "action_item_id": "AI-RSK-007-2",
+          "inferred_bucket": "30-60 days",
+          "source_signal": "§101(j) notice-and-consent must precede policy issuance; sized to allow attorney drafting and execution"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-TAX-011",
+          "phrasing_used": "Low-priority module for Holloway given GA-only residence; coordinate per-state PTET, apportionment, and nexus across the 5+ states of HIS operations to avoid double-counting and capture state-specific optimizations.",
+          "reason": "Rec file explicitly notes low-priority for single-residence-state clients; quantified savings depend on residency change which client is not contemplating"
+        }
+      ],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 52141,
+      "output_token_count": 37256,
+      "cache_creation_input_tokens": 85327,
+      "cache_read_input_tokens": 16344,
+      "attempts_made": 2,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "schema_validation_failed",
+          "failure_details": "batch_index: Invalid input: expected number, received undefined; total_batches: Invalid input: expected number, received undefined; recommendations: Invalid input: expected array, received undefined; _stage_flags: Invalid input: expected object, received undefined",
+          "duration_ms": 200909,
+          "input_tokens": 51966,
+          "output_tokens": 20218
+        },
+        {
+          "attempt_number": 2,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 178635,
+          "input_tokens": 175,
+          "output_tokens": 17038
+        }
+      ],
+      "duration_ms": 379568,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:41:22.225Z",
+      "batch_index": 3,
+      "total_batches": 11
+    }
+  }
+}

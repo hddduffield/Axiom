@@ -1,0 +1,54 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-02T23:42:43.294Z",
+    "input_batch_rec_ids": [
+      "REC-EST-001",
+      "REC-EST-002",
+      "REC-EST-003",
+      "REC-EST-004",
+      "REC-EST-005",
+      "REC-EST-006",
+      "REC-EST-008",
+      "REC-EST-009",
+      "REC-EST-012",
+      "REC-EST-011",
+      "REC-EST-020"
+    ],
+    "wall_clock_ms": 3,
+    "script": "scripts/runStage3a1SingleBatchLive.ts"
+  },
+  "result": {
+    "_stage_status": "FAILED",
+    "_failure_type": "api_error",
+    "_failure_reason": "Anthropic API call failed: Streaming is required for operations that may take longer than 10 minutes. See https://github.com/anthropics/anthropic-sdk-typescript#long-requests for more details",
+    "_failure_context": {
+      "batch_index": 0,
+      "api_error": "Streaming is required for operations that may take longer than 10 minutes. See https://github.com/anthropics/anthropic-sdk-typescript#long-requests for more details",
+      "attempts_made": 1
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 0,
+      "output_token_count": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "api_error",
+          "failure_details": "Streaming is required for operations that may take longer than 10 minutes. See https://github.com/anthropics/anthropic-sdk-typescript#long-requests for more details",
+          "duration_ms": 0,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      ],
+      "duration_ms": 2,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-02T23:42:43.294Z",
+      "batch_index": 0,
+      "total_batches": 1
+    }
+  }
+}

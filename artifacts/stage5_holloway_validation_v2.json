@@ -1,0 +1,188 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-03T15:16:21.907Z",
+    "input_stage4_artifact": "artifacts/stage4_holloway_validation_v1.json",
+    "input_quantified_recommendations": "artifacts/stage3a_full_pipeline_test_v2.json",
+    "input_client_profile": "artifacts/holloway_clientprofile.json",
+    "rec_count": 81,
+    "wall_clock_ms": 51467,
+    "dry_run": false,
+    "script": "scripts/runStage5LiveValidation.ts"
+  },
+  "result": {
+    "findings": [
+      {
+        "finding_id": "F-001",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-FAM-001 ($380K) does not appear in plan prose within tolerance.",
+        "evidence": "REC-FAM-001: expected $380K not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC2-001",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "ES",
+          "RB.4",
+          "RP.12"
+        ],
+        "description": "Executive Summary's 'what this means' closer states the five priorities produce 'roughly $7M – $13M of estate-tax savings on the trust and gifting layers alone.' But the top-5 cited recommendations sum to ~$57.3M (REC-RSK-008 ~$42.5M + REC-EST-005 ~$6.0M + REC-RSK-017 ~$4.0M + REC-EST-004 ~$3.6M + REC-EST-003 ~$1.2M). Even if interpreted as just the trust/gifting priorities (REC-EST-005 + REC-EST-004 + REC-EST-003 ≈ $10.8M midpoint), the $7–$13M range is plausible but the closer's framing 'on the trust and gifting layers alone' against the top-5 list is muddled — the top priority by impact text is REC-RSK-008 at ~$42.5M (umbrella face amount, not estate-tax savings).",
+        "evidence": "Acted on together, the five priorities above produce roughly $7M – $13M of estate-tax savings on the trust and gifting layers alone... | Rank 1: REC-RSK-008 (Risk & Insurance) ~$42.5M",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC2-002",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.5",
+          "RB.2"
+        ],
+        "description": "RB.5 closer claims combined business risk premium of ~$48K–$79K is 'materially less than the Section 2 cash-yield pickup'. RB.2 closer states yield pickup is '~$35K–$40K per year per $1M moved' on 'a typical $2M – $3M business cash position' — implying ~$70K–$120K of yield. The premium ($48–79K) is not 'materially less' than $70–120K — at the low end of yield ($70K) and the high end of premium ($79K), they're roughly equal. The narrative claim of comfortable self-funding is loose.",
+        "evidence": "Combined annual premium of approximately $48K – $79K is materially less than the Section 2 business cash-yield pickup once the tiered cash structure is in place — meaning the entire program is self-funding | every $1M moved... is approximately $35K – $40K per year of pre-tax yield. On a typical $2M – $3M business cash position",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC3-001",
+        "severity": "warning",
+        "category": "LC3_strategic_coherence",
+        "section_ids": [
+          "T",
+          "RB.7"
+        ],
+        "description": "Top 5 Priorities lists REC-RSK-008 (personal umbrella) at impact '~$42.5M' which represents the recommended face amount of coverage, not a tax savings or wealth-preservation impact. This sits oddly alongside REC-EST-005 (~$6.0M, actual estate-tax savings) and creates an apples-to-oranges comparison in the priorities table that misleads the reader on relative impact magnitude. The umbrella's actual impact is liability protection sized to net worth, not a $42.5M wealth gain.",
+        "evidence": "{\"rank\":1,\"descriptor\":\"REC-RSK-008 (Risk & Insurance)\",\"estimated_impact_text\":\"~$42.5M\",\"timing_text\":\"30-60 days\"}",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC1-001",
+        "severity": "info",
+        "category": "LC1_voice_consistency",
+        "section_ids": [
+          "RB.1",
+          "RB.4",
+          "RP.8",
+          "RP.12"
+        ],
+        "description": "Voice holds well across Pass 1 (RB.*) and Pass 2 (RP.*). Both lenses use strategic-frame openings, bold-imperative bullets, em-dash qualifiers, partner-coordination language, and 'we/you' pronoun discipline. RP.8 opens with 'The business is the first place we invest. Personal portfolios are the second' — a textbook Holloway reframing. RP.9 reuses the 'Insurance is one of the few financial decisions...' framing from RB.5, which is consistent voice rather than drift. No LC.1 finding warranted.",
+        "evidence": "Insurance is one of the few financial decisions where the right answer is shaped by exposure, not opinion. (RB.5) | Insurance is one of the few financial decisions where the right answer is shaped by exposure, not opinion. (RP.9)",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC2-003",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.4"
+        ],
+        "description": "RB.4 intro says combined cumulative estate tax savings 'low end approximately $11M, midpoint approximately $25M'. RB.4 closer aggregates the same items at '$23M – $52M of federal estate-tax savings'. The low-end figures ($11M intro vs. $23M closer) materially diverge in the same section. Reader will notice.",
+        "evidence": "Combined cumulative estate tax savings across the layered architecture: low end approximately $11M, midpoint approximately $25M | combine to a layered architecture of approximately $23M – $52M of federal estate-tax savings",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-004",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.7"
+        ],
+        "description": "RB.7 intro says 'Combined preserved transaction value across the workstreams: approximately $14M – $30M+ on the $30M baseline.' Closer sums the same components to '$17M – $33M'. Both ranges are defensible but they don't match each other within the section.",
+        "evidence": "Combined preserved transaction value across the workstreams: approximately $14M – $30M+ on the $30M baseline | sum to approximately $17M – $33M of preserved or captured value on a $30M baseline",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-005",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RP.9",
+          "RB.5"
+        ],
+        "description": "RP.9 references coordination of Marcus's individual DI 'with the buy/sell disability trigger in Section 4.' Section 4 is Estate Planning; the buy/sell mechanics are in Section 5 (RB.5). Cross-reference is mis-cited in narrative. Minor but visible to a careful reader.",
+        "evidence": "Coordinates with the buy/sell disability trigger in Section 4.",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC4-001",
+        "severity": "info",
+        "category": "LC4_findings_alignment",
+        "section_ids": [
+          "FO",
+          "RP.11"
+        ],
+        "description": "Findings & Observations 'Investment' opportunity notes 'Personal cash ($310K Truist) and HIS operating cash are sitting in low-yield bank accounts. A tiered cash structure picks up an estimated $12K – $22K per year on the personal side alone' — but RP.8 quantifies the personal cash yield at '~$18,000 per year', which is consistent with the FO range. No issue. However, FO Family opportunity 'Eleanor... LTC status and balance sheet are not documented' connects to RP.11 (Eleanor discovery conversation) — which is addressed. All FO opportunities trace to a recommendation. Recording as informational confirmation.",
+        "evidence": "Eleanor (Marcus's mother, age 78) — the family expects to provide assisted-living or in-home care support within 5–10 years. Her LTC status and balance sheet are not documented",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC5-001",
+        "severity": "info",
+        "category": "LC5_narrative_weaving",
+        "section_ids": [
+          "RB.2"
+        ],
+        "description": "RB.2 closer asserts the cash-yield pickup 'fully funds the buy/sell life insurance program in Section 5'. Section 5 buy/sell premium is $8K–$30K (just buy/sell) — well covered. But the broader Section 5 program is $48K–$79K. The 'buy/sell life insurance program' phrasing is narrowly true but easily read as the full program. Minor narrative imprecision.",
+        "evidence": "the annual benefit lands in the range that fully funds the buy/sell life insurance program in Section 5",
+        "suggested_action": "informational_only"
+      }
+    ],
+    "deterministic_checks": {
+      "DC1_unresolved_cross_refs": [],
+      "DC2_roadmap_orphans": [],
+      "DC3_top5_mismatch": null,
+      "DC4_missing_decisions": [],
+      "DC5_unused_glossary": [],
+      "DC6_missing_sections": [],
+      "DC7_archetype_violations": [],
+      "DC8_unused_numbers": [
+        {
+          "rec_id": "REC-FAM-001",
+          "expected_value": "$380K"
+        }
+      ],
+      "DC9_compliance_issues": [],
+      "DC10_lifecycle_violations": []
+    },
+    "llm_assessment": {
+      "voice_consistency_score": 90,
+      "contradiction_count": 6,
+      "llm_overall_assessment": "review_recommended"
+    },
+    "overall_assessment": "review_recommended",
+    "_flags": {
+      "assessment_disagreement": false,
+      "llm_skipped": false,
+      "llm_skipped_due_to_context_overflow": false,
+      "unresolved_findings_count": 3
+    },
+    "_metadata": {
+      "stage_version": "5-1.0.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 107932,
+      "output_token_count": 3093,
+      "cache_creation_input_tokens": 5532,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 50888,
+          "input_tokens": 107932,
+          "output_tokens": 3093
+        }
+      ],
+      "duration_ms": 51464,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T15:16:21.904Z",
+      "cost_cents": 195,
+      "source_stage4_result_hash": "74be91ce39ffd5d441a87907918ddb92c65f85de0688075b5ac0dce6f57a077d",
+      "source_quantified_recommendations_hash": "e17c5acb65420ff5ab1c39108ae7fea28a495ade22d78bc5b7f344147b4bf8b9",
+      "source_client_profile_hash": "d3c69f4a03be36c0486ed619f360a561c89f13ee03f0407c3829149e0249c9f4"
+    }
+  }
+}

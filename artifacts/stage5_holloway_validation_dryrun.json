@@ -1,0 +1,47 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-03T15:15:23.498Z",
+    "input_stage4_artifact": "artifacts/stage4_holloway_validation_v1.json",
+    "input_quantified_recommendations": "artifacts/stage3a_full_pipeline_test_v2.json",
+    "input_client_profile": "artifacts/holloway_clientprofile.json",
+    "rec_count": 81,
+    "wall_clock_ms": 352,
+    "dry_run": true,
+    "script": "scripts/runStage5LiveValidation.ts"
+  },
+  "result": {
+    "_stage_status": "FAILED",
+    "_failure_type": "api_error",
+    "_failure_reason": "Anthropic API call failed: STAGE5_DRY_RUN_ABORT: pre-flight passed; aborted before LLM call. chars/4=64187 real=113325",
+    "_failure_context": {
+      "api_error": "STAGE5_DRY_RUN_ABORT: pre-flight passed; aborted before LLM call. chars/4=64187 real=113325",
+      "attempts_made": 1
+    },
+    "_metadata": {
+      "stage_version": "5-1.0.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 0,
+      "output_token_count": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "api_error",
+          "failure_details": "STAGE5_DRY_RUN_ABORT: pre-flight passed; aborted before LLM call. chars/4=64187 real=113325",
+          "duration_ms": 1,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      ],
+      "duration_ms": 345,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T15:15:23.492Z",
+      "cost_cents": 0,
+      "source_stage4_result_hash": "74be91ce39ffd5d441a87907918ddb92c65f85de0688075b5ac0dce6f57a077d",
+      "source_quantified_recommendations_hash": "e17c5acb65420ff5ab1c39108ae7fea28a495ade22d78bc5b7f344147b4bf8b9",
+      "source_client_profile_hash": "d3c69f4a03be36c0486ed619f360a561c89f13ee03f0407c3829149e0249c9f4"
+    }
+  }
+}

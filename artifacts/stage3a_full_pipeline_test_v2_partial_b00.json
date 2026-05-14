@@ -1,0 +1,1331 @@
+{
+  "_partial_metadata": {
+    "batch_index": 0,
+    "rec_ids": [
+      "REC-ENT-001",
+      "REC-ENT-002",
+      "REC-ENT-003",
+      "REC-ENT-004",
+      "REC-ENT-007",
+      "REC-EST-001",
+      "REC-EST-002",
+      "REC-EST-003"
+    ],
+    "resolved_at": "2026-05-03T01:37:32.965Z"
+  },
+  "result": {
+    "batch_index": 0,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-ENT-001",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-001_real_estate_separation.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 1,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Entity & Real Estate Structure → Foundational Move",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              15000,
+              30000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct professional fees and recording cost; downstream year-one tax benefit (~$500K) tracked via REC-TAX-006/007.",
+            "is_approximate": true
+          },
+          "formula_id": "real_estate_separation_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-001_real_estate_separation.md",
+          "computation_inputs": {
+            "property_value_usd": 4200000,
+            "facility_sqft": 38000,
+            "transfer_tax_state": "Georgia",
+            "lender_consent_required": true
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 15000,
+          "midpoint_value": 22500,
+          "high_value": 30000,
+          "computation_method": "Range from rec file QUANTIFIED IMPACT FRAMEWORK direct cost band"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "entity_restructure_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-001-1",
+            "description": "Form Holloway Properties LLC in Georgia and draft operating agreement.",
+            "sub_steps": [
+              "File Articles of Organization with GA SOS",
+              "Obtain EIN",
+              "Mirror ownership proportions to operating LLC initially"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 1-2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-2",
+            "description": "Obtain Truist lender consent for transfer of Kennesaw HQ to common-ownership entity.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-ENT-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-3",
+            "description": "Execute deed transferring Kennesaw HQ from HIS LLC to Holloway Properties LLC and record with Cobb County.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 4",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-4",
+            "description": "Engage broker for FMV rent opinion and execute triple-net lease between Holloway Properties LLC (landlord) and HIS (tenant).",
+            "sub_steps": [
+              "Obtain Cobb County industrial rent comps",
+              "Draft NNN lease at market rate"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-5",
+            "description": "CPA prepares §721/§351 tax memo documenting tax-deferred contribution and basis tracking.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 7",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-6",
+            "description": "Update property and liability insurance to reflect new property LLC ownership.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Coordination",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Direct cost only; downstream year-one tax savings (~$500K) computed under REC-TAX-006 + REC-TAX-007 to avoid double-count. Sequenced before F-reorg per rec file."
+      },
+      {
+        "recommendation_id": "REC-ENT-002",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-002_f_reorganization_to_holdco.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 2,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Entity & Real Estate Structure",
+        "co_triggered_with": [
+          "REC-TAX-008",
+          "REC-FAM-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              20000,
+              35000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct professional fees of the F-reorg itself; option value (>$8M) realized through downstream recap, GRAT/IDGT, charitable, and stock-vs-asset bridge moves.",
+            "is_approximate": true
+          },
+          "formula_id": "f_reorg_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-002_f_reorganization.md",
+          "computation_inputs": {
+            "attorney_fees_usd": [
+              15000,
+              25000
+            ],
+            "cpa_fees_usd": [
+              5000,
+              10000
+            ],
+            "business_value_midpoint_usd": 35200000,
+            "transaction_window_years": [
+              3,
+              5
+            ],
+            "owner_pct": 88
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 20000,
+          "midpoint_value": 27500,
+          "high_value": 35000,
+          "computation_method": "Range from rec file worked example for Holloway-style client"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "entity_restructure_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-002-1",
+            "description": "Confirm S-election integrity and shareholder eligibility (Marcus 88%, Derek 12%).",
+            "sub_steps": [
+              "Pull Form 2553 acceptance",
+              "Review 5-year ownership history",
+              "Confirm no foreign/corporate shareholders"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-2",
+            "description": "Engage specialist M&A counsel with documented F-reorg experience.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-3",
+            "description": "Form Holloway Holdings entity in Georgia and obtain EIN.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 2 — Document Drafting",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-002-1",
+              "AI-ENT-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-4",
+            "description": "Draft Plan of Reorganization, Share Exchange Agreement, and Holdco operating agreement.",
+            "sub_steps": [
+              "Plan of Reorganization",
+              "Share Exchange Agreement",
+              "Holdco operating agreement / bylaws"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 2 — Document Drafting",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on F-reorg drafting progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-ENT-002-5",
+            "description": "Execute share exchange per Plan of Reorganization with all shareholders (Marcus and Derek).",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 3 — Execution",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-ENT-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-6",
+            "description": "File Form 2553 (Holdco S-election) and Form 8869 (QSub election for HIS).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 3 — Execution",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-ENT-002-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-7",
+            "description": "Confirm IRS acceptance of S-election and QSub election; update banking, insurance, and vendor records.",
+            "sub_steps": [
+              "Track IRS acceptance letters",
+              "Update Truist banking docs",
+              "Notify insurance carriers"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 4 — Post-Reorg Integration",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-002-6"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "F-reorg quantified as direct cost only per firm policy; downstream value (>$8M) attributed to enabled recs (recap, GRAT, IDGT, DAF, deal bridge) to avoid double-count."
+      },
+      {
+        "recommendation_id": "REC-ENT-003",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-003_voting_nonvoting_recap.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 3,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Entity & Real Estate Structure",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 7400000,
+            "unit": "USD",
+            "narrative_context": "Estimated valuation discount captured on Marcus's 88% non-voting interest at midpoint business value of $35.2M, applying 30% combined LOM/minority discount to be transferred via downstream GRAT/IDGT/SLAT.",
+            "is_approximate": true
+          },
+          "formula_id": "vot_nonvot_recap_discount_value_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-003_voting_nonvoting_recap.md",
+          "computation_inputs": {
+            "business_value_midpoint_usd": 35200000,
+            "marcus_pct": 88,
+            "marcus_economic_value_usd": 30976000,
+            "voting_share_pct": 1,
+            "nonvoting_share_pct": 99,
+            "nonvoting_value_pre_discount_usd": 30666240,
+            "discount_pct_midrange": 30,
+            "discount_value_captured_usd": 9199872
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 7666560,
+          "midpoint_value": 9199872,
+          "high_value": 10733184,
+          "computation_method": "discount range 25%-35% applied to Marcus's $30.66M non-voting interest at midpoint business value"
+        },
+        "timing_bucket": "4-6 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "entity_restructure_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-003-1",
+            "description": "Estate attorney drafts amended Holdco operating agreement with voting/non-voting class structure.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-003",
+            "source_phase_or_step": "Step 2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-003-2",
+            "description": "Obtain Derek Chen consent on recap of his 12% interest into voting/non-voting classes.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-003",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-003-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-003-3",
+            "description": "Engage qualified appraiser for LOM and minority discount analysis on non-voting interest.",
+            "sub_steps": [
+              "Mandelbaum factor analysis",
+              "Document discount support"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-003",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-003-4",
+            "description": "Execute amended operating agreement and re-issue unit certificates reflecting class structure.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-003",
+            "source_phase_or_step": "Steps 5-6",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-003-2",
+              "AI-ENT-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-003-5",
+            "description": "CPA tax memo confirming non-recognition treatment of recap.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-003",
+            "source_phase_or_step": "Coordination",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-003-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used 30% midpoint discount per rec file; range 25%-35% appraisal-supported. Derek's 12% recap consent flagged as decision needed. Discount value flows to GRAT/IDGT planning downstream — do not double-count estate tax savings here."
+      },
+      {
+        "recommendation_id": "REC-ENT-004",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-004_op_agreement_replacement.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 4,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Entity & Real Estate Structure",
+        "co_triggered_with": [
+          "REC-RSK-001",
+          "REC-SUC-008"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              5000,
+              15000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct attorney drafting cost; avoided transaction friction $25K-$100K at deal-time.",
+            "is_approximate": true
+          },
+          "formula_id": "operating_agreement_replacement_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-004_operating_agreement_replacement.md",
+          "computation_inputs": {
+            "attorney_fees_usd": [
+              5000,
+              15000
+            ],
+            "existing_op_agreement_year": 2009,
+            "owner_count": 2
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000,
+          "midpoint_value": 10000,
+          "high_value": 15000,
+          "computation_method": "Range from rec file QUANTIFIED IMPACT FRAMEWORK"
+        },
+        "timing_bucket": "4-6 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "entity_restructure_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-004-1",
+            "description": "M&A attorney drafts replacement operating agreement reflecting holdco structure, recap, transfer restrictions, and Derek's 12% economics.",
+            "sub_steps": [
+              "Reflect holdco/QSub structure",
+              "Voting/non-voting classes",
+              "Transfer restrictions",
+              "Derek role and economics"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-004",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-004-2",
+            "description": "Both owners (Marcus and Derek) review and execute replacement operating agreement.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-004",
+            "source_phase_or_step": "Steps 2-3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-004-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-004-3",
+            "description": "File state amendment if required and coordinate buy/sell provisions with REC-RSK-001.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-004",
+            "source_phase_or_step": "Steps 4-6",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "2009 operating agreement (17 years stale) replaced as part of restructuring; coordinates with buy/sell and recap."
+      },
+      {
+        "recommendation_id": "REC-ENT-007",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-007_op_agreement_annual_audit.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 5,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Annual Maintenance",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              1000,
+              3000
+            ],
+            "unit": "USD",
+            "narrative_context": "Annual review cost; avoided transaction friction $10K-$50K+ at deal time.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "operating_agreement_annual_audit_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-007_operating_agreement_annual_audit.md",
+          "computation_inputs": {
+            "annual_review_fee_usd": [
+              1000,
+              3000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1000,
+          "midpoint_value": 2000,
+          "high_value": 3000,
+          "computation_method": "Range from rec file QUANTIFIED IMPACT FRAMEWORK"
+        },
+        "timing_bucket": "Ongoing",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-007-1",
+            "description": "Conduct annual review of operating, shareholder, buy/sell, and inter-entity agreements with attorney.",
+            "sub_steps": [
+              "Identify drift between docs and practice",
+              "Execute amendments as needed",
+              "Update central file"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-007",
+            "source_phase_or_step": "Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Schedule annual operating-agreement audit with {{partner_type}} for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Annual maintenance item; long_running with annual cadence."
+      },
+      {
+        "recommendation_id": "REC-EST-001",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-001_joint_revocable_living_trust.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 6,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 1 — Foundation",
+        "co_triggered_with": [
+          "REC-SPC-001"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 100000,
+            "unit": "USD",
+            "narrative_context": "Probate cost avoided on probate-eligible assets (~$5M of liquid+real estate excluding business), at GA midrange 2% attorney fee.",
+            "is_approximate": true
+          },
+          "formula_id": "joint_rev_trust_probate_avoidance_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/estate/REC-EST-001_joint_revocable_living_trust.md",
+          "computation_inputs": {
+            "probate_estate_estimate_usd": 5000000,
+            "ga_probate_attorney_fee_pct_midrange": 0.02,
+            "liquid_assets_usd": 2110000,
+            "real_estate_usd": 3500000,
+            "drafting_cost_usd": [
+              12000,
+              18000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 50000,
+          "midpoint_value": 100000,
+          "high_value": 150000,
+          "computation_method": "GA probate attorney fees at 1%-3% of $5M probate estate"
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-001-1",
+            "description": "Estate attorney drafts joint revocable living trust for Marcus and Catherine.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-001-2",
+            "description": "Fund the trust by retitling investment accounts, real estate (East Cobb residence, Blue Ridge), and post-recap voting interest into the trust.",
+            "sub_steps": [
+              "Retitle Schwab brokerage",
+              "Retitle Truist checking",
+              "Deed East Cobb and Blue Ridge to trust",
+              "Title voting Holdco units to trust post-recap"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check trust funding progress with {{partner_type}} for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-001-3",
+            "description": "Update beneficiary designations on retirement accounts (Marcus 401(k), Catherine Rollover IRA) and life insurance policies to align with estate plan.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-001-4",
+            "description": "Schedule annual review of trust assets and successor trustee designations.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review of trust asset schedule and successor trustees for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Probate estate excludes business interest (held outside probate via separate planning) and retirement accounts (beneficiary designation). Used $5M as estimate of liquid + real estate."
+      },
+      {
+        "recommendation_id": "REC-EST-002",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-002_pour_over_will_poas.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 7,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 1 — Foundation",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              8000,
+              18000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct drafting cost for full document set; avoids conservatorship costs ($5K-$25K) and probate friction.",
+            "is_approximate": true
+          },
+          "formula_id": "core_estate_doc_set_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/estate/REC-EST-002_pourover_will_poa_hcd_hipaa.md",
+          "computation_inputs": {
+            "document_set_fee_usd": [
+              8000,
+              18000
+            ],
+            "minor_children_count": 2,
+            "adult_children_count": 1,
+            "existing_will_year": 2014,
+            "stale_years": 12
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 8000,
+          "midpoint_value": 13000,
+          "high_value": 18000,
+          "computation_method": "Range from rec file direct cost band"
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "estate_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-002-1",
+            "description": "Estate attorney drafts pour-over wills, financial POAs, healthcare directives, HIPAA authorizations, and guardianship designations for Marcus and Catherine.",
+            "sub_steps": [
+              "Pour-over wills replacing 2014 wills",
+              "Durable financial POAs",
+              "Healthcare directives / medical POAs",
+              "HIPAA authorizations",
+              "Guardianship for James (16) and Sophie (12)"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-002-2",
+            "description": "Draft separate HIPAA authorization and healthcare/financial POA for Olivia (age 19, adult).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 4",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-002-3",
+            "description": "Notarize, witness, and distribute originals/copies of all documents to clients, healthcare providers, and PSA file.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Steps 2-3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-002-1",
+              "AI-EST-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Decisions needed: guardianship designation for Sophie (not named in 2014 will). Olivia at 19 needs own HIPAA/POA per rec file."
+      },
+      {
+        "recommendation_id": "REC-EST-003",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-003_annual_exclusion_gifting.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 8,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 2 — Annual Exclusion Gifts",
+        "co_triggered_with": [
+          "REC-FAM-001",
+          "REC-CHR-002",
+          "REC-CHR-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 1216000,
+            "unit": "USD",
+            "narrative_context": "Estate tax savings from systematic annual gifting program over 20 years: $19K x 2 spouses x 4 donees x 20 yrs = $3.04M removed; at 40% federal estate tax = $1.216M (excluding compound growth on gifted assets).",
+            "is_approximate": true
+          },
+          "formula_id": "annual_exclusion_gifting_estate_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/estate/REC-EST-003_annual_exclusion_gifting.md",
+          "computation_inputs": {
+            "annual_exclusion_per_donor_per_donee_usd_2026": 19000,
+            "donor_count": 2,
+            "donee_count": 4,
+            "donees_listed": [
+              "Olivia",
+              "James",
+              "Sophie",
+              "Eleanor (Marcus's mother)"
+            ],
+            "annual_capacity_usd": 152000,
+            "program_years": 20,
+            "cumulative_principal_removed_usd": 3040000,
+            "federal_estate_tax_rate_pct": 40,
+            "compound_growth_value_usd_estimate": 6600000,
+            "estate_tax_saved_with_growth_usd_estimate": 2640000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1216000,
+          "midpoint_value": 1900000,
+          "high_value": 2640000,
+          "computation_method": "Low: principal-only at 40%; high: principal + 7% compound growth over 20 years at 40% estate tax"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-003-1",
+            "description": "Identify and confirm donee list (Olivia, James, Sophie, Eleanor) and gift vehicles (direct cash vs. Crummey trusts).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 1-2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-003-2",
+            "description": "Calendar and execute annual gifts each January using $152K combined annual exclusion capacity.",
+            "sub_steps": [
+              "Schedule January transfers",
+              "Coordinate Crummey notices for trust gifts",
+              "Track per-donee cumulative"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Steps 3-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Execute annual exclusion gifts in January for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-003-3",
+            "description": "CPA files Form 709 to report gift-splitting election and any gifts requiring reporting.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Coordinate Form 709 filing with {{partner_type}} for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Decision flagged on per-child trust vs. pot trust and direct cash vs. Crummey vehicles. Donee count of 4 includes Eleanor (Marcus's mother); program coordinates with REC-EST-005 children's trusts."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-ENT-002-7",
+          "inferred_bucket": "4-6 months",
+          "source_signal": "Phase 4 — Post-Reorg Integration (Days 60-120) extends past 120 days for IRS acceptance"
+        },
+        {
+          "action_item_id": "AI-ENT-003-1",
+          "inferred_bucket": "4-6 months",
+          "source_signal": "Recap follows F-reorg per sequencing dependency; rec file says ~30-60 days post-F-reorg"
+        }
+      ],
+      "qualitative_fallback_used": [],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 59884,
+      "output_token_count": 14612,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 150281,
+          "input_tokens": 59884,
+          "output_tokens": 14612
+        }
+      ],
+      "duration_ms": 150308,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:37:32.965Z",
+      "batch_index": 0,
+      "total_batches": 11
+    }
+  }
+}

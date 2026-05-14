@@ -1,0 +1,1404 @@
+{
+  "_partial_metadata": {
+    "batch_index": 7,
+    "rec_ids": [
+      "REC-RET-001",
+      "REC-RET-002",
+      "REC-RET-003",
+      "REC-RET-007",
+      "REC-RET-010",
+      "REC-RET-004",
+      "REC-RET-005",
+      "REC-RET-008"
+    ],
+    "resolved_at": "2026-05-03T01:41:14.750Z"
+  },
+  "result": {
+    "batch_index": 7,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-RET-001",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-001_max_401k_deferrals.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "401(k) Deferral Maximization",
+        "co_triggered_with": [
+          "REC-TAX-003",
+          "REC-RET-007",
+          "REC-RET-010"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 12025,
+            "unit": "USD",
+            "narrative_context": "Marcus only — current-year federal tax savings on $32,500 deferral at assumed 37% marginal rate. Catherine not on payroll ($0 W-2), so household combined deferral not available until REC-TAX-003 spousal payroll executes.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "401k_deferral_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-001_max_401k_deferral.md",
+          "computation_inputs": {
+            "marcus_deferral_base_2026_usd": 24500,
+            "marcus_catchup_2026_usd": 8000,
+            "marcus_total_deferral_2026_usd": 32500,
+            "assumed_federal_marginal_rate": 0.37,
+            "rationale_marginal_rate": "FR.tax_status.federal_marginal_rate is known_unknown; AGI ~$3.6M places Marcus solidly in 37% top bracket per 2026 MFJ schedule (>$751,600).",
+            "catherine_w2_2026_usd": 0,
+            "catherine_status": "$0 W-2; not on payroll. Spousal deferral capacity unlocked only after REC-TAX-003 executes."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 12025,
+          "midpoint_value": 18525,
+          "high_value": 25025,
+          "computation_method": "Low = Marcus only ($32,500 × 37%). Midpoint = Marcus + Catherine partial payroll (e.g., $50K W-2 supports ~$25K deferral). High = both spouses fully maxed at $32,500 each ($65,000 × 37% = $24,050; rounded)."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-001-1",
+            "description": "Confirm Marcus's current 2026 deferral elections and remaining capacity with Empower (HIS 401(k) recordkeeper).",
+            "sub_steps": [
+              "Pull YTD deferral from Empower",
+              "Compare to $32,500 annual cap (50+)",
+              "Document gap"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-2",
+            "description": "Verify Empower plan supports Roth deferrals/catch-up; if not, escalate to REC-RET-007 plan amendment.",
+            "sub_steps": [
+              "Check plan document for Roth feature",
+              "If absent, trigger REC-RET-007 prerequisite path"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-3",
+            "description": "Submit deferral election to Empower targeting $32,500 annual (Roth catch-up portion if SECURE 2.0 applies).",
+            "sub_steps": [
+              "Calculate per-pay-period amount based on remaining pay periods",
+              "Coordinate with Paychex",
+              "Confirm Roth bucket for $8,000 catch-up"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-4",
+            "description": "After Catherine is added to HIS payroll (REC-TAX-003), enroll her in 401(k) and set deferral to applicable max.",
+            "sub_steps": [
+              "Coordinate with REC-TAX-003 spousal payroll execution",
+              "Enroll Catherine in HIS 401(k)",
+              "Set deferral up to lesser of W-2 or $32,500"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Implementation Step 1 (spousal)",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RET-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-5",
+            "description": "Annual review of deferral cap and elections each January.",
+            "sub_steps": [
+              "Confirm next-year IRS cap",
+              "Adjust elections by January 15",
+              "Verify Roth catch-up status against prior-year FICA wages"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review: confirm 401(k) deferral elections updated for new IRS cap and {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Federal marginal rate inferred at 37% from AGI ~$3.6M (well above $751,600 MFJ top bracket). Catherine $0 W-2 — household combined deferral path depends on REC-TAX-003 spousal payroll first."
+      },
+      {
+        "recommendation_id": "REC-RET-002",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-002_cash_balance_plan.md",
+        "category": "Retirement",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Cash-Balance Plan",
+        "co_triggered_with": [
+          "REC-TAX-002",
+          "REC-RET-003",
+          "REC-RET-009"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              50000,
+              70000
+            ],
+            "unit": "USD",
+            "narrative_context": "Net annual economic benefit (owner tax savings minus non-owner employee allocation cost) for cash-balance plan layered on existing 401(k). Per-rec-file Worked Example for owner age 52.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "cash_balance_net_benefit_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-002_cash_balance_plan.md",
+          "computation_inputs": {
+            "owner_age": 52,
+            "owner_compensation_used_usd": 360000,
+            "section_401a17_comp_cap_2026_usd": 360000,
+            "cb_pay_credit_owner_usd": 200000,
+            "owner_marginal_rate": 0.37,
+            "owner_gross_tax_savings_usd": 74000,
+            "non_owner_employee_count_estimate": 86,
+            "estimated_non_owner_payroll_usd": 4500000,
+            "employee_allocation_pct_assumed": 0.06,
+            "employee_allocation_cost_usd": 270000,
+            "rationale_employee_cost_caveat": "Rec file worked example assumes $500K non-owner payroll → $30K-$40K. HIS has 87 FTE; non-owner payroll is materially larger, which could push employee carry-along cost well above the rec-file's worked-example range and compress net benefit. Final design requires actuarial workforce analysis.",
+            "transaction_window_years": "3-5",
+            "transaction_caution": "Rec file specifies plan must run 3-5 years; HIS transaction window is 3-5 years — borderline. Flagged Active-Cautioned."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 60000,
+          "high_value": 110000,
+          "computation_method": "Low = workforce carry-along makes net benefit zero or negative (87 FTE risk). Midpoint = rec-file worked example ($60K). High = optimal cross-testing design with owner-favorable allocation and minimal employee cost ($110K gross tax savings)."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-002-1",
+            "description": "Engage actuarial firm / DB-specialist TPA for cash-balance plan design analysis.",
+            "sub_steps": [
+              "Identify 2-3 candidate TPAs with DB capability",
+              "Request workforce analysis proposal",
+              "Evaluate non-owner allocation cost given 87 FTE"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-002",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-002-2",
+            "description": "Workforce analysis projecting non-owner allocation cost across 87 FTE under cross-tested design.",
+            "sub_steps": [
+              "Pull census from Paychex",
+              "Model class allocations",
+              "Project annual employee carry-along cost"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-002",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RET-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-002-3",
+            "description": "Decide whether to proceed given 3-5 year transaction window vs 3-5 year minimum durability requirement.",
+            "sub_steps": [
+              "Review actuarial proposal",
+              "Weigh net benefit vs transaction-termination complication",
+              "Document go/no-go decision"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-002",
+            "source_phase_or_step": "Design Decision",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RET-002-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-002-4",
+            "description": "Draft and execute cash-balance plan document with ERISA counsel.",
+            "sub_steps": [
+              "TPA drafts",
+              "ERISA counsel review",
+              "Adopt by board resolution",
+              "Distribute SPD"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-002",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-RET-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on cash-balance plan document drafting and adoption progress"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-002-5",
+            "description": "Annual actuarial valuation, Form 5500, PBGC premium, and minimum funding compliance.",
+            "sub_steps": [
+              "Annual valuation by actuary",
+              "Form 5500 filing by 7/31",
+              "PBGC premium if applicable",
+              "Fund by entity tax filing deadline"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-002",
+            "source_phase_or_step": "Implementation Steps 6-8",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: confirm with {{partner_type}} actuarial valuation, Form 5500, and CB plan funding complete"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Active-Cautioned status: HIS 87 FTE non-owner payroll likely materially exceeds rec-file's $500K worked-example payroll, compressing net benefit. Also, 3-5 year transaction window is at the edge of cash-balance plan's 3-5 year durability threshold. Net benefit estimate uses rec file's worked-example range ($50-70K)."
+      },
+      {
+        "recommendation_id": "REC-RET-003",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-003_profit_sharing_layer.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Cross-Tested Profit-Sharing",
+        "co_triggered_with": [
+          "REC-RET-002"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 14615,
+            "unit": "USD",
+            "narrative_context": "Marcus profit-sharing layer of $39,500 (filling deferral gap to $72,000 §415(c) cap) × 37% marginal rate = $14,615 of business-level current-year tax savings. Tax-deferred growth additional.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "profit_sharing_415c_fill_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-003_profit_sharing_cross_tested.md",
+          "computation_inputs": {
+            "section_415c_cap_2026_usd": 72000,
+            "marcus_deferral_2026_usd": 32500,
+            "profit_sharing_layer_usd": 39500,
+            "owner_marginal_rate": 0.37,
+            "owner_compensation_cap_2026_usd": 360000,
+            "owner_age": 52,
+            "rationale": "Per rec file worked example: profit-sharing fills gap from $32,500 deferral to $72,000 §415(c) cap = $39,500 employer contribution.",
+            "employee_carry_along_caveat": "Employee allocation cost depends on workforce composition; coordinated with REC-RET-002 cross-testing analysis."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 7400,
+          "midpoint_value": 14615,
+          "high_value": 14615,
+          "computation_method": "Low = pro-rata profit sharing (less owner-favorable, ~$20K layer × 37%). Midpoint/High = cross-tested layer at $39,500 × 37%."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-003-1",
+            "description": "Amend plan document to add or modify cross-tested profit-sharing formula.",
+            "sub_steps": [
+              "Confirm current plan formula",
+              "Coordinate with TPA on cross-testing amendment",
+              "Adopt amendment by board resolution"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-003",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-003-2",
+            "description": "Annual cross-testing nondiscrimination analysis with TPA.",
+            "sub_steps": [
+              "Pull workforce census",
+              "Run cross-testing groups",
+              "Document allocation results"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-003",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: confirm with {{partner_type}} cross-testing analysis and profit-sharing allocation completed"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-003-3",
+            "description": "Fund profit-sharing contribution by entity tax-filing deadline (with extensions).",
+            "sub_steps": [
+              "Confirm allocation amount",
+              "Authorize wire to plan trust",
+              "Confirm CPA reflects deduction on 1120-S"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-003",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: confirm with {{partner_type}} profit-sharing contribution funded by tax deadline"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Profit-sharing layer typically bundled into same TPA engagement as cash-balance plan (REC-RET-002) for combined cross-testing. Tax savings shown at owner level conceptually but is business-deductible."
+      },
+      {
+        "recommendation_id": "REC-RET-007",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-007_plan_amendment_roth_aftertax.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Plan Amendment for Roth/After-Tax",
+        "co_triggered_with": [
+          "REC-RET-008"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {},
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Plan amendment is a low-cost compliance enabler that unlocks SECURE 2.0 Roth catch-up compliance (REC-RET-010) and mega-backdoor Roth capacity (REC-RET-004); standalone quantification is not meaningful — value flows through dependent recs.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-007-1",
+            "description": "Identify Empower's amendment process and request proposal for adding Roth, after-tax, in-service Roth conversion features.",
+            "sub_steps": [
+              "Contact Empower account manager",
+              "Request standard amendment package quote",
+              "Confirm features supported by recordkeeper platform"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-007",
+            "source_phase_or_step": "Implementation Steps 1-2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-007-2",
+            "description": "Adopt amendment via board resolution and distribute participant notice.",
+            "sub_steps": [
+              "Board resolution",
+              "Sign amendment",
+              "Distribute participant notice with effective date"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-007",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RET-007-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-007-3",
+            "description": "Coordinate with Paychex to integrate new contribution sources (Roth deferral, after-tax) into payroll.",
+            "sub_steps": [
+              "Update payroll setup with new sources",
+              "Test deduction codes",
+              "Confirm 1099-R / W-2 reporting paths"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-007",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RET-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Plan amendment is enabler not deduction-generator; State D with reason_no_formula 'all_inputs_qualitative'. Value passes through to REC-RET-001 (catch-up), REC-RET-004 (mega backdoor), REC-RET-010 (SECURE 2.0 compliance)."
+      },
+      {
+        "recommendation_id": "REC-RET-010",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-010_secure_2_roth_catchup_compliance.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "SECURE 2.0 Roth Catch-Up Compliance",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {
+            "marcus_2025_fica_wages_estimate_usd": 184500,
+            "ss_wage_base_2025_usd": 176100,
+            "secure_2_threshold_usd": 150000,
+            "marcus_above_threshold": true,
+            "marcus_2026_catchup_usd": 8000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Compliance mandate (no economic value to quantify); ensures Marcus's $8,000 catch-up is preserved as Roth treatment for 2026, avoiding loss of catch-up capacity if plan does not support Roth.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-010-1",
+            "description": "Pull Marcus's 2025 FICA wages (W-2 Box 3) from Paychex/HIS payroll records to confirm $150K threshold exceedance.",
+            "sub_steps": [
+              "Pull 2025 W-2",
+              "Document Box 3 amount",
+              "Flag if >$150K"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-010",
+            "source_phase_or_step": "Implementation Steps 1-3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-010-2",
+            "description": "Verify Empower plan supports Roth deferrals; if not, ensure REC-RET-007 amendment is operational by 1/1/2026.",
+            "sub_steps": [
+              "Confirm Roth feature live",
+              "If not, escalate REC-RET-007 amendment timeline"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-010",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-010-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-010-3",
+            "description": "Coordinate with Paychex to flag Marcus's catch-up bucket as Roth in 2026 payroll.",
+            "sub_steps": [
+              "Update payroll deduction code",
+              "Test on next pay cycle",
+              "Confirm Empower received Roth-categorized catch-up"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-010",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-010-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-010-4",
+            "description": "Annual recheck of Marcus's prior-year FICA wages against indexed threshold each January.",
+            "sub_steps": [
+              "Pull prior-year W-2",
+              "Compare to current threshold",
+              "Adjust catch-up bucket designation"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-010",
+            "source_phase_or_step": "Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-010-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: verify prior-year FICA wages against SECURE 2.0 Roth catch-up threshold and {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Marcus's W-2 of $480K solidly above $150K SECURE 2.0 threshold. State D — compliance mandate, no incremental economic value (just preservation of catch-up capacity)."
+      },
+      {
+        "recommendation_id": "REC-RET-004",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-004_mega_backdoor_roth.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Mega-Backdoor Roth",
+        "co_triggered_with": [
+          "REC-RET-005"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 25000,
+            "unit": "USD",
+            "narrative_context": "Annual incremental Roth contribution capacity for Marcus via after-tax + in-plan conversion. Tax-free growth on this balance compounds for life; immediate tax cost is near zero.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "mega_backdoor_415c_capacity_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-004_mega_backdoor_roth.md",
+          "computation_inputs": {
+            "section_415c_cap_2026_usd": 72000,
+            "marcus_base_deferral_2026_usd": 24500,
+            "marcus_catchup_2026_usd": 8000,
+            "employer_match_assumed_usd": 10000,
+            "profit_sharing_layer_estimate_usd": 12500,
+            "after_tax_capacity_usd": 25000,
+            "rationale": "If profit-sharing fills entirely to §415(c) cap (REC-RET-003), after-tax capacity is reduced; modeled here at moderate profit-sharing scenario leaving ~$25K after-tax space.",
+            "long_term_growth_rate_assumed": 0.07,
+            "horizon_years": 25,
+            "projected_25yr_roth_balance_usd_low": 1500000,
+            "projected_25yr_roth_balance_usd_high": 2000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 25000,
+          "high_value": 39500,
+          "computation_method": "Low = profit-sharing fully fills §415(c) cap, leaving zero after-tax capacity. Midpoint = moderate profit-sharing, ~$25K after-tax. High = no profit-sharing layer, full $39,500 gap available for after-tax."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-004-1",
+            "description": "Confirm Empower plan supports after-tax contributions and in-service Roth conversions (post REC-RET-007 amendment).",
+            "sub_steps": [
+              "Verify plan document",
+              "Confirm recordkeeper operational support",
+              "Document conversion mechanics (in-plan vs in-service to Roth IRA)"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-004",
+            "source_phase_or_step": "Implementation Steps 1-2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-004-2",
+            "description": "Calculate available after-tax space given deferrals + match + profit-sharing layer.",
+            "sub_steps": [
+              "Model §415(c) calc",
+              "Confirm available capacity post REC-RET-003",
+              "Document target after-tax annual contribution"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-004",
+            "source_phase_or_step": "Calc step",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RET-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-004-3",
+            "description": "Submit after-tax contribution election and trigger periodic in-plan Roth conversion.",
+            "sub_steps": [
+              "Submit after-tax payroll election",
+              "Set up monthly/quarterly Roth conversion trigger",
+              "Confirm 1099-R reporting"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-004",
+            "source_phase_or_step": "Implementation Steps 3-5",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RET-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly: confirm after-tax contribution converted to Roth and {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-004-4",
+            "description": "CPA confirms tax reporting on conversion (Form 8606 if applicable, 1099-R review).",
+            "sub_steps": [
+              "Year-end 1099-R review",
+              "Confirm tax return reflects conversion correctly"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-RET-004",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: confirm with {{partner_type}} mega-backdoor Roth conversion reported correctly on tax return"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "After-tax capacity is residual after deferrals + match + profit-sharing under §415(c) cap. Estimate is annual incremental Roth contribution capacity; tax savings are deferred (tax-free growth). Borderline match per Stage 2."
+      },
+      {
+        "recommendation_id": "REC-RET-005",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-005_backdoor_roth.md",
+        "category": "Retirement",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Backdoor Roth IRA",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 8600,
+            "unit": "USD",
+            "narrative_context": "Marcus only — annual non-deductible traditional IRA contribution + immediate Roth conversion at $8,600 (50+). Catherine blocked by $340K Rollover IRA pro-rata rule until that balance is cleared (e.g., rolled into 401(k) — but Catherine is not currently on payroll).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "backdoor_roth_ira_capacity_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-005_backdoor_roth_ira.md",
+          "computation_inputs": {
+            "ira_contribution_limit_2026_usd": 7500,
+            "ira_catchup_50plus_2026_usd": 1100,
+            "marcus_total_50plus_usd": 8600,
+            "marcus_pretax_ira_balance_usd": 0,
+            "catherine_pretax_ira_balance_usd": 340000,
+            "catherine_pro_rata_block": "Catherine has $340K Rollover IRA at Schwab — pro-rata rule contaminates conversion; backdoor blocked until rolled into a workplace plan. Catherine has no W-2 currently, so no 401(k) to receive rollover. Path conditional on REC-TAX-003 spousal payroll execution.",
+            "long_term_growth_rate_assumed": 0.07,
+            "horizon_years": 30
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 8600,
+          "midpoint_value": 8600,
+          "high_value": 17200,
+          "computation_method": "Low/Midpoint = Marcus only ($8,600). High = both spouses after Catherine's $340K Rollover IRA is cleared and she's on payroll with a 401(k) to receive rollover ($17,200 combined)."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-005-1",
+            "description": "Confirm Marcus has no pre-tax IRA balance contaminating pro-rata rule (FR confirms only 401(k) and Catherine's IRA; verify no SEP/SIMPLE/Rollover IRA in his name).",
+            "sub_steps": [
+              "Verify Schwab account list",
+              "Confirm no traditional IRA in Marcus's name"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-005",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-005-2",
+            "description": "Open Marcus's traditional IRA at Schwab (if not present) and execute non-deductible $8,600 contribution.",
+            "sub_steps": [
+              "Open traditional IRA",
+              "Wire $8,600 non-deductible contribution",
+              "Document basis"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-005",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RET-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-005-3",
+            "description": "Convert Marcus's traditional IRA to Roth IRA promptly (next business day).",
+            "sub_steps": [
+              "Submit conversion request to Schwab",
+              "Confirm completed",
+              "Document for Form 8606"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-005",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RET-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-005-4",
+            "description": "CPA files Form 8606 with Marcus's 1040 documenting non-deductible basis.",
+            "sub_steps": [
+              "Provide CPA with contribution and conversion documentation",
+              "Confirm Form 8606 attached"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-RET-005",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RET-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual: confirm with {{partner_type}} Form 8606 filed for backdoor Roth basis tracking"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-005-5",
+            "description": "Evaluate path to clear Catherine's $340K Rollover IRA pro-rata block (rollover into 401(k) once she's on payroll per REC-TAX-003).",
+            "sub_steps": [
+              "Coordinate with REC-TAX-003 spousal payroll",
+              "Once Catherine has HIS 401(k), evaluate rollover of Schwab Rollover IRA into HIS 401(k)",
+              "If executed, enable Catherine's backdoor Roth"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-005",
+            "source_phase_or_step": "Caution / Pro-rata workaround",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly: revisit Catherine pro-rata block — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Catherine's $340K Schwab Rollover IRA is the pro-rata blocker — only Marcus's leg executes immediately. Active-Cautioned reflects partial-path-only execution."
+      },
+      {
+        "recommendation_id": "REC-RET-008",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-008_plan_restatement_review.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": "Plan Document Restatement",
+        "co_triggered_with": [
+          "REC-RET-007"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {},
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Operational compliance item (no economic value to quantify); preserves plan qualification by incorporating SECURE Act and SECURE 2.0 statutory changes into the plan document.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-008-1",
+            "description": "Identify Empower plan's restatement cycle status and SECURE 2.0 amendment compliance.",
+            "sub_steps": [
+              "Request restatement cycle confirmation from Empower/TPA",
+              "Document last restatement date"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-008",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-008-2",
+            "description": "Engage TPA for restatement bundled with REC-RET-007 amendment work.",
+            "sub_steps": [
+              "Coordinate scope with TPA",
+              "Bundle Roth/after-tax/cross-testing amendments into restatement",
+              "Adopt restated plan document"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-008",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-RET-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Monthly: check in with {{partner_type}} on plan restatement progress"
+            }
+          },
+          {
+            "action_item_id": "AI-RET-008-3",
+            "description": "Distribute updated SPD to all plan participants.",
+            "sub_steps": [
+              "Coordinate with TPA on SPD update",
+              "Distribute via standard channels",
+              "Document delivery"
+            ],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-008",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-RET-008-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Plan restatement is operational compliance — State D. Bundled with REC-RET-007 amendments and TPA engagement (REC-RET-002 cash-balance design)."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-RET-002-4",
+          "inferred_bucket": "4-6 months",
+          "source_signal": "Plan document drafting + ERISA counsel review + board adoption typical timeline"
+        },
+        {
+          "action_item_id": "AI-RET-008-2",
+          "inferred_bucket": "4-6 months",
+          "source_signal": "Bundled restatement with multiple amendments typically 4-6 month engagement"
+        },
+        {
+          "action_item_id": "AI-RET-005-5",
+          "inferred_bucket": "6-12 months",
+          "source_signal": "Conditional on REC-TAX-003 spousal payroll execution timeline"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-RET-007",
+          "phrasing_used": "Plan amendment is a low-cost compliance enabler that unlocks SECURE 2.0 Roth catch-up compliance and mega-backdoor Roth capacity; standalone quantification is not meaningful — value flows through dependent recs.",
+          "reason": "Enabler/precondition rec; value flows through dependent recs (REC-RET-001, REC-RET-004, REC-RET-010)"
+        },
+        {
+          "rec_id": "REC-RET-010",
+          "phrasing_used": "Compliance mandate (no economic value to quantify); ensures Marcus's $8,000 catch-up is preserved as Roth treatment for 2026.",
+          "reason": "Pure compliance mandate — no incremental economic value, just preservation"
+        },
+        {
+          "rec_id": "REC-RET-008",
+          "phrasing_used": "Operational compliance item (no economic value to quantify); preserves plan qualification.",
+          "reason": "Operational compliance, not strategy — rec file explicitly states 'Restatement is operational compliance, not a strategy'"
+        }
+      ],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 49655,
+      "output_token_count": 34783,
+      "cache_creation_input_tokens": 81803,
+      "cache_read_input_tokens": 16344,
+      "attempts_made": 2,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "schema_validation_failed",
+          "failure_details": "recommendations.1.action_items.0.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.1.action_items.1.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.2.action_items.0.auto_generated_reminder_template: Invalid input: expected object, received undefined",
+          "duration_ms": 189385,
+          "input_tokens": 49443,
+          "output_tokens": 18637
+        },
+        {
+          "attempt_number": 2,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 182683,
+          "input_tokens": 212,
+          "output_tokens": 16146
+        }
+      ],
+      "duration_ms": 372093,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:41:14.750Z",
+      "batch_index": 7,
+      "total_batches": 11
+    }
+  }
+}

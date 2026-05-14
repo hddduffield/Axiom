@@ -1,0 +1,1740 @@
+{
+  "_partial_metadata": {
+    "batch_index": 2,
+    "rec_ids": [
+      "REC-TAX-001",
+      "REC-TAX-002",
+      "REC-TAX-003",
+      "REC-TAX-004",
+      "REC-TAX-005",
+      "REC-TAX-006",
+      "REC-TAX-007",
+      "REC-TAX-008"
+    ],
+    "resolved_at": "2026-05-03T01:38:18.312Z"
+  },
+  "result": {
+    "batch_index": 2,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-TAX-001",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-001_georgia_ptet_election.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 1,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [
+          "REC-TAX-002",
+          "REC-TAX-010"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 73112,
+            "unit": "USD",
+            "narrative_context": "Annual federal tax savings from GA PTET election at Marcus's K-1 income and post-OBBBA SALT cap with phase-out.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "ga_ptet_federal_savings_post_obbba_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-001_georgia_ptet_election.md",
+          "computation_inputs": {
+            "k1_income_usd": 3400000,
+            "ga_ptet_rate_percent": 5.19,
+            "state_tax_at_entity_usd": 176460,
+            "agi_usd": 3600000,
+            "salt_cap_personal_floor_usd": 10000,
+            "salt_cap_recovered_usd": 166460,
+            "federal_marginal_rate_percent": 37,
+            "method_used": "post_salt_cap_differential"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 60000,
+          "midpoint_value": 73000,
+          "high_value": 90000,
+          "computation_method": "K-1 income × GA PTET rate × federal marginal rate, less SALT cap floor at AGI > $605K"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-001-1",
+            "description": "Coordinate with CPA to confirm PTET experience and model with-vs-without PTET projection for current tax year.",
+            "sub_steps": [
+              "Confirm CPA familiarity with HB 149 PTET",
+              "Request side-by-side projection"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Steps 1-2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-2",
+            "description": "Confirm entity cash flow capacity to fund PTET liability via quarterly distributions adjustment.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-3",
+            "description": "Make estimated PTET payments via Form 602-ES quarterly to Georgia Department of Revenue.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Confirm with {{partner_type}} that GA Form 602-ES PTET estimated payment was filed this quarter for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-001-4",
+            "description": "File PTET election on Form 600S with HIS S-Corp return for current tax year.",
+            "sub_steps": [
+              "Check election box on Schedule 1",
+              "File by entity return due date including extensions"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-5",
+            "description": "Verify PTET credit on owners' Georgia Form 500 personal returns at year-end.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-6",
+            "description": "Schedule annual PTET election review to remake election each tax year and re-model benefit.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Implementation Step 7",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-001-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual PTET re-election review with {{partner_type}} for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used post-OBBBA SALT cap differential method; rec file's worked example explicitly cites $73K under post-OBBBA $40K SALT cap with phase-out at $605K+ AGI. Marcus's $3.6M AGI puts SALT cap at $10K floor."
+      },
+      {
+        "recommendation_id": "REC-TAX-002",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-002_w2_k1_mix_optimization.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 2,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [
+          "REC-TAX-001",
+          "REC-RET-002"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              5000,
+              15000
+            ],
+            "unit": "USD",
+            "narrative_context": "Net annual benefit from W-2 reduction $480K→$360K balancing FICA savings vs QBI cap.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "w2_k1_mix_optimization_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-002_w2_k1_mix_optimization.md",
+          "computation_inputs": {
+            "current_w2_usd": 480000,
+            "recommended_w2_usd": 360000,
+            "ss_wage_base_2026_usd": 184500,
+            "medicare_savings_usd": 3480,
+            "additional_medicare_savings_usd": 1080,
+            "qbi_offset_usd": 22000,
+            "401a17_comp_limit_usd": 360000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000,
+          "midpoint_value": 10000,
+          "high_value": 15000,
+          "computation_method": "FICA savings on W-2 reduction less QBI deduction loss above phase-in"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-002-1",
+            "description": "Engage CPA or compensation specialist (RCReports or similar) for formal reasonable-compensation analysis.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-002",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-002-2",
+            "description": "Source industry-benchmark compensation data for specialty mechanical contractor CEO at $40M+ revenue.",
+            "sub_steps": [
+              "BLS data",
+              "Industry association surveys",
+              "RCReports software"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-002",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-TAX-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-002-3",
+            "description": "Update HIS payroll forward-only at Paychex to reflect new W-2 level on next payroll cycle boundary.",
+            "sub_steps": [
+              "Update withholding",
+              "Document effective date"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-002",
+            "source_phase_or_step": "Implementation Steps 3-4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-002-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-002-4",
+            "description": "Coordinate with retirement plan to ensure 401(k)/profit-sharing contributions remain compliant and optimal at new W-2 level.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-002",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-002-5",
+            "description": "Document analysis and rationale in HIS tax file for audit defense.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-002",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Net benefit modest because Marcus's W-2 reduction is largely above SS wage base ($184.5K). QBI cap math nearly offsets FICA savings. Real value is alignment with §401(a)(17) limit ($360K) and cash-balance plan optimization."
+      },
+      {
+        "recommendation_id": "REC-TAX-003",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-003_spouse_on_payroll.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 3,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              15000,
+              25000
+            ],
+            "unit": "USD",
+            "narrative_context": "Net annual benefit from $50K Catherine W-2 enabling 401(k), DI insurability, backdoor Roth, family-employed-children path; net of FICA cost.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "spouse_on_payroll_aggregate_benefit_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-003_spouse_on_payroll.md",
+          "computation_inputs": {
+            "spouse_salary_usd": 50000,
+            "fica_cost_usd": 7650,
+            "401k_deferral_capacity_usd": 24500,
+            "401k_tax_savings_at_37pct_usd": 9065,
+            "business_deduction_value_usd": 21000,
+            "individual_di_premium_estimate_usd": 1750
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 15000,
+          "midpoint_value": 20000,
+          "high_value": 25000,
+          "computation_method": "Business deduction at marginal rate + 401(k) deferral tax savings - FICA cost"
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-003-1",
+            "description": "Document Catherine's role with written job description, time commitment, and deliverables for marketing/admin work.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-003-2",
+            "description": "Set defensible salary at $40K-$80K based on industry benchmark for marketing director / admin coordinator role.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-003-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-003-3",
+            "description": "Add Catherine to HIS payroll through Paychex with appropriate withholding.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-TAX-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-003-4",
+            "description": "Enroll Catherine in HIS 401(k) plan once eligibility period satisfied.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-003-5",
+            "description": "Underwrite individual disability insurance for Catherine after 6-12 months of W-2 history.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-003-6",
+            "description": "Maintain quarterly documentation file with deliverables, time logs, and evidence of legitimate work.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-003",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Update spouse-on-payroll documentation file for {{rec_id}}: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Catherine's prior healthcare REIT marketing experience supports defensibility of role. DI partner_type set to 'Other' since 'Insurance Broker' partner type maps to Health Insurance Broker or Commercial P&C; individual DI uses general broker."
+      },
+      {
+        "recommendation_id": "REC-TAX-004",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-004_family_employed_children_custodial_roths.md",
+        "category": "Tax",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 4,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [
+          "REC-FAM-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 6300,
+            "unit": "USD",
+            "narrative_context": "Annual parents' tax savings from $7,500 wage × 2 eligible children (James 16, Olivia 19) at combined ~42% federal+state marginal rate.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "family_employed_children_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-004_family_employed_children.md",
+          "computation_inputs": {
+            "eligible_children_count": 2,
+            "eligible_children_names": [
+              "James (16)",
+              "Olivia (19)"
+            ],
+            "wage_per_child_usd": 7500,
+            "total_wages_usd": 15000,
+            "combined_marginal_rate_percent": 42,
+            "child_federal_tax_usd": 0,
+            "fica_cost_via_family_llc_usd": 0,
+            "compounded_value_per_child_50yr_at_7pct_usd": 1900000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000,
+          "midpoint_value": 6300,
+          "high_value": 7600,
+          "computation_method": "Total annual wages × parents' combined marginal rate; net of FICA depending on entity structure"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-004-1",
+            "description": "Document each eligible child's role with job description, hours, tasks, and deliverables.",
+            "sub_steps": [
+              "Job description per child",
+              "Age-appropriate tasks",
+              "Hourly rate rationale"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-004-2",
+            "description": "Set defensible wage rate per child compliant with federal and Georgia child-labor minimum wage rules.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-004-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-004-3",
+            "description": "Process children through payroll with W-2 issuance and minimal withholding via Paychex.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-004-4",
+            "description": "Open custodial Roth IRAs at Schwab for each eligible child with parent as UTMA custodian.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-TAX-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-004-5",
+            "description": "Fund custodial Roth IRAs annually up to lesser of earned income or annual Roth contribution limit.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-004-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual custodial Roth funding for children for {{rec_id}}: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-004-6",
+            "description": "Maintain quarterly documentation of work performed (emails, deliverables, photos, time logs) for audit defense.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-004",
+            "source_phase_or_step": "Documentation Checklist",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Update children-employment documentation file for {{rec_id}}: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Sophie (12) excluded as too young per rec file's typical <12 threshold. Olivia (19, college) included as 14-22 age band still eligible. FICA assumed zero via family-management LLC (Variation A) which aligns with REC-ENT-002 holdco path; if direct from S-Corp, FICA would apply."
+      },
+      {
+        "recommendation_id": "REC-TAX-005",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-005_augusta_rule.md",
+        "category": "Tax",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 5,
+        "plan_section": "Recommendations — Personal Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 7584,
+            "unit": "USD",
+            "narrative_context": "Annual federal+GA tax savings from $18,000 of business rent deduction (12 days × $1,500) excluded from homeowner income under §280A(g).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "augusta_rule_280a_g_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-005_augusta_rule.md",
+          "computation_inputs": {
+            "days_used": 12,
+            "daily_rate_usd": 1500,
+            "total_rent_usd": 18000,
+            "federal_marginal_rate_percent": 37,
+            "ga_rate_percent": 5.19,
+            "combined_rate_percent": 42.19
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000,
+          "midpoint_value": 7584,
+          "high_value": 9000,
+          "computation_method": "Days × rate × combined federal+GA marginal rate; recommend 10-12 days, never 14"
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-005-1",
+            "description": "Obtain 2-3 written quotes from local Atlanta-area event venues for comparable space to establish defensible market rate.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-005-2",
+            "description": "Set per-day rental rate based on quote median and document methodology in writing.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-005-3",
+            "description": "Calendar quarterly board/strategy meetings at East Cobb residence with real agendas and attendees.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-TAX-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-005-4",
+            "description": "Maintain per-day documentation file with agenda, attendees, business purpose, meeting minutes for each rental day.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly Augusta Rule documentation update for {{rec_id}}: confirm meeting minutes and day count log"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-005-5",
+            "description": "Issue rental invoices from homeowner to HIS and process payment from operating account.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Process Augusta Rule rental invoice for {{rec_id}}: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-005-6",
+            "description": "CPA records business deduction on HIS return and confirms homeowner is NOT reporting rental income.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-005-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-005-7",
+            "description": "Track day count rigorously throughout the year; never approach 14 days.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-005",
+            "source_phase_or_step": "Implementation Step 7",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Augusta Rule day-count check for {{rec_id}}: confirm under 14-day cap"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used 12 days at $1,500/day per rec file's house position (never recommend 14). Applied combined federal+GA rate."
+      },
+      {
+        "recommendation_id": "REC-TAX-006",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-006_cost_segregation_study.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 6,
+        "plan_section": "Recommendations — Business Tax",
+        "subsection_within_section": "Tax Strategy → 3B. Evaluate Within 12 Months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 531594,
+            "unit": "USD",
+            "narrative_context": "First-year tax savings from cost segregation on Kennesaw HQ ($4.2M basis) under OBBBA permanent 100% bonus depreciation, paired with §469 grouping.",
+            "is_approximate": true
+          },
+          "formula_id": "cost_seg_obbba_first_year_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-006_cost_segregation_study.md",
+          "computation_inputs": {
+            "building_basis_usd": 4200000,
+            "reclassification_pct": 0.3,
+            "reclassified_basis_usd": 1260000,
+            "bonus_pct": 1,
+            "federal_marginal_rate_percent": 37,
+            "ga_rate_percent": 5.19,
+            "combined_rate_percent": 42.19,
+            "first_year_federal_savings_usd": 466200,
+            "first_year_ga_savings_usd": 65394,
+            "cost_seg_fee_estimate_usd": 15000,
+            "obbba_acquisition_date_threshold": "2025-01-20"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 360000,
+          "midpoint_value": 531594,
+          "high_value": 620000,
+          "computation_method": "Building basis × reclassification % (25-35%) × 100% bonus × combined federal+GA marginal rate"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-006-1",
+            "description": "Confirm Kennesaw HQ has been moved to Holloway Properties LLC (REC-ENT-001 sequencing prerequisite) before engaging cost-seg firm.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-006-2",
+            "description": "Obtain feasibility estimate from 2-3 cost-segregation firms.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-TAX-006-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Specialty Tax Credits",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-006-3",
+            "description": "Engage cost-seg firm for full engineering-based study of Kennesaw HQ.",
+            "sub_steps": [
+              "Site visit",
+              "Component inventory",
+              "Depreciation analysis"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Steps 3-4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-006-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Specialty Tax Credits",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on cost-seg study progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-006-4",
+            "description": "Receive and review study report with reclassification percentages and §481(a) adjustment if applicable.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-006-5",
+            "description": "CPA implements cost-seg results on tax return via Form 3115 (catch-up) or Form 4562 (current year).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-006-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-006-6",
+            "description": "Coordinate filing with §469 grouping election (REC-TAX-007) in same return year.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 7",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-006-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-006-7",
+            "description": "Establish recapture tracking schedule for §1245/§1250 at future disposition.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-006",
+            "source_phase_or_step": "Implementation Step 8",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-006-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used 30% reclassification midpoint per rec file. Assumed post-1/19/25 acquisition treatment via REC-ENT-001 restructuring; verify with CPA whether transfer to new entity counts as new acquisition for OBBBA bonus eligibility — flagged."
+      },
+      {
+        "recommendation_id": "REC-TAX-007",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-007_469_grouping_election.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 7,
+        "plan_section": "Recommendations — Business Tax",
+        "subsection_within_section": "Tax Strategy → 3B. Evaluate Within 12 Months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 531594,
+            "unit": "USD",
+            "narrative_context": "First-year federal+GA tax savings from §469(c)(7) grouping that allows cost-seg-driven accelerated depreciation to offset Marcus's active K-1 income.",
+            "is_approximate": true
+          },
+          "formula_id": "section_469_grouping_first_year_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-007_section_469_grouping.md",
+          "computation_inputs": {
+            "accelerated_depreciation_usd": 1260000,
+            "federal_marginal_rate_percent": 37,
+            "ga_rate_percent": 5.19,
+            "federal_savings_usd": 466200,
+            "ga_savings_usd": 65394,
+            "note_quantification_overlap": "savings overlap with REC-TAX-006; do not double-count in plan totals"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 400000,
+          "midpoint_value": 531594,
+          "high_value": 620000,
+          "computation_method": "Cost-seg accelerated depreciation × combined marginal rate; benefit is the unlocking of passive-trapped depreciation"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "CPA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-007-1",
+            "description": "Confirm common ownership and material participation in both real estate (Holloway Properties LLC) and operating business (HIS).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-007",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-007-2",
+            "description": "CPA files §469(c)(7) grouping election with tax return for the year of grouping.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-007",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-007-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-007-3",
+            "description": "Establish material participation documentation: time logs, role descriptions, decision-making evidence for both activities.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-007",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Update §469 material participation documentation for {{rec_id}}: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-007-4",
+            "description": "Coordinate filing of grouping election with cost-segregation study (REC-TAX-006) in same return year.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-007",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-TAX-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-007-5",
+            "description": "Maintain material participation in both activities going forward; election is binding.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-007",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual confirmation of §469 grouping material participation for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Quantification overlaps with REC-TAX-006; the savings figure represents the joint mechanism (cost-seg + grouping). Stage 4 should not double-count when summing plan totals."
+      },
+      {
+        "recommendation_id": "REC-TAX-008",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-008_section_1202_qsbs_evaluation.md",
+        "category": "Tax",
+        "status": "Advanced",
+        "position_in_sequence": 8,
+        "plan_section": "Recommendations — Business Tax",
+        "subsection_within_section": "Tax Strategy → 3C. Long-Term Considerations",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              3570000,
+              7140000
+            ],
+            "unit": "USD",
+            "narrative_context": "Federal capital-gains tax savings on $15M-$30M of QSBS exclusion at 23.8% LTCG+NIIT (single shareholder vs. multiplied via SLAT/trusts), assuming 5+ year hold post-C-Corp conversion.",
+            "is_approximate": true
+          },
+          "formula_id": "section_1202_qsbs_post_obbba_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-008_section_1202_qsbs.md",
+          "computation_inputs": {
+            "exclusion_cap_per_shareholder_usd": 15000000,
+            "ltcg_plus_niit_rate_percent": 23.8,
+            "single_shareholder_savings_usd": 3570000,
+            "multiplied_via_slat_savings_usd": 7140000,
+            "obbba_post_7_4_25_issuance": true,
+            "aggregate_gross_asset_cap_usd": 75000000,
+            "current_business_value_estimate_usd": 40000000,
+            "transaction_window_years": "3-5",
+            "holding_period_tier": "5+ years for 100% exclusion (3 yrs / 50%, 4 yrs / 75%)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 3570000,
+          "high_value": 10710000,
+          "computation_method": "Per-shareholder $15M exclusion × 23.8% federal LTCG+NIIT × number of qualifying shareholders (1-3); $0 floor if transaction <3yrs"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-008-1",
+            "description": "Conduct §1202 eligibility analysis covering business size, SSTB status (specialty mechanical contractor non-SSTB), asset composition, ownership pattern.",
+            "sub_steps": [
+              "Active business test",
+              "Gross asset test (<$75M)",
+              "SSTB analysis",
+              "Ownership pattern review"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-008-2",
+            "description": "Decision: choose Variation A (C-Corp from start), B (convert mid-stream), or C (multiplication via gifting).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-008-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-008-3",
+            "description": "Execute C-Corp formation or conversion with attorney; document QSBS attributes at issuance.",
+            "sub_steps": [
+              "Stock certificates",
+              "Board resolutions",
+              "Active-business certification"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-008-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on §1202 C-Corp conversion progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-008-4",
+            "description": "Document QSBS qualification at issuance: active business test, 80% qualified-trade-or-business asset test, gross asset cap.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-008-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-008-5",
+            "description": "Maintain QSBS attributes through hold period: continuous active business, monitor asset composition drift, avoid taint redemptions.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-008-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual QSBS qualification confirmation with {{partner_type}} for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-008-6",
+            "description": "Coordinate §1202 multiplication strategy via SLAT and/or children's trusts with estate planning team.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 8",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-008-3"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on §1202 multiplication trust strategy for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-008-7",
+            "description": "Negotiate stock-sale (vs. asset-sale) transaction structure at exit to preserve §1202 treatment.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-008",
+            "source_phase_or_step": "Implementation Step 7",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-008-3"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Coordinate with {{partner_type}} on §1202-preserving deal structure for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Decisions_needed flagged true given Variation A vs B vs C is a strategic choice and C-Corp ongoing tax drag must be modeled against §1202 benefit. Verify GA §1202 conformity post-OBBBA — flagged in Georgia specifics KB."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [
+        {
+          "rec_id": "REC-TAX-006",
+          "source_metadata_text": "Plan section placement: Recommendations — Business → Tax Strategy → 3B",
+          "candidate_sections": [
+            "Recommendations — Business Tax",
+            "Recommendations — Personal Tax"
+          ]
+        },
+        {
+          "rec_id": "REC-TAX-007",
+          "source_metadata_text": "Plan section placement: Recommendations — Business → Tax Strategy → 3B",
+          "candidate_sections": [
+            "Recommendations — Business Tax",
+            "Recommendations — Personal Tax"
+          ]
+        }
+      ],
+      "timing_bucket_inferred": [],
+      "qualitative_fallback_used": [],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 65519,
+      "output_token_count": 19995,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 195626,
+          "input_tokens": 65519,
+          "output_tokens": 19995
+        }
+      ],
+      "duration_ms": 195655,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:38:18.312Z",
+      "batch_index": 2,
+      "total_batches": 11
+    }
+  }
+}

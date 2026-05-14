@@ -1,0 +1,334 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-03T15:03:45.072Z",
+    "input_stage4_artifact": "artifacts/stage4_holloway_validation_v1.json",
+    "input_quantified_recommendations": "artifacts/stage3a_full_pipeline_test_v2.json",
+    "input_client_profile": "artifacts/holloway_clientprofile.json",
+    "rec_count": 81,
+    "wall_clock_ms": 65623,
+    "dry_run": false,
+    "script": "scripts/runStage5LiveValidation.ts"
+  },
+  "result": {
+    "findings": [
+      {
+        "finding_id": "F-001",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-ENT-003 ($7.4M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-ENT-003: expected $7.4M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-002",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-EST-003 ($1.2M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-EST-003: expected $1.2M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-003",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-EST-004 ($3.6M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-EST-004: expected $3.6M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-004",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-TAX-008 ($3.6M – $7.1M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-TAX-008: expected $3.6M – $7.1M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-005",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-SUC-002 ($400K – $1.2M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-SUC-002: expected $400K – $1.2M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-006",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-SUC-010 ($1.5M – $4.5M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-SUC-010: expected $1.5M – $4.5M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-007",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-SUC-011 ($4.4M – $9.3M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-SUC-011: expected $4.4M – $9.3M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-008",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-FAM-001 ($380K) does not appear in plan prose within tolerance.",
+        "evidence": "REC-FAM-001: expected $380K not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-009",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-CHR-002 ($900K – $2.4M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-CHR-002: expected $900K – $2.4M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-010",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-CHR-003 ($1.1M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-CHR-003: expected $1.1M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "F-011",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-SPC-002 ($1.5M – $2.2M) does not appear in plan prose within tolerance.",
+        "evidence": "REC-SPC-002: expected $1.5M – $2.2M not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC2-001",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "ES",
+          "RB.4"
+        ],
+        "description": "Executive Summary's 'What this means' closer states the top 5 priorities produce 'roughly $7M – $13M of estate-tax savings on the trust and gifting layers alone.' But the Top 5 list aggregates: REC-RSK-008 (~$42.5M umbrella face — not estate tax savings), REC-EST-005 (~$6.0M), REC-RSK-017 (~$4.0M cyber face — not estate tax savings), REC-EST-004 (~$3.6M), REC-EST-003 (~$1.2M). The estate-only items sum to ~$10.8M (within range), but the $42.5M and $4M are insurance face amounts, not estate-tax savings — the closer's framing conflates these line items.",
+        "evidence": "Acted on together, the five priorities above produce roughly $7M – $13M of estate-tax savings on the trust and gifting layers alone... [Top 5: REC-RSK-008 ~$42.5M, REC-EST-005 ~$6.0M, REC-RSK-017 ~$4.0M, REC-EST-004 ~$3.6M, REC-EST-003 ~$1.2M]",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-002",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "ES",
+          "RB.5"
+        ],
+        "description": "Top 5 lists REC-RSK-008 with '~$42.5M' impact but Section 9 (the personal umbrella rec) states recommended target is '$35M' with quotes at '$25M, $35M, and $50M tiers.' Stage 3a estimate is $35M–$50M (midpoint ~$42.5M). The ES descriptor is consistent with the Stage 3a midpoint but contradicts the Section 9 recommended target of $35M, and the figure is a face amount, not an 'impact' — the ES rank/impact framing is misleading.",
+        "evidence": "1. REC-RSK-008 (Risk & Insurance) ~$42.5M / 30-60 days ... Recommended target: $35M, with annual review post-transaction",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-003",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.2",
+          "RB.5"
+        ],
+        "description": "RB.2's closer claims the cash-yield pickup 'fully funds the buy/sell life insurance program in Section 5' and Section 5 says combined business-risk premium ($48K–$79K) is 'materially less than the Section 2 cash-yield pickup.' RB.2 quantifies pickup as '$35K–$40K per year per $1M moved' on 'a typical $2M–$3M business cash position,' implying $70K–$120K annually. That covers Section 5's $48K–$79K — internally consistent — but RB.2 also says the program is 'self-funding' before factoring PTET, while ES top priorities don't reflect this connection. Marginal coherence concern.",
+        "evidence": "the annual benefit lands in the range that fully funds the buy/sell life insurance program in Section 5 — before factoring in the federal benefit of PTET in Section 3.",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC2-004",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.4",
+          "RP.12"
+        ],
+        "description": "RB.4 closer states layered architecture totals 'approximately $23M – $52M of federal estate-tax savings.' RP.12 closer covers the same architecture (children's trusts, GRAT, IDGT, SLAT, QPRT, ILIT, GST allocation, annual exclusion) and lists the same components but does not give a comparable rolled total — it cites '$224M two-generation' for GST allocation prominently, which mixes estate-tax-savings figures with GST-tax-avoided figures. The two sections describe overlapping architecture and a reader comparing them gets two different framings of the same dollar stack.",
+        "evidence": "RB.4: 'approximately $23M – $52M of federal estate-tax savings — before factoring in the dynasty/GST allocation, which is where the long-horizon multi-generational number runs into the nine figures.' RP.12: 'GST allocation across all of the above (~$224M two-generation) — this program is designed to remove the great majority of HIS's appreciated value'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC3-001",
+        "severity": "warning",
+        "category": "LC3_strategic_coherence",
+        "section_ids": [
+          "RB.6",
+          "RB.7"
+        ],
+        "description": "RB.6 recommends installing a cash-balance plan (REC-RET-002) which 'must be installed at least 3 years pre-transaction to be durable' and then terminating it 12-24 months pre-transaction (REC-RET-009). On a 3-5 year transaction window per Section 7, this leaves a tight installation window: install must happen now, run ≥3 years, terminate 12-24 months pre-LOI. If the transaction window is at the shorter end (3 years) as Section 7 hints ('possibly shorter'), the cash-balance plan cannot satisfy both the 3-year durability and the 12-24 month pre-termination requirement. Decision-required flag in Decisions Needed mitigates but the tension should be made explicit.",
+        "evidence": "the cash-balance plan must be installed at least 3 years pre-transaction to be durable, and terminated cleanly pre-LOI ... 87 FTE risk against a 3–5 year minimum durability requirement vs the 3–5 year transaction window",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC5-001",
+        "severity": "warning",
+        "category": "LC5_narrative_weaving",
+        "section_ids": [
+          "RB.2",
+          "RB.5"
+        ],
+        "description": "RB.2 closer asserts the yield 'lands in the range that fully funds the buy/sell life insurance program in Section 5,' and Section 5 closer reciprocates: 'Combined annual premium of approximately $48K – $79K is materially less than the Section 2 cash-yield pickup.' RB.2 quantifies pickup at '$35K–$40K per $1M moved' on a typical $2M–$3M position — implying ~$70K–$120K. The connecting claim holds, but RB.2 explicitly says the precise HIS operating cash balance is unblocked ('we do not yet have the precise HIS operating cash balance'), so the connecting claim depends on an assumption not yet validated. Worth flagging to advisor.",
+        "evidence": "We do not yet have the precise HIS operating cash balance from the controller — that is the unblock we need ... On a typical $2M – $3M business cash position for a contractor of HIS scale, the annual benefit lands in the range that fully funds the buy/sell life insurance program in Section 5",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC1-001",
+        "severity": "info",
+        "category": "LC1_voice_consistency",
+        "section_ids": [
+          "RB.1",
+          "RB.2",
+          "RB.3",
+          "RP.8",
+          "RP.9",
+          "RP.12"
+        ],
+        "description": "Voice holds well across Pass 1 and Pass 2. RB sections open with strategic frame ('Insurance is one of the few financial decisions...', 'How HIS, the Kennesaw real estate...'); RP sections similarly ('You have approximately $310,000...', 'Your wills date from 2014...'). Bold-imperative bullet pattern is consistent. Pronoun discipline holds. No drift to flag — recording for telemetry.",
+        "evidence": "RB.5 opens 'Insurance is one of the few financial decisions where the right answer is shaped by exposure, not opinion.' RP.9 opens identically. Voice is internally consistent across passes.",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC2-005",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "FO",
+          "RP.12"
+        ],
+        "description": "FO Estate states 'Projected federal estate tax exposure of approximately $8M at second death on a projected ~$50M estate.' RP.12 intro states 'projected estate-tax exposure of $11M+ growing toward $17M+ as HIS appreciates.' The $8M figure aligns with REC-RSK-004's narrative ($30M MFJ exemption × 40% on ~$50M estate). The $11M+ figure in RP.12 is not derived in the plan and contradicts the $8M figure cited elsewhere. Likely projecting forward growth but the gap should be reconciled or annotated.",
+        "evidence": "FO: 'Projected federal estate tax exposure of approximately $8M at second death.' RP.12: 'projected estate-tax exposure of $11M+ growing toward $17M+ as HIS appreciates ... it is also the single largest unfunded liability on your balance sheet.'",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC3-002",
+        "severity": "info",
+        "category": "LC3_strategic_coherence",
+        "section_ids": [
+          "RB.3",
+          "RB.4"
+        ],
+        "description": "RB.3's QSBS path (REC-TAX-008) requires C-Corp conversion to capture §1202; RB.1's entity work establishes Holloway Holdings as an S-Corp with QSub election. The plan acknowledges C-Corp conversion is a Decisions Needed item and Variation A is unavailable retroactively, but the S-Corp default in RB.1 and the QSBS C-Corp evaluation in RB.3 are in tension. The plan flags this as a decision rather than reconciling it — which is correct treatment, but worth verifying the sequence (S-Corp now, potential C-Corp conversion later) is intentional.",
+        "evidence": "Form Holloway Holdings (Georgia, S-Corp), execute a Plan of Reorganization ... Variation A (C-Corp from start — not available retroactively), B (convert mid-stream and hold 5 years — viable only if transaction window is at the longer end of 3–5)",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC4-001",
+        "severity": "info",
+        "category": "LC4_findings_alignment",
+        "section_ids": [
+          "FO",
+          "RP.11"
+        ],
+        "description": "FO Family opportunity 'Eleanor (Marcus's mother, age 78)' notes care projections $300K–$1M+ and undocumented LTC status. This is addressed by REC-FAM-005 (Eleanor discovery conversation in RP.11), so coverage exists — but the connection from FO to the recommendation is implicit. Minor narrative-weaving observation.",
+        "evidence": "Eleanor (Marcus's mother, age 78) — the family expects to provide assisted-living or in-home care support within 5–10 years. Her LTC status and balance sheet are not documented; care projections range $300K – $1M+",
+        "suggested_action": "informational_only"
+      }
+    ],
+    "deterministic_checks": {
+      "DC1_unresolved_cross_refs": [],
+      "DC2_roadmap_orphans": [],
+      "DC3_top5_mismatch": null,
+      "DC4_missing_decisions": [],
+      "DC5_unused_glossary": [],
+      "DC6_missing_sections": [],
+      "DC7_archetype_violations": [],
+      "DC8_unused_numbers": [
+        {
+          "rec_id": "REC-ENT-003",
+          "expected_value": "$7.4M"
+        },
+        {
+          "rec_id": "REC-EST-003",
+          "expected_value": "$1.2M"
+        },
+        {
+          "rec_id": "REC-EST-004",
+          "expected_value": "$3.6M"
+        },
+        {
+          "rec_id": "REC-TAX-008",
+          "expected_value": "$3.6M – $7.1M"
+        },
+        {
+          "rec_id": "REC-SUC-002",
+          "expected_value": "$400K – $1.2M"
+        },
+        {
+          "rec_id": "REC-SUC-010",
+          "expected_value": "$1.5M – $4.5M"
+        },
+        {
+          "rec_id": "REC-SUC-011",
+          "expected_value": "$4.4M – $9.3M"
+        },
+        {
+          "rec_id": "REC-FAM-001",
+          "expected_value": "$380K"
+        },
+        {
+          "rec_id": "REC-CHR-002",
+          "expected_value": "$900K – $2.4M"
+        },
+        {
+          "rec_id": "REC-CHR-003",
+          "expected_value": "$1.1M"
+        },
+        {
+          "rec_id": "REC-SPC-002",
+          "expected_value": "$1.5M – $2.2M"
+        }
+      ],
+      "DC9_compliance_issues": [],
+      "DC10_lifecycle_violations": []
+    },
+    "llm_assessment": {
+      "voice_consistency_score": 90,
+      "contradiction_count": 6,
+      "llm_overall_assessment": "review_recommended"
+    },
+    "overall_assessment": "regenerate_recommended",
+    "_flags": {
+      "assessment_disagreement": true,
+      "llm_skipped": false,
+      "llm_skipped_due_to_context_overflow": false,
+      "unresolved_findings_count": 4
+    },
+    "_metadata": {
+      "stage_version": "5-1.0.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 109442,
+      "output_token_count": 3955,
+      "cache_creation_input_tokens": 5532,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 65252,
+          "input_tokens": 109442,
+          "output_tokens": 3955
+        }
+      ],
+      "duration_ms": 65620,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T15:03:45.069Z",
+      "cost_cents": 204,
+      "source_stage4_result_hash": "74be91ce39ffd5d441a87907918ddb92c65f85de0688075b5ac0dce6f57a077d",
+      "source_quantified_recommendations_hash": "e17c5acb65420ff5ab1c39108ae7fea28a495ade22d78bc5b7f344147b4bf8b9",
+      "source_client_profile_hash": "d3c69f4a03be36c0486ed619f360a561c89f13ee03f0407c3829149e0249c9f4"
+    }
+  }
+}

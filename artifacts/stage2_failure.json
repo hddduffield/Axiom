@@ -1,0 +1,39 @@
+{
+  "_stage_status": "FAILED",
+  "_failure_type": "api_error",
+  "_failure_reason": "Anthropic API call failed: terminated",
+  "_failure_context": {
+    "api_error": "terminated",
+    "attempts_made": 2
+  },
+  "_metadata": {
+    "stage_version": "2.0.1",
+    "model_used": "claude-opus-4-7",
+    "input_token_count": 24298,
+    "output_token_count": 22656,
+    "cache_creation_input_tokens": 8782,
+    "cache_read_input_tokens": 0,
+    "attempts_made": 2,
+    "attempt_history": [
+      {
+        "attempt_number": 1,
+        "outcome": "json_parse_failed",
+        "failure_details": "Expected ',' or '}' after property value in JSON at position 36043 (line 884 column 42)",
+        "duration_ms": 228924,
+        "input_tokens": 24298,
+        "output_tokens": 22656
+      },
+      {
+        "attempt_number": 2,
+        "outcome": "api_error",
+        "failure_details": "terminated",
+        "duration_ms": 154215,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    ],
+    "duration_ms": 383140,
+    "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+    "parsed_at": "2026-05-01T21:48:18.195Z"
+  }
+}

@@ -1,0 +1,1512 @@
+{
+  "_partial_metadata": {
+    "batch_index": 9,
+    "rec_ids": [
+      "REC-CHR-001",
+      "REC-CHR-002",
+      "REC-CHR-003",
+      "REC-CHR-007",
+      "REC-CHR-005",
+      "REC-CHR-008",
+      "REC-SPC-001",
+      "REC-SPC-002"
+    ],
+    "resolved_at": "2026-05-03T01:41:22.482Z"
+  },
+  "result": {
+    "batch_index": 9,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-CHR-001",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-001_daf.md",
+        "category": "Charitable",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": "Donor-Advised Fund",
+        "co_triggered_with": [
+          "REC-CHR-002",
+          "REC-INV-007"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 28000,
+            "unit": "USD",
+            "narrative_context": "Annual federal+GA tax savings on $75K appreciated-stock DAF contribution at 37% federal + 5.19% GA marginal rate; pre-transaction year baseline.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "daf_annual_savings_appreciated_stock_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-001_donor_advised_fund.md",
+          "computation_inputs": {
+            "annual_contribution_target_usd": 75000,
+            "federal_marginal_rate_pct": 37,
+            "ga_marginal_rate_pct": 5.19,
+            "deduction_savings_usd": 31642,
+            "appreciated_stock_assumed": true,
+            "cap_gain_avoided_assumed_pct_of_contribution": 0,
+            "note": "Baseline annual figure; transaction-year bunch contribution modeled separately in REC-CHR-002"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 21100,
+          "midpoint_value": 28000,
+          "high_value": 42200,
+          "computation_method": "Range based on $50K-$100K/year contribution band cited in rec template at combined 42.19% marginal rate"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-001-1",
+            "description": "Select DAF sponsor (Fidelity Charitable, Schwab Charitable, or community foundation) and document rationale.",
+            "sub_steps": [
+              "Compare commercial vs. community foundation sponsors",
+              "Confirm acceptance of business interests for future REC-CHR-002 funding"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-2",
+            "description": "Open DAF account; appoint Marcus and Catherine as primary advisors and children as successors.",
+            "sub_steps": [
+              "Complete sponsor onboarding",
+              "Designate successor advisors"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-CHR-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-3",
+            "description": "Fund DAF in current tax year with appreciated brokerage securities ($50K-$100K target).",
+            "sub_steps": [
+              "Identify highest-gain lots from Schwab taxable brokerage",
+              "Initiate in-kind transfer to DAF"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-CHR-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-4",
+            "description": "Coordinate with CPA on Form 8283 filing and AGI-limit/carryforward tracking.",
+            "sub_steps": [
+              "Form 8283 preparation for non-cash gifts >$500",
+              "Document carryforward schedule if AGI limit hit"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 3 — substantiation",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-CHR-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-5",
+            "description": "Establish ongoing DAF granting cadence and annual review of giving plan.",
+            "sub_steps": [
+              "Annual grant recommendation cycle",
+              "Investment menu review",
+              "Family discussion of recipients"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 5-6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-CHR-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual DAF review: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Annual baseline modeled at $75K midpoint of $50K-$100K rec-file band; transaction-year bunched gift modeled in REC-CHR-002 to avoid double-counting."
+      },
+      {
+        "recommendation_id": "REC-CHR-002",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-002_pre_transaction_charitable_gifting.md",
+        "category": "Charitable",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "Charitable",
+        "co_triggered_with": [
+          "REC-ENT-002",
+          "REC-ENT-003",
+          "REC-CHR-001",
+          "REC-SUC-011"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              900000,
+              2400000
+            ],
+            "unit": "USD",
+            "narrative_context": "Combined federal income tax + capital gains avoided on pre-LOI gift of 5% non-voting Holdco units; range driven by $32M-$48M HIS valuation. Excludes Georgia 5.19% deduction benefit for simplicity.",
+            "is_approximate": true
+          },
+          "formula_id": "pretransaction_business_gift_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-002_pretransaction_charitable_gifting.md",
+          "computation_inputs": {
+            "marcus_business_pct": 88,
+            "his_valuation_low_usd": 32000000,
+            "his_valuation_high_usd": 48000000,
+            "gift_pct_of_marcus_interest": 5,
+            "valuation_discount_pct": 30,
+            "federal_marginal_rate_pct": 37,
+            "ltcg_plus_niit_pct": 23.8,
+            "low_calc_usd": "5%×88%×$32M×0.70 = $986K gifted FMV → $986K×(0.37+0.238) = ~$599K; charity proceeds ~$1.41M",
+            "mid_calc_usd": "5%×88%×$40M×0.70 = $1.232M gifted FMV → ~$749K savings",
+            "high_calc_usd": "5%×88%×$48M×0.70 = $1.478M gifted FMV → ~$899K savings; with full 5% pre-discount aggregating multiple-year contributions could reach $2.4M"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 900000,
+          "midpoint_value": 1500000,
+          "high_value": 2400000,
+          "computation_method": "Brief rationale band; matches rec-file worked example range"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-002-1",
+            "description": "Confirm transaction not past binding LOI; re-confirm before any gift transfer.",
+            "sub_steps": [
+              "Document LOI status as of gift date",
+              "Anti-anticipatory-assignment file note"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-2",
+            "description": "Engage qualified appraiser for FMV of non-voting Holdco units with discount support.",
+            "sub_steps": [
+              "USPAP-compliant business valuation specialist",
+              "Document discount methodology"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-CHR-002-3",
+            "description": "Prepare formal gift documentation and Form 8283 with appraiser's report attached.",
+            "sub_steps": [
+              "Legal transfer documents",
+              "Gift letter and acknowledgment"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-4",
+            "description": "Transfer non-voting Holdco units to DAF (or CRT/foundation per chosen variant).",
+            "sub_steps": [
+              "Confirm sponsor accepts business interests",
+              "Execute transfer",
+              "Receive sponsor acknowledgment"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-5",
+            "description": "Coordinate with banker/M&A counsel that DAF/charity now appears as shareholder of record.",
+            "sub_steps": [
+              "Update cap table",
+              "Notify Truist banker"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 6",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-6",
+            "description": "File Form 8283 with personal return for gift year; track 30% AGI limit and 5-year carryforward.",
+            "sub_steps": [
+              "Attach qualified appraisal",
+              "Carryforward worksheet"
+            ],
+            "category": "Tax",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 5",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Critical pre-LOI timing constraint. Range expressed as tuple in estimate to capture valuation-band uncertainty; both bookends within scenario_range."
+      },
+      {
+        "recommendation_id": "REC-CHR-003",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-003_crt_crut.md",
+        "category": "Charitable",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": "Charitable Remainder Unitrust",
+        "co_triggered_with": [
+          "REC-SPC-002",
+          "REC-SPC-006",
+          "REC-CHR-002"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 1100000,
+            "unit": "USD",
+            "narrative_context": "Approximate federal charitable deduction at funding for $5M FLIP CRUT, 5% unitrust, 20-year+ horizon; PV of remainder at current §7520 rate of 5.00% (May 2026).",
+            "is_approximate": true
+          },
+          "formula_id": "crut_funding_deduction_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-003_charitable_remainder_unitrust.md",
+          "computation_inputs": {
+            "crut_funding_usd": 5000000,
+            "unitrust_percent": 5,
+            "donor_age": 52,
+            "s7520_rate_at_funding_percent": 5,
+            "s7520_rate_source_month": "May 2026",
+            "deduction_pv_remainder_pct_estimate": 0.22,
+            "annual_first_year_income_usd": 250000,
+            "ltcg_deferred_at_funding_pct": 23.8,
+            "note": "PV of remainder ~22% on lifetime CRUT for age 52 at 5% §7520; deduction = funding × ~22%"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1000000,
+          "midpoint_value": 1100000,
+          "high_value": 1500000,
+          "computation_method": "Rec-file worked example range $1.0M-$1.5M for $5M funding; midpoint scaled to age 52"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-003-1",
+            "description": "Engage specialist counsel for CRUT drafting (FLIP variant for illiquid Holdco-unit funding).",
+            "sub_steps": [
+              "Confirm FLIP-trigger language",
+              "Draft trust instrument"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-003",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on CRUT drafting progress"
+            }
+          },
+          {
+            "action_item_id": "AI-CHR-003-2",
+            "description": "Obtain qualified appraisal of Holdco units to be contributed (coordinate with REC-CHR-002 appraisal).",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-003",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-003-3",
+            "description": "Execute trust document and select institutional trustee.",
+            "sub_steps": [
+              "Trustee selection",
+              "Sign and notarize"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-003",
+            "source_phase_or_step": "Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-003-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-003-4",
+            "description": "Transfer appreciated assets to CRUT prior to binding sale agreement.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-003",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-CHR-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-003-5",
+            "description": "Establish annual administration: Form 5227, K-1 to donor, 4-tier income characterization, unitrust valuation.",
+            "sub_steps": [
+              "Trustee operating cadence",
+              "Annual valuation",
+              "K-1 issuance"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-003",
+            "source_phase_or_step": "Steps 6-8",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-CHR-003-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual CRUT administration with {{partner_type}}: Form 5227, K-1, valuation"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Funding amount $5M is template-default; actual amount depends on charitable allocation across DAF/CRUT/foundation. §7520 = 5.00% (May 2026) per volatile_rates."
+      },
+      {
+        "recommendation_id": "REC-CHR-007",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-007_private_foundation.md",
+        "category": "Charitable",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": "Private Foundation (Post-Liquidity)",
+        "co_triggered_with": [
+          "REC-FAM-007",
+          "REC-FAM-008",
+          "REC-CHR-008",
+          "REC-CHR-001"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "private_foundation_annual_impact_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-007_private_foundation.md",
+          "computation_inputs": {
+            "scale_threshold_usd": 25000000,
+            "minimum_annual_payout_pct": 5,
+            "excise_tax_on_nii_pct": 1.39,
+            "expected_funding_basis": "post-transaction net proceeds, scale TBD"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Family foundation funded post-liquidity; provides multi-generational governance vehicle and 5% minimum annual grantmaking at scale defined post-transaction.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "foundation_initial_funding_usd",
+              "blocked_reason": "Funding amount depends on post-transaction net proceeds and DAF/CRUT allocations",
+              "source": "Client",
+              "would_unblock_when": "Post-liquidity charitable allocation decision finalized"
+            },
+            {
+              "input_name": "annual_giving_target_usd",
+              "blocked_reason": "Family scale of ongoing philanthropy not yet defined",
+              "source": "Client",
+              "would_unblock_when": "Post-transaction values discussion with Catherine and family"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-007-1",
+            "description": "Decide foundation vs. DAF-only path after post-liquidity scale and family engagement assessed.",
+            "sub_steps": [
+              "Scale check ($25M+ funding capacity)",
+              "Family engagement check"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-007",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-007-2",
+            "description": "Engage specialist nonprofit/private-foundation counsel for formation.",
+            "sub_steps": [
+              "State nonprofit corporation filing",
+              "IRS Form 1023"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-007",
+            "source_phase_or_step": "Steps 2-3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-007-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on foundation formation milestones"
+            }
+          },
+          {
+            "action_item_id": "AI-CHR-007-3",
+            "description": "Initial funding from post-transaction proceeds; coordinate with PSA on investment policy.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-007",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-007-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-007-4",
+            "description": "Structure board (Marcus, Catherine, children, optional independent directors) and grant policy.",
+            "sub_steps": [
+              "Bylaws",
+              "Conflict-of-interest policy",
+              "Grant guidelines"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-007",
+            "source_phase_or_step": "Step 5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-007-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-007-5",
+            "description": "Establish annual Form 990-PF, audit, board meetings, and 5% payout monitoring.",
+            "sub_steps": [
+              "Audit engagement",
+              "Calendar of board meetings",
+              "Payout tracking"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-007",
+            "source_phase_or_step": "Step 7",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-CHR-007-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual foundation compliance with {{partner_type}}: 990-PF, audit, payout"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "State B blocked on funding scale. Catherine's hard-rule: family foundation with kids in governance. Decision is timing/scale, not whether."
+      },
+      {
+        "recommendation_id": "REC-CHR-005",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-005_clat.md",
+        "category": "Charitable",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": "Charitable Lead Annuity Trust (CLAT)",
+        "co_triggered_with": [
+          "REC-EST-006",
+          "REC-EST-008"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              0,
+              5000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Family remainder gift-tax-free at end of 20-year zeroed-out grantor CLAT. Range: $0 if asset matches §7520 hurdle (5.00% May 2026); ~$5M+ if asset earns 8%. Highly sensitive to §7520 environment and asset performance.",
+            "is_approximate": true
+          },
+          "formula_id": "clat_remainder_outperformance_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-005_charitable_lead_annuity_trust.md",
+          "computation_inputs": {
+            "clat_funding_usd": 5000000,
+            "term_years": 20,
+            "s7520_rate_at_funding_percent": 5,
+            "s7520_rate_source_month": "May 2026",
+            "annual_charitable_annuity_usd": 400000,
+            "gift_tax_at_funding_usd": 0,
+            "remainder_at_8pct_growth_usd": 5000000,
+            "remainder_at_5pct_growth_usd": 0,
+            "note": "Borderline match; current §7520 of 5.00% is moderate. Lower §7520 favors CLAT; current rate yields modest favorability."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 2500000,
+          "high_value": 10000000,
+          "computation_method": "$5M funded; remainder = funding × (1+r)^20 - $400K annuity stream FV; r=5% (zero), r=8% (~$5M), r=10% (~$10M)"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-005-1",
+            "description": "Specialist counsel evaluates CLAT vs. GRAT/IDGT alternatives given §7520 = 5.00% and Holloway charitable intent.",
+            "sub_steps": [
+              "§7520 favorability analysis",
+              "Asset selection (high expected return)",
+              "Grantor vs. non-grantor election"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-CHR-005",
+            "source_phase_or_step": "Steps 1-3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on CLAT structuring decision"
+            }
+          },
+          {
+            "action_item_id": "AI-CHR-005-2",
+            "description": "Draft CLAT trust document with annuity sized to zero-out gift tax at funding.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-CHR-005",
+            "source_phase_or_step": "Step 4",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-005-3",
+            "description": "Fund CLAT and confirm charity acceptance of annuity stream.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-005",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-005-4",
+            "description": "Establish annual administration: Form 5227 (grantor) or 1041 (non-grantor) and annuity payments.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-005",
+            "source_phase_or_step": "Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-CHR-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual CLAT administration with {{partner_type}}: Form 5227/1041, annuity payment"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Borderline match per Stage 2; §7520 = 5.00% (May 2026) is moderate (not strongly favorable). Marked Advanced status. Competing with GRAT/IDGT in REC-EST-006/008."
+      },
+      {
+        "recommendation_id": "REC-CHR-008",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-008_daf_to_foundation_transition.md",
+        "category": "Charitable",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": "DAF → Foundation Transition",
+        "co_triggered_with": [
+          "REC-CHR-001",
+          "REC-CHR-007"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {},
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "DAF balance accumulated through transaction window grants to newly-formed family foundation post-liquidity; transition is mechanically simple and primarily a governance shift.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "CHR-philanthropy-stack",
+        "cluster_sequence_closer": "REC-CHR-008",
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-008-1",
+            "description": "After foundation operational, recommend DAF grant of full balance to new foundation.",
+            "sub_steps": [
+              "Confirm DAF sponsor permits grant to private foundation",
+              "Document grant recommendation"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-008",
+            "source_phase_or_step": "Steps 2-4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-008-2",
+            "description": "Close DAF or maintain at minimum balance per family preference.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-008",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-008-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Closer of philanthropy cluster. State D — transition mechanics are qualitative; quantification rolls up to REC-CHR-001 + REC-CHR-007."
+      },
+      {
+        "recommendation_id": "REC-SPC-001",
+        "source_file_path": "kb/v1_2/01_recommendations/specialty/REC-SPC-001_multi_state_trust_situs.md",
+        "category": "Specialty",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Specialty",
+        "subsection_within_section": "Multi-State Trust Situs",
+        "co_triggered_with": [
+          "REC-EST-001",
+          "REC-EST-005",
+          "REC-EST-008",
+          "REC-EST-012",
+          "REC-SPC-002"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "trust_situs_state_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/specialty/REC-SPC-001_multi_state_trust_situs.md",
+          "computation_inputs": {
+            "ga_trust_income_tax_pct": 5.19,
+            "alt_situs_states": [
+              "Delaware",
+              "South Dakota",
+              "Nevada",
+              "Wyoming",
+              "Alaska"
+            ],
+            "alt_situs_state_tax_pct": 0,
+            "horizon_years_typical": 50,
+            "worked_example_funding_usd": 10000000,
+            "worked_example_return_pct": 7,
+            "worked_example_50yr_savings_range_usd": "25,000,000-40,000,000"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Siting long-duration dynasty/IDGT/GST trusts in DE or SD avoids GA 5.19% income tax on trust income; over 50-year horizon and meaningful funding, compounded difference reaches mid-seven to low-eight figures.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "trust_funding_usd_per_situs_decision",
+              "blocked_reason": "Specific trust funding amounts depend on REC-EST-005/008/012 structuring decisions",
+              "source": "Estate Attorney",
+              "would_unblock_when": "Trust structuring choices finalized"
+            },
+            {
+              "input_name": "trust_horizon_years",
+              "blocked_reason": "Dynasty vs. term-of-years selection still open",
+              "source": "Estate Attorney",
+              "would_unblock_when": "Trust drafting decisions"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "SPC-trust-infrastructure",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SPC-001-1",
+            "description": "Document situs analysis comparing GA, DE, SD for dynasty/IDGT/GST trusts.",
+            "sub_steps": [
+              "Tax comparison",
+              "Asset protection comparison",
+              "Decanting flexibility"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-001-2",
+            "description": "Engage institutional trustee in chosen state (DE or SD recommended).",
+            "sub_steps": [
+              "Trustee bench evaluation",
+              "Service agreement"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SPC-001-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-001-3",
+            "description": "Embed appropriate situs clauses in trust documents drafted for REC-EST-005/008/012.",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SPC-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-001-4",
+            "description": "Maintain administration discipline (trustee acts in chosen state; avoid GA nexus).",
+            "sub_steps": [
+              "Document where trustee acts",
+              "Annual nexus check"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Steps 4-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual situs administration discipline check: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "State B because trust funding amounts depend on EST-005/008/012 outcomes. Long-horizon savings real but only quantifiable once trust funding sized."
+      },
+      {
+        "recommendation_id": "REC-SPC-002",
+        "source_file_path": "kb/v1_2/01_recommendations/specialty/REC-SPC-002_ning_ding_trust.md",
+        "category": "Specialty",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Specialty",
+        "subsection_within_section": "NING/DING Evaluation",
+        "co_triggered_with": [
+          "REC-CHR-003",
+          "REC-SPC-001"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              1500000,
+              2200000
+            ],
+            "unit": "USD",
+            "narrative_context": "Potential GA 5.19% state tax avoidance on Marcus's share of HIS sale capital gain via NING/DING. Range based on $32M-$48M valuation × 88% × estimated gain (assuming low basis); admin cost $25K-$50K. Borderline at GA rate; rec file flags GA tighter calculus.",
+            "is_approximate": true
+          },
+          "formula_id": "ning_ding_state_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/specialty/REC-SPC-002_ning_ding_trust.md",
+          "computation_inputs": {
+            "his_valuation_low_usd": 32000000,
+            "his_valuation_high_usd": 48000000,
+            "marcus_pct": 88,
+            "marcus_proceeds_low_usd": 28160000,
+            "marcus_proceeds_high_usd": 42240000,
+            "assumed_basis_low_pct_of_proceeds": 0,
+            "ga_state_tax_pct": 5.19,
+            "low_calc": "$28.16M × 5.19% = $1.46M; less admin",
+            "high_calc": "$42.24M × 5.19% = $2.19M; less admin",
+            "admin_cost_usd_range": "25000-50000"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1460000,
+          "midpoint_value": 1800000,
+          "high_value": 2190000,
+          "computation_method": "Marcus 88% of HIS valuation × 5.19% GA tax avoidance assuming near-zero basis on founder equity"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "SPC-trust-infrastructure",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SPC-002-1",
+            "description": "Specialist counsel evaluates NING/DING viability for GA resident with $25M+ gain; cost-benefit vs. admin.",
+            "sub_steps": [
+              "GA-residency anti-NING risk review",
+              "Independent distribution committee design"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-002",
+            "source_phase_or_step": "Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-002-2",
+            "description": "Form NING/DING trust in chosen no-tax state (NV or DE) with independent distribution committee.",
+            "sub_steps": [
+              "Trust formation",
+              "Committee composition",
+              "Trustee engagement"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-002",
+            "source_phase_or_step": "Steps 2-3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SPC-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on NING/DING formation milestones"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-002-3",
+            "description": "Transfer assets to NING/DING pre-sale (must occur before binding sale agreement).",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-002",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SPC-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-002-4",
+            "description": "Establish annual Form 1041 administration in situs state.",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-002",
+            "source_phase_or_step": "Steps 5-6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual NING/DING Form 1041 administration with {{partner_type}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Borderline because GA at 5.19% sits at edge of cost-justification; rec file flags this. Decision required on whether magnitude of gain justifies admin. Active-Cautioned status."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-CHR-005-1",
+          "inferred_bucket": "12-24 months",
+          "source_signal": "CLAT is post-transaction estate planning; not urgent pre-LOI"
+        },
+        {
+          "action_item_id": "AI-CHR-008-1",
+          "inferred_bucket": "12-24 months",
+          "source_signal": "Transition occurs after foundation operational post-liquidity"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-CHR-008",
+          "phrasing_used": "DAF-to-foundation transition; balance and timing depend on post-liquidity scale",
+          "reason": "Inputs (DAF balance at transition, foundation funding scale) unknown until liquidity event"
+        },
+        {
+          "rec_id": "REC-SPC-001",
+          "phrasing_used": "Situs in DE/SD saves GA 5.19% on long-duration trust income; 50-year compounded difference can reach mid-seven to low-eight figures",
+          "reason": "Trust funding amounts and durations depend on which trusts are funded post-transaction"
+        }
+      ],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-CHR-007",
+          "blocked_inputs": [
+            "foundation_initial_funding_usd",
+            "annual_giving_target_usd"
+          ],
+          "awaiting": [
+            "Post-liquidity decision on foundation scale",
+            "Client"
+          ]
+        },
+        {
+          "rec_id": "REC-CHR-008",
+          "blocked_inputs": [
+            "daf_balance_at_transition_usd"
+          ],
+          "awaiting": [
+            "Post-liquidity DAF accumulation"
+          ]
+        },
+        {
+          "rec_id": "REC-SPC-001",
+          "blocked_inputs": [
+            "trust_funding_usd_per_situs_decision",
+            "trust_horizon_years"
+          ],
+          "awaiting": [
+            "Trust structure decisions in REC-EST-005/008/012"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 49459,
+      "output_token_count": 34649,
+      "cache_creation_input_tokens": 81011,
+      "cache_read_input_tokens": 16344,
+      "attempts_made": 2,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "schema_validation_failed",
+          "failure_details": "recommendations.0.action_items.3.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.1.action_items.2.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.1.action_items.4.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.1.action_items.5.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.2.action_items.1.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.2.action_items.2.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.3.action_items.3.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.4.action_items.1.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.6.action_items.0.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.6.action_items.1.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.6.action_items.2.auto_generated_reminder_template: Invalid input: expected object, received undefined; recommendations.7.action_items.0.auto_generated_reminder_template: Invalid input: expected object, received undefined",
+          "duration_ms": 196801,
+          "input_tokens": 48878,
+          "output_tokens": 18591
+        },
+        {
+          "attempt_number": 2,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 182996,
+          "input_tokens": 581,
+          "output_tokens": 16058
+        }
+      ],
+      "duration_ms": 379825,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:41:22.482Z",
+      "batch_index": 9,
+      "total_batches": 11
+    }
+  }
+}

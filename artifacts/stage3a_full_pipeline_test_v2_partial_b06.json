@@ -1,0 +1,1450 @@
+{
+  "_partial_metadata": {
+    "batch_index": 6,
+    "rec_ids": [
+      "REC-INV-001",
+      "REC-INV-002",
+      "REC-INV-003",
+      "REC-INV-004",
+      "REC-INV-005",
+      "REC-INV-007",
+      "REC-INV-010",
+      "REC-INV-009"
+    ],
+    "resolved_at": "2026-05-03T01:37:30.488Z"
+  },
+  "result": {
+    "batch_index": 6,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-INV-001",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-001_tiered_business_cash.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Business Cash Management",
+        "co_triggered_with": [
+          "REC-SUC-010"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "tiered_business_cash_yield_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-001_tiered_business_cash_management.md",
+          "computation_inputs": {
+            "optimized_yield_blend_percent": 4.5,
+            "current_bank_yield_percent_estimate": 0.4
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Restructure HIS idle business cash into operating/reserve/strategic layers to capture 4-5% yield vs sub-1% bank rate; benefit scales linearly with idle balance.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "business_idle_cash_balance_usd",
+              "blocked_reason": "FR does not disclose HIS operating cash balance",
+              "source": "Client/Banker",
+              "would_unblock_when": "CFO/Controller provides current Truist operating account balance and 12-mo AP/AR cycle"
+            },
+            {
+              "input_name": "current_business_cash_yield_percent",
+              "blocked_reason": "Bank rate on Truist operating account not disclosed",
+              "source": "Banker",
+              "would_unblock_when": "Truist provides current rate sheet"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-001-1",
+            "description": "Perform business cash analysis: balance, monthly OPS cycle, AP/AR pattern at HIS",
+            "sub_steps": [
+              "Pull 12 months of Truist statements",
+              "Map AP/AR cycle with controller"
+            ],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-2",
+            "description": "Determine layer sizes (operating / working reserve / strategic) based on operational need",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-001-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-3",
+            "description": "Choose vehicles (bank MMF, brokerage MMF, Treasury Direct, CD ladder)",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-4",
+            "description": "Open accounts, fund layers, configure Truist sweep",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-5",
+            "description": "Establish monthly monitoring and rebalancing of business cash layers",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Review HIS business cash layers and rebalance per IPS — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "HIS business cash balance not in FR; State B with blocked inputs."
+      },
+      {
+        "recommendation_id": "REC-INV-002",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-002_personal_cash_layering.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Personal Cash Layering",
+        "co_triggered_with": [
+          "REC-INV-005",
+          "REC-INV-009"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 18000,
+            "unit": "USD",
+            "narrative_context": "Restructured yield on $310K personal cash less near-zero current yield.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "personal_cash_layering_yield_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-002_personal_cash_layering.md",
+          "computation_inputs": {
+            "current_personal_checking_balance_usd": 310000,
+            "current_yield_percent_assumed": 0.1,
+            "operating_layer_usd": 70000,
+            "operating_layer_yield_percent": 0.5,
+            "emergency_layer_usd": 120000,
+            "emergency_layer_yield_percent": 4.5,
+            "near_term_layer_usd": 120000,
+            "near_term_layer_yield_percent": 4.7,
+            "current_yield_dollars": 310,
+            "restructured_yield_dollars": 18390
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 12000,
+          "midpoint_value": 18000,
+          "high_value": 22000,
+          "computation_method": "Range based on assumed allocation between emergency (4.5%) and near-term Treasury ladder (4.7%) layers; low assumes more in operating layer; high assumes maximum in Treasury ladder."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-002-1",
+            "description": "Inventory personal cash and current placement across Truist checking and any savings",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-002",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-002-2",
+            "description": "Determine layer sizes: 1-2mo operating, 6-12mo emergency, 12-36mo near-term, balance to portfolio",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-002",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-002-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-002-3",
+            "description": "Open vehicles: HYSA, brokerage MMF at Schwab, Treasury Direct or brokerage Treasuries",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-002",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-002-4",
+            "description": "Move funds into proper layers",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-002",
+            "source_phase_or_step": "Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-002-5",
+            "description": "Quarterly review of personal cash structure",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-002",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly cash layering review — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used $310K Truist checking; allocations are PSA-typical splits, not from FR."
+      },
+      {
+        "recommendation_id": "REC-INV-003",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-003_direct_indexing.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Direct Indexing",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 13500,
+            "unit": "USD",
+            "narrative_context": "75bps tax alpha on $1.8M taxable brokerage.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "direct_indexing_tax_alpha_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-003_direct_indexing.md",
+          "computation_inputs": {
+            "taxable_brokerage_balance_usd": 1800000,
+            "tax_alpha_midpoint_bps": 75
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 9000,
+          "midpoint_value": 13500,
+          "high_value": 18000,
+          "computation_method": "$1.8M × 50bps low / 75bps mid / 100bps high tax alpha range from rec QUANTIFIED IMPACT FRAMEWORK."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-003-1",
+            "description": "Confirm taxable balance and tax-bracket fit for direct indexing",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-003-2",
+            "description": "Choose SMA platform (PSA preferred provider)",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-003-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-003-3",
+            "description": "Define index, screening, and factor tilts in IPS",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-003-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-003-4",
+            "description": "Migrate from existing index funds (gradual if material gains) or fund with cash",
+            "sub_steps": [
+              "Quantify embedded gains",
+              "Stage transition to manage realization"
+            ],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-INV-003-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Check in with {{partner_type}} on direct-indexing migration progress — {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-INV-003-5",
+            "description": "Quarterly review of harvested losses and overall positioning",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-003-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly DI loss-harvest review — {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-INV-003-6",
+            "description": "Annual rebalance and tax-loss summary delivered to CPA",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-003",
+            "source_phase_or_step": "Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-003-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual DI tax-loss summary to {{partner_type}} — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Existing $1.8M Schwab self-directed brokerage transitioning to PSA-managed; ideal DI candidate."
+      },
+      {
+        "recommendation_id": "REC-INV-004",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-004_asset_location.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Asset Location",
+        "co_triggered_with": [
+          "REC-INV-003",
+          "REC-INV-010"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 22950,
+            "unit": "USD",
+            "narrative_context": "75bps after-tax improvement on combined $3.06M tax+retirement portfolio.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "asset_location_alpha_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-004_asset_location_optimization.md",
+          "computation_inputs": {
+            "taxable_balance_usd": 1800000,
+            "retirement_balance_usd": 1260000,
+            "total_portfolio_usd": 3060000,
+            "asset_location_alpha_midpoint_bps": 75
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 15300,
+          "midpoint_value": 22950,
+          "high_value": 30600,
+          "computation_method": "$3.06M × 50/75/100 bps after-tax improvement range from rec framework."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-004-1",
+            "description": "Inventory current asset placement across taxable, 401(k), Rollover IRA",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-004",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-004-2",
+            "description": "Identify tax-efficient vs tax-inefficient asset classes per household allocation",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-004",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-004-3",
+            "description": "Determine optimal placement subject to Empower 401(k) menu constraints",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-004",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-004-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-004-4",
+            "description": "Execute transfers and rebalances with attention to gain realization",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-004",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-INV-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-004-5",
+            "description": "Annual asset-location review",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-004",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-004-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual asset-location review — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Combined taxable $1.8M + 401(k) $920K + Rollover IRA $340K = $3.06M."
+      },
+      {
+        "recommendation_id": "REC-INV-005",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-005_pre_transaction_diversification.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "Pre-Transaction Diversification Discipline",
+        "co_triggered_with": [
+          "REC-ENT-001"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {
+            "concentration_pct_estimate_low": 60,
+            "concentration_pct_estimate_high": 85,
+            "business_industry": "specialty mechanical contracting / construction"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Maintain pre-transaction discipline against further concentration in HIS or related construction-sector exposure; estimated 60-85% of household net worth currently in HIS equity (range driven by valuation $32M-$48M).",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "Ongoing",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-005-1",
+            "description": "Document concentration analysis: HIS equity / total net worth",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-005",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-005-2",
+            "description": "Identify diversification levers (real estate spin-off per REC-ENT-001, dividend recap, portfolio rebalancing)",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-005",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-005-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-005-3",
+            "description": "Set discipline rule: no further capital additions to HIS or construction-sector investments",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-005",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-005-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly concentration discipline review — {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-INV-005-4",
+            "description": "Build investment portfolio infrastructure (PSA-managed) ahead of liquidity event",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-005",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-005-5",
+            "description": "Quarterly check-in through transaction window",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-005",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Pre-transaction diversification check-in — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Discipline rec; benefit is risk reduction, not yield. State D."
+      },
+      {
+        "recommendation_id": "REC-INV-007",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-007_tax_loss_harvesting.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Tax-Loss Harvesting",
+        "co_triggered_with": [
+          "REC-INV-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 13500,
+            "unit": "USD",
+            "narrative_context": "75bps tax alpha on $1.8M taxable; coordinated with direct indexing — not double-counted.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "tax_loss_harvest_alpha_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-007_tax_loss_harvesting.md",
+          "computation_inputs": {
+            "taxable_balance_usd": 1800000,
+            "tax_alpha_midpoint_bps": 75,
+            "_coordination_note": "Primary harvesting via REC-INV-003 direct indexing; this rec covers transition period and non-DI holdings."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 9000,
+          "midpoint_value": 13500,
+          "high_value": 18000,
+          "computation_method": "$1.8M × 50/75/100 bps tax alpha from rec framework; benefit overlaps with REC-INV-003 once DI is in place."
+        },
+        "timing_bucket": "Ongoing",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-007-1",
+            "description": "Quarterly portfolio review for loss positions across all taxable accounts",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-007",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly TLH review — {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-INV-007-2",
+            "description": "Identify losses; verify wash-sale-safe replacement securities",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-007",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-007-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-007-3",
+            "description": "Execute trades with cross-account wash-sale awareness (Catherine's Rollover IRA)",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-007",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-007-4",
+            "description": "Year-end harvesting review for realized-gain offset",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-007",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Year-end TLH review with {{partner_type}} — {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-INV-007-5",
+            "description": "Tax filing reflects all realized gains/losses and carryforward bank",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-007",
+            "source_phase_or_step": "Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-007-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} TLH carryforward tracked on filing — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Benefit overlaps REC-INV-003; flagged in computation_inputs to avoid double-count at plan level."
+      },
+      {
+        "recommendation_id": "REC-INV-010",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-010_muni_bonds.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Municipal Bond Allocation",
+        "co_triggered_with": [
+          "REC-INV-004"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 4320,
+            "unit": "USD",
+            "narrative_context": "After-tax pickup of muni vs taxable corporate at 5% taxable / 3.5% muni assumption on $720K FI sleeve (40% of $1.8M taxable).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "muni_after_tax_yield_diff_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-010_municipal_bond_allocation.md",
+          "computation_inputs": {
+            "taxable_brokerage_usd": 1800000,
+            "fi_sleeve_pct_assumed": 0.4,
+            "fi_allocation_usd": 720000,
+            "taxable_corp_yield_percent": 5,
+            "muni_yield_percent": 3.5,
+            "federal_marginal_rate_percent_assumed": 37,
+            "ga_state_rate_percent": 5.19,
+            "combined_rate_percent": 42.19,
+            "taxable_after_tax_usd": 20831,
+            "muni_after_tax_usd": 25200,
+            "annual_pickup_usd": 4369
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 2000,
+          "midpoint_value": 4320,
+          "high_value": 12000,
+          "computation_method": "Range driven by FI sleeve size (20-50% of taxable) and yield-curve assumption; high case scales sleeve to $1M."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-010-1",
+            "description": "Determine fixed-income allocation amount within taxable account",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-010",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-010-2",
+            "description": "Choose vehicle: GA-specific muni SMA preferred for in-state state tax exemption",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-010",
+            "source_phase_or_step": "Step 2-3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-010-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-010-3",
+            "description": "Apply credit-quality discipline (minimum AA-/A1) and avoid AMT private-activity bonds",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-010",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-INV-010-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-010-4",
+            "description": "Annual review of yield environment and credit conditions",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-010",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-010-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual muni yield/credit review — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Federal marginal rate not in FR (effective ~41% combined given); used 37% top bracket given $3.6M AGI."
+      },
+      {
+        "recommendation_id": "REC-INV-009",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-009_treasury_direct.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Treasury Direct Holdings",
+        "co_triggered_with": [
+          "REC-INV-001",
+          "REC-INV-002"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 290,
+            "unit": "USD",
+            "narrative_context": "GA state-tax savings on Treasury interest at 5.19% vs MMF; based on $120K near-term Treasury layer × 4.7% × 5.19%.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "treasury_state_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-009_treasury_direct_holdings.md",
+          "computation_inputs": {
+            "treasury_holding_usd": 120000,
+            "treasury_yield_percent": 4.7,
+            "ga_state_rate_percent": 5.19,
+            "annual_state_tax_saved_usd": 293
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 290,
+          "midpoint_value": 1200,
+          "high_value": 2440,
+          "computation_method": "Low: $120K personal near-term layer; mid: ~$500K combined personal+business Treasuries; high: $1M Treasury holding from rec worked example."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-009-1",
+            "description": "Open Treasury Direct account or set up Treasury purchases via Schwab brokerage",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-009",
+            "source_phase_or_step": "Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-009-2",
+            "description": "Determine T-bill / T-note ladder structure based on cash needs",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-009",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-009-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-009-3",
+            "description": "Place orders at scheduled auctions and configure auto-reinvestment at maturity",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-009",
+            "source_phase_or_step": "Step 3-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-009-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-009-4",
+            "description": "Coordinate with CPA at filing to confirm state tax exemption applied (Form 500 schedule adj)",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-009",
+            "source_phase_or_step": "Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-009-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} state-tax exemption on Treasury interest — {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "GA's 5.19% rate makes Treasury state-tax exemption a small benefit; brokerage purchase may be more practical than Treasury Direct."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-INV-005-3",
+          "inferred_bucket": "Ongoing",
+          "source_signal": "Quarterly review through transaction window"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-INV-005",
+          "phrasing_used": "Discipline rather than a discrete computable benefit; resilience-oriented",
+          "reason": "Concentration-discipline rec; benefit is risk reduction, not computable yield"
+        }
+      ],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-INV-001",
+          "blocked_inputs": [
+            "business_idle_cash_balance_usd",
+            "current_business_cash_yield_percent"
+          ],
+          "awaiting": [
+            "FR.entities.HIS.cash_balance",
+            "Client/Banker"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 47015,
+      "output_token_count": 15432,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 147808,
+          "input_tokens": 47015,
+          "output_tokens": 15432
+        }
+      ],
+      "duration_ms": 147831,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:37:30.488Z",
+      "batch_index": 6,
+      "total_batches": 11
+    }
+  }
+}

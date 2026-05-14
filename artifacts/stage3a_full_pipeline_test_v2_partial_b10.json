@@ -1,0 +1,355 @@
+{
+  "_partial_metadata": {
+    "batch_index": 10,
+    "rec_ids": [
+      "REC-SPC-006"
+    ],
+    "resolved_at": "2026-05-03T01:36:08.067Z"
+  },
+  "result": {
+    "batch_index": 10,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-SPC-006",
+        "source_file_path": "kb/v1_2/01_recommendations/specialty/REC-SPC-006_structured_charitable_bailout.md",
+        "category": "Specialty",
+        "status": "Advanced",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Specialty",
+        "subsection_within_section": "Specialty Charitable / Estate",
+        "co_triggered_with": [
+          "REC-CHR-003",
+          "REC-EST-004",
+          "REC-RSK-004"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "crut_ilit_bailout_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/specialty/REC-SPC-006_structured_charitable_bailout.md",
+          "computation_inputs": {
+            "indicative_appreciated_asset_value_usd": 5000000,
+            "indicative_crut_payout_rate_percent": 5,
+            "indicative_crut_annual_income_usd": 250000,
+            "indicative_charitable_deduction_usd": 1000000,
+            "indicative_ilit_face_amount_usd": 5000000,
+            "indicative_survivorship_ul_premium_range_usd": [
+              50000,
+              80000
+            ],
+            "current_estate_tax_rate_percent": 40,
+            "s7520_rate_at_funding_percent": 5,
+            "s7520_rate_source_month": "May 2026",
+            "note": "Indicative figures from rec file worked example; actual sizing depends on which appreciated asset is contributed (post-liquidity) and on couple's underwriting outcome."
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Pairs a CRUT (lifetime income, charitable deduction, charity remainder) with a wealth-replacement ILIT (income-tax-free death benefit to family) so the family is not disinherited by the charitable gift; at indicative $5M asset / $5M survivorship UL scale, family receives ~$5M income-tax-free via ILIT and charity receives ~$5M+ remainder, versus ~$2–3M to family after estate tax with no charitable component absent the structure.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "specific_appreciated_asset_and_basis",
+              "blocked_reason": "Until post-liquidity asset mix and basis are known, exact CRUT contribution asset is undecided (HIS sale proceeds, brokerage lots, or other appreciated property).",
+              "source": "Client",
+              "would_unblock_when": "Post-transaction balance sheet finalized and charitable budget confirmed."
+            },
+            {
+              "input_name": "survivorship_ul_underwriting_offer",
+              "blocked_reason": "Premium and face amount depend on underwritten offer for Marcus + Catherine survivorship UL; both are listed as preferred-rate insurable but no offer obtained.",
+              "source": "Insurance Broker",
+              "would_unblock_when": "Survivorship UL underwriting completed for both spouses."
+            },
+            {
+              "input_name": "crut_payout_rate_and_term",
+              "blocked_reason": "CRUT payout rate (must satisfy 10% remainder test at current §7520 5.00%) and term (lifetime vs term-of-years) not yet selected; affects income, deduction, and remainder.",
+              "source": "Estate Attorney",
+              "would_unblock_when": "CRUT design finalized with attorney and §7520 rate locked at funding."
+            },
+            {
+              "input_name": "charitable_intent_scale_and_recipient",
+              "blocked_reason": "Family foundation vs DAF vs direct public charity decision (Marcus's trade scholarships, Catherine's children's hospital) not finalized; affects deduction AGI limits and remainder design.",
+              "source": "Client",
+              "would_unblock_when": "Post-liquidity charitable vehicle decision confirmed (foundation hard-rule preference noted)."
+            }
+          ]
+        },
+        "scenario_range": {
+          "low_value": 2000000,
+          "midpoint_value": 5000000,
+          "high_value": 8000000,
+          "computation_method": "Indicative wealth-replacement ILIT face amount range based on rec-file worked example ($5M midpoint); low/high reflect smaller/larger appreciated-asset contribution scaling, scaled to plausible post-transaction Holloway charitable budget."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "charitable-bailout-crut-ilit",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SPC-006-1",
+            "description": "Establish CRUT and contribute appreciated asset, coordinated with REC-CHR-003 (CRUT setup, payout rate selection, charitable remainder beneficiary).",
+            "sub_steps": [
+              "Select CRUT payout rate satisfying 10% remainder test at current §7520 5.00%",
+              "Identify appreciated asset to contribute (post-liquidity)",
+              "Coordinate qualified appraisal if non-publicly-traded asset",
+              "Finalize charitable remainder beneficiary (DAF / family foundation / public charity)"
+            ],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 1 — CRUT setup (REC-CHR-003)",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on CRUT drafting and funding milestones for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-006-2",
+            "description": "Establish ILIT with institutional trustee, coordinated with REC-EST-004, to own survivorship life policy on Marcus and Catherine.",
+            "sub_steps": [
+              "Engage estate attorney specializing in ILIT + CRUT integration",
+              "Designate institutional trustee",
+              "Establish Crummey beneficiaries and notice protocol"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 2 — ILIT setup (REC-EST-004)",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on ILIT drafting and trustee onboarding for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-006-3",
+            "description": "Underwrite survivorship universal life policy on Marcus and Catherine; secure offer and place coverage owned by ILIT.",
+            "sub_steps": [
+              "Submit applications for both spouses (both reported preferred-rate insurable)",
+              "Obtain medical exams and APS",
+              "Compare carrier illustrations and select policy",
+              "Bind policy with ILIT as owner and beneficiary"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 3 — Survivorship UL underwriting",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SPC-006-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on survivorship UL underwriting status for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-006-4",
+            "description": "Implement Crummey notice protocol for annual exclusion gifts funding ILIT premium.",
+            "sub_steps": [
+              "Trustee issues written Crummey notices to each beneficiary on each contribution",
+              "Track 30–60 day withdrawal window",
+              "Maintain notice + acknowledgment file",
+              "Apply hanging-Crummey mechanics if needed to avoid 5/$5,000 lapse-as-gift"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 4 — Crummey notice protocol",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-006-2",
+              "AI-SPC-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that annual Crummey notices have been issued and acknowledged for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-006-5",
+            "description": "Coordinate annual CRUT 4-tier income reporting, ILIT premium funding, and Crummey administration across CPA, attorney, and trustee.",
+            "sub_steps": [
+              "CPA prepares CRUT 4-tier income reporting (Form 5227 / K-1 to donor)",
+              "PSA confirms premium paid and ILIT funded",
+              "Trustee maintains administration file"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 5 — Annual coordination",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-006-1",
+              "AI-SPC-006-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that CRUT 4-tier reporting and ILIT premium funding completed for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-006-6",
+            "description": "Conduct annual review of CRUT performance, ILIT policy performance, and family/charitable alignment.",
+            "sub_steps": [
+              "Review CRUT investment performance vs payout obligation",
+              "Review survivorship UL in-force illustration",
+              "Confirm continued charitable intent and beneficiary designations"
+            ],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-006",
+            "source_phase_or_step": "Step 6 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-006-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Conduct annual CRUT + ILIT review for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "State B: formula identified but key inputs (specific appreciated asset, UL underwriting offer, CRUT payout rate, charitable vehicle choice) are post-liquidity decisions. Indicative computation uses rec-file worked example at $5M scale. §7520 rate cited at May 2026 = 5.00% (current at funding). Cluster id assigned to bind CRUT+ILIT bailout; sequencing relations (must_come_after REC-CHR-003 and REC-EST-004; coordinated_with REC-RSK-004) copied from batch context and rec file. Insurance broker partner_type set to Other since enum lacks a generic life-insurance broker (Health Insurance Broker is wrong category)."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [
+        {
+          "rec_id": "REC-SPC-006",
+          "source_metadata_text": "Plan section placement: Specialty Charitable / Estate",
+          "candidate_sections": [
+            "Recommendations — Specialty",
+            "Recommendations — Charitable Planning",
+            "Recommendations — Estate Planning"
+          ]
+        }
+      ],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-SPC-006-1",
+          "inferred_bucket": "12-24 months",
+          "source_signal": "Rec file lacks explicit timing; structure depends on post-liquidity asset and charitable budget, placing it in the post-transaction window."
+        }
+      ],
+      "qualitative_fallback_used": [],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-SPC-006",
+          "blocked_inputs": [
+            "specific_appreciated_asset_and_basis",
+            "survivorship_ul_underwriting_offer",
+            "crut_payout_rate_and_term",
+            "charitable_intent_scale_and_recipient"
+          ],
+          "awaiting": [
+            "Client",
+            "Insurance Broker",
+            "Estate Attorney"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 31854,
+      "output_token_count": 5314,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 65407,
+          "input_tokens": 31854,
+          "output_tokens": 5314
+        }
+      ],
+      "duration_ms": 65410,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:36:08.067Z",
+      "batch_index": 10,
+      "total_batches": 11
+    }
+  }
+}

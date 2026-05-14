@@ -90,6 +90,10 @@ export namespace ClientsApi {
     status?: ClientStatus;
     archetype?: ClientArchetype | null;
     notes?: string | null;
+    // Phase 17.2 — Contact cadence; when omitted on create, the route
+    // handler defaults from CADENCE_DEFAULTS_BY_ARCHETYPE.
+    cadence_target_days?: number | null;
+    cadence_custom_label?: string | null;
   }
   export type CreateResponse = Client;
 
@@ -101,6 +105,8 @@ export namespace ClientsApi {
     status?: ClientStatus;
     archetype?: ClientArchetype | null;
     notes?: string | null;
+    cadence_target_days?: number | null;
+    cadence_custom_label?: string | null;
   }
   export type UpdateResponse = Client;
 

@@ -1,0 +1,1615 @@
+{
+  "_partial_metadata": {
+    "batch_index": 5,
+    "rec_ids": [
+      "REC-SUC-010",
+      "REC-SUC-011",
+      "REC-SUC-012",
+      "REC-SUC-013",
+      "REC-SUC-015",
+      "REC-SUC-016",
+      "REC-SUC-001",
+      "REC-SUC-004"
+    ],
+    "resolved_at": "2026-05-03T01:41:00.951Z"
+  },
+  "result": {
+    "batch_index": 5,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-SUC-010",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-010_pre_transaction_qofe.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "T-12 to T-18 months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              1500000,
+              4500000
+            ],
+            "unit": "USD",
+            "narrative_context": "Expected preserved transaction value of 5-15% on a $30M baseline transaction (low end of HIS preliminary $32M-$48M valuation), net of $75K-$125K QofE engagement cost.",
+            "is_approximate": true
+          },
+          "formula_id": "qofe_value_preservation_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-010_pre_transaction_qofe.md",
+          "computation_inputs": {
+            "transaction_value_baseline_usd": 30000000,
+            "preservation_pct_low": 0.05,
+            "preservation_pct_high": 0.15,
+            "qofe_cost_low_usd": 75000,
+            "qofe_cost_high_usd": 125000,
+            "his_preliminary_valuation_range_usd": [
+              32000000,
+              48000000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1500000,
+          "midpoint_value": 3000000,
+          "high_value": 4500000,
+          "computation_method": "5-15% of $30M baseline preserved through cleaner diligence; cost ($75K-$125K) small relative to preservation."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-010-1",
+            "description": "Engage independent QofE firm 12-18 months pre-transaction (separate from existing CPA for independence).",
+            "sub_steps": [
+              "Shortlist 2-3 independent QofE firms with industrial-services M&A experience",
+              "Reference checks",
+              "Negotiate engagement letter and fee"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-010",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-010-2",
+            "description": "Provide financial records, customer concentration data, and revenue detail to the QofE firm.",
+            "sub_steps": [
+              "Three years of financials (2022-2024)",
+              "Customer concentration schedules (top 3 = 47%, top 10 = 78%)",
+              "Revenue recognition policies",
+              "Working capital detail"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-010",
+            "source_phase_or_step": "Step 2",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-010-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-010-3",
+            "description": "Receive and review QofE report (typically 6-10 weeks after engagement).",
+            "sub_steps": [
+              "Review normalizing adjustments",
+              "Review identified issues",
+              "Validate adjusted EBITDA"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-010",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-010-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-010-4",
+            "description": "Address issues identified by QofE: clean up books, normalize accounting, document customer concentration.",
+            "sub_steps": [
+              "Issue resolution log",
+              "Coordinate with fractional CFO and existing CPA",
+              "Document customer concentration mitigation"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-010",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-010-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on QofE issue resolution progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-010-5",
+            "description": "Refresh QofE 6 months later if material time elapsed before going to market.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-010",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-010-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Used $30M baseline (low end of HIS preliminary $32M-$48M range, conservative for impact estimate)."
+      },
+      {
+        "recommendation_id": "REC-SUC-011",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-011_sell_side_banker.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "T-12 months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              4400000,
+              9300000
+            ],
+            "unit": "USD",
+            "narrative_context": "Net premium captured from competitive sale process: 15-30% premium on $30M baseline less estimated 1-2% banker fee on post-premium transaction.",
+            "is_approximate": true
+          },
+          "formula_id": "ma_banker_competitive_premium_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-011_sell_side_banker.md",
+          "computation_inputs": {
+            "transaction_baseline_usd": 30000000,
+            "competitive_premium_low_pct": 0.15,
+            "competitive_premium_high_pct": 0.3,
+            "banker_fee_low_pct": 0.01,
+            "banker_fee_high_pct": 0.02,
+            "transaction_low_with_premium_usd": 34500000,
+            "transaction_high_with_premium_usd": 39000000,
+            "banker_fee_low_usd": 345000,
+            "banker_fee_high_usd": 780000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 4400000,
+          "midpoint_value": 6800000,
+          "high_value": 9300000,
+          "computation_method": "Net premium = (15-30% × $30M baseline) − banker fee (1-2% of post-premium transaction)."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-011-1",
+            "description": "Banker selection: shortlist 2-3 boutique LMM M&A finalists with industrial-services / specialty contractor specialty.",
+            "sub_steps": [
+              "Reference checks",
+              "Specialty fit review (data center / healthcare MEP)",
+              "Compare engagement terms"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-011",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-011-2",
+            "description": "Negotiate and execute banker engagement letter (success-fee structure, minimums, expense reimbursement, carve-outs).",
+            "sub_steps": [
+              "Success-fee waterfall",
+              "Minimum fee floor",
+              "Carve-out for direct relationships if any"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-011",
+            "source_phase_or_step": "Step 2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SUC-011-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-011-3",
+            "description": "CIM development with banker; client review and approval.",
+            "sub_steps": [
+              "Banker drafts CIM",
+              "Client review",
+              "Finalize teaser"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-011",
+            "source_phase_or_step": "Step 3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SUC-011-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-011-4",
+            "description": "Run sell-side process: buyer outreach, manage first-round indications and second-round LOIs, facilitate diligence and closing.",
+            "sub_steps": [
+              "Buyer outreach list approval",
+              "First round indications of interest",
+              "Second-round LOIs and evaluation matrix",
+              "Diligence support",
+              "Closing"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-011",
+            "source_phase_or_step": "Steps 4-7",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-011-3"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "weekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 7,
+              "cadence": "weekly",
+              "reminder_text_template": "Check in with {{partner_type}} on sell-side process milestones for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Weekly cadence appropriate during active deal-execution per rec-file rule."
+      },
+      {
+        "recommendation_id": "REC-SUC-012",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-012_fractional_cfo.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "T-18 to T-12 months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              80000,
+              200000
+            ],
+            "unit": "USD",
+            "narrative_context": "Annual fractional CFO cost of $80K-$200K; expected ROI through cleaner diligence and working capital optimization larger than cost but attributed to QofE/banker outcomes.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "fractional_cfo_annual_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-012_fractional_cfo.md",
+          "computation_inputs": {
+            "fractional_cfo_low_usd": 80000,
+            "fractional_cfo_high_usd": 200000,
+            "alternative_full_time_cfo_usd": 250000,
+            "potential_wc_impact_pct": [
+              0.05,
+              0.1
+            ],
+            "transaction_baseline_usd": 30000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 80000,
+          "midpoint_value": 140000,
+          "high_value": 200000,
+          "computation_method": "Annual cost range from rec file ($80K-$200K)."
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-012-1",
+            "description": "Identify fractional CFO firm or individual with industrial-services / specialty contractor M&A experience.",
+            "sub_steps": [
+              "PSA referrals",
+              "Industry-experience filter",
+              "Interview 2-3 candidates"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-012",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-012-2",
+            "description": "Define scope of fractional CFO engagement: monthly close, board-grade reporting, working capital, transaction prep.",
+            "sub_steps": [
+              "Scope document",
+              "Hours/week targeted",
+              "Transaction prep deliverables"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-012",
+            "source_phase_or_step": "Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-012-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-012-3",
+            "description": "Execute fractional CFO engagement letter.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-012",
+            "source_phase_or_step": "Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-012-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-012-4",
+            "description": "Onboard fractional CFO with internal controller, bookkeeper, banker, and existing CPA.",
+            "sub_steps": [
+              "Introductions",
+              "Access to financial systems",
+              "Banking-relationship handoff briefing"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-012",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-012-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-012-5",
+            "description": "Establish monthly close cadence and quarterly board-grade financial package.",
+            "sub_steps": [
+              "Monthly close calendar",
+              "Reporting template",
+              "KPI dashboard",
+              "Working capital metrics"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-012",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-012-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Confirm monthly close package and KPI dashboard for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "HIS lacks internal CFO; multi-entity restructuring planned."
+      },
+      {
+        "recommendation_id": "REC-SUC-013",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-013_management_bench_buildout.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "T-18 to T-12 months",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              6000000,
+              12000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Owner-dependent businesses sell at 20-40% discounts; closing management bench gaps recovers most of that. Applied to $30M baseline.",
+            "is_approximate": true
+          },
+          "formula_id": "management_bench_owner_dependence_recovery_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-013_management_bench.md",
+          "computation_inputs": {
+            "transaction_baseline_usd": 30000000,
+            "owner_dependence_discount_low_pct": 0.2,
+            "owner_dependence_discount_high_pct": 0.4,
+            "critical_function_gaps": [
+              "COO/operations",
+              "CFO/finance",
+              "sales leader"
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 6000000,
+          "midpoint_value": 9000000,
+          "high_value": 12000000,
+          "computation_method": "20-40% owner-dependence discount applied to $30M baseline; full closure of bench gaps recovers most of the discount."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-013-1",
+            "description": "Org chart analysis identifying critical function gaps (COO/operations, CFO/finance, sales leader, key technical lead).",
+            "sub_steps": [
+              "Map current responsibilities held by Marcus",
+              "Identify Derek's coverage scope",
+              "Identify gaps below owner level"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-013",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-013-2",
+            "description": "Decide for each gap: hire externally, promote internally, or fractional contract.",
+            "sub_steps": [
+              "Hire/promote/fractional matrix",
+              "Budget by role"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-013",
+            "source_phase_or_step": "Step 2",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-013-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-013-3",
+            "description": "Execute recruiting / development plans for each role.",
+            "sub_steps": [
+              "Engage recruiter where needed",
+              "Internal development tracks",
+              "Interview/assessment process"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-013",
+            "source_phase_or_step": "Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-013-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on management bench hiring milestones for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-013-4",
+            "description": "Design compensation packages for new/promoted leaders coordinated with stay bonus, SERP, and phantom equity.",
+            "sub_steps": [
+              "Base + variable comp",
+              "Vesting through transaction close",
+              "Stay bonus integration"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-013",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-013-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-013-5",
+            "description": "Set performance milestones aligned with transaction timing and track quarterly.",
+            "sub_steps": [
+              "Milestone definitions",
+              "Quarterly review cadence"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-013",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-013-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly review of management bench performance milestones for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Likely roles for HIS per Holloway example: operations manager, project executive, business development lead."
+      },
+      {
+        "recommendation_id": "REC-SUC-015",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-015_written_succession_plan.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Succession & Continuity",
+        "subsection_within_section": "Continuity",
+        "co_triggered_with": [
+          "REC-RSK-001",
+          "REC-RSK-005",
+          "REC-RSK-006"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {},
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Written succession plan eliminates operational paralysis on owner death or disability — distinct from buy/sell financial mechanics; covers interim leadership, decision authority, banking signatures, and customer/vendor communication.",
+          "reason_no_formula": "intentionally_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-015-1",
+            "description": "Inventory operational decision points across HIS (contracts, spending authority, hire/fire, customer commitments).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-015-2",
+            "description": "Designate interim leadership chain and decision authority on owner death/disability.",
+            "sub_steps": [
+              "Primary interim leader (Derek likely)",
+              "Backup designation",
+              "Decision-authority matrix"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 2",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-015-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-015-3",
+            "description": "Update banking signatures with backup designations at Truist.",
+            "sub_steps": [
+              "Signature card updates",
+              "Operating account access",
+              "LOC authority"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-015-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-015-4",
+            "description": "Draft customer and vendor communication scripts for owner-death/disability scenario.",
+            "sub_steps": [
+              "Top-customer notification scripts",
+              "Key vendor scripts",
+              "Employee communication"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 4",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-015-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-015-5",
+            "description": "Document the written succession plan; distribute to key team members and Catherine.",
+            "sub_steps": [
+              "Final document",
+              "Distribution list",
+              "Authority delegations (POA-like documents) drafted by attorney"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-015-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-015-6",
+            "description": "Schedule and conduct annual review/update of the succession plan.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-015",
+            "source_phase_or_step": "Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SUC-015-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review of written succession plan for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Qualitative recommendation — no quantified framework in rec file."
+      },
+      {
+        "recommendation_id": "REC-SUC-016",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-016_customer_concentration_derisking.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": null,
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              5000000,
+              7000000
+            ],
+            "unit": "USD",
+            "narrative_context": "HIS top-customer single concentration is 22% (hyperscale data center); top 3 = 47%. 25-35% discount risk on $30M baseline; 24-month diversification + long-term contract recovers $5M-$7M.",
+            "is_approximate": true
+          },
+          "formula_id": "customer_concentration_value_recovery_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-016_customer_concentration_de_risking.md",
+          "computation_inputs": {
+            "transaction_baseline_usd": 30000000,
+            "top_single_customer_pct": 0.22,
+            "top3_pct": 0.47,
+            "top10_pct": 0.78,
+            "discount_low_pct": 0.25,
+            "discount_high_pct": 0.35,
+            "discount_low_usd": 7500000,
+            "discount_high_usd": 10500000,
+            "recovery_low_usd": 5000000,
+            "recovery_high_usd": 7000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000000,
+          "midpoint_value": 6000000,
+          "high_value": 7000000,
+          "computation_method": "Worked example from rec file applied to HIS facts."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-016-1",
+            "description": "Concentration analysis: build current concentration ratios by customer, vertical, and geography.",
+            "sub_steps": [
+              "Top 3, top 5, top 10 ratios",
+              "Vertical mix (data center 55%, healthcare 28%, mfg 17%)",
+              "Geographic distribution"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-016",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-016-2",
+            "description": "Realign sales-team incentives toward diversification (net-new accounts, broadening within non-concentrated accounts).",
+            "sub_steps": [
+              "Compensation plan review",
+              "New-customer KPIs",
+              "Account-broadening KPIs"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-016",
+            "source_phase_or_step": "Step 2",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-016-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-016-3",
+            "description": "Develop customer expansion plans for non-concentrated accounts (depth and breadth).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-016",
+            "source_phase_or_step": "Step 3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-016-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly review of customer diversification metrics for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-016-4",
+            "description": "Negotiate long-term (3-year minimum) contracts with the largest concentration customer (hyperscale data-center, 22%).",
+            "sub_steps": [
+              "Identify mutually-beneficial terms",
+              "3-year minimum take",
+              "Buyer-comfort framing as predictability"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-016",
+            "source_phase_or_step": "Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SUC-016-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on long-term contract negotiation progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-016-5",
+            "description": "Build and maintain quarterly KPI dashboard tracking concentration metrics.",
+            "sub_steps": [
+              "KPI definitions",
+              "Dashboard infrastructure",
+              "Quarterly review cadence"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-016",
+            "source_phase_or_step": "Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-016-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Quarterly KPI dashboard review for customer concentration ({{rec_id}})"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "HIS data: top single 22% (hyperscale data-center), top 3 = 47%, top 10 = 78%."
+      },
+      {
+        "recommendation_id": "REC-SUC-001",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-001_serp_coli_funded.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Succession & Continuity",
+        "subsection_within_section": "Key Employee Retention",
+        "co_triggered_with": [
+          "REC-RSK-001",
+          "REC-RET-002"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 25000,
+            "unit": "USD",
+            "narrative_context": "Worked-example COLI premium for primary key employee targeting $50K/year benefit at age 65 for 15 years; ~$1M cash value over 20 years. Holloway-style sizing: $80K/year SERP for Derek and $40K/year for controller would imply higher COLI funding.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "serp_coli_funding_worked_example_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-001_serp_coli.md",
+          "computation_inputs": {
+            "key_employee_age_assumption": 45,
+            "current_w2_assumption_usd": 300000,
+            "target_annual_benefit_usd": 50000,
+            "benefit_duration_years": 15,
+            "annual_coli_premium_usd": 25000,
+            "twenty_year_cash_value_usd": 1000000,
+            "holloway_derek_target_serp_usd": 80000,
+            "holloway_controller_target_serp_usd": 40000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-001-1",
+            "description": "Identify key employees (Derek, controller) and target SERP benefit amounts ($80K/year for Derek, $40K/year for controller).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-001-2",
+            "description": "Engage specialist NQDC counsel for §409A-compliant SERP plan document.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Step 2",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-001-3",
+            "description": "Establish vesting schedule (7-year cliff vest tied to transaction event or 7 years of continued service, whichever first).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-001-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-001-4",
+            "description": "Issue COLI policies on Derek and the controller (with §101(j) notice-and-consent signed BEFORE policy issuance).",
+            "sub_steps": [
+              "Carrier selection",
+              "§101(j) notice-and-consent execution",
+              "Underwriting",
+              "Policy issuance"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Steps 4-5",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-001-5",
+            "description": "Establish annual administration: contributions, vesting tracking, balance reporting, Form 8925 filing.",
+            "sub_steps": [
+              "Annual contribution schedule",
+              "Vesting milestone tracker",
+              "Annual benefit statement",
+              "Form 8925 with corporate return"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Step 6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SUC-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual SERP administration check-in with {{partner_type}} for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-001-6",
+            "description": "Communicate SERP benefit details to Derek and the controller (participant communication).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-001",
+            "source_phase_or_step": "Step 7",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Holloway-style sizing: Derek $80K/year, controller $40K/year SERP, 7-year cliff to transaction event."
+      },
+      {
+        "recommendation_id": "REC-SUC-004",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-004_restricted_162_with_vesting.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Succession & Continuity",
+        "subsection_within_section": "Executive Benefits",
+        "co_triggered_with": [
+          "REC-SUC-001",
+          "REC-SUC-007"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-004_restricted_162_bonus.md",
+          "computation_inputs": {
+            "vehicle": "restricted §162 bonus with restrictive endorsement",
+            "deductible_to_employer": true,
+            "taxable_to_employee": true,
+            "vesting_schedule_typical": "5-10 year cliff or graded",
+            "alternative_to": "REC-SUC-003 plain §162 (mutually exclusive)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Restricted §162 bonus offers §162 simplicity with retention pull via restrictive endorsement; sizing depends on selected key employee comp targets and vesting schedule, not yet specified for HIS.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-004-1",
+            "description": "Define vesting schedule for Restricted §162 plan (typical 5-10 year cliff or graded; align with transaction window).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-004",
+            "source_phase_or_step": "Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-004-2",
+            "description": "Issue policy with restrictive endorsement on the participating executive(s).",
+            "sub_steps": [
+              "Carrier endorsement-language review",
+              "Underwriting",
+              "Policy issuance"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-004",
+            "source_phase_or_step": "Step 2",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-004-3",
+            "description": "Pay annual bonus and fund premium; maintain restrictive endorsement; annual W-2 reporting.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-004",
+            "source_phase_or_step": "Step 3",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SUC-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual Restricted §162 bonus and W-2 reporting check-in with {{partner_type}} for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-004-4",
+            "description": "Monitor vesting milestones and lift restriction at full vesting.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-004",
+            "source_phase_or_step": "Steps 4-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual vesting-milestone review for Restricted §162 plan ({{rec_id}})"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-004-5",
+            "description": "CPA §83 income timing analysis for participants.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-SUC-004",
+            "source_phase_or_step": "Coordination — CPA",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Mutually exclusive with REC-SUC-003 (plain §162) per rec file. Sizing for HIS not yet defined."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-SUC-013-1",
+          "inferred_bucket": "0-30 days",
+          "source_signal": "Org chart analysis is initial diagnostic step; immediate start within rec window."
+        },
+        {
+          "action_item_id": "AI-SUC-016-1",
+          "inferred_bucket": "0-30 days",
+          "source_signal": "Concentration analysis is initial diagnostic; immediate start."
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-SUC-015",
+          "phrasing_used": "Written succession plan eliminates operational paralysis on owner death or disability — distinct from buy/sell financial mechanics.",
+          "reason": "Rec file has no QUANTIFIED IMPACT FRAMEWORK section; intentionally qualitative continuity recommendation."
+        },
+        {
+          "rec_id": "REC-SUC-004",
+          "phrasing_used": "Restricted §162 bonus offers §162 simplicity with retention pull via restrictive endorsement; sizing depends on selected key employee comp targets and vesting schedule, not yet specified for HIS.",
+          "reason": "Rec file QUANTIFIED IMPACT FRAMEWORK is qualitative-only; sizing for HIS not yet selected."
+        }
+      ],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 46641,
+      "output_token_count": 35942,
+      "cache_creation_input_tokens": 79426,
+      "cache_read_input_tokens": 16344,
+      "attempts_made": 2,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "schema_validation_failed",
+          "failure_details": "batch_index: Invalid input: expected number, received undefined; total_batches: Invalid input: expected number, received undefined; recommendations: Invalid input: expected array, received undefined; _stage_flags: Invalid input: expected object, received undefined",
+          "duration_ms": 192328,
+          "input_tokens": 46466,
+          "output_tokens": 19709
+        },
+        {
+          "attempt_number": 2,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 165935,
+          "input_tokens": 175,
+          "output_tokens": 16233
+        }
+      ],
+      "duration_ms": 358294,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:41:00.951Z",
+      "batch_index": 5,
+      "total_batches": 11
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx *\\)\rBash\\(git *\\)\rBash\\(python3 *\\)\rBash\\(node *\\)\rBash\\(test *\\)\rBash\\(ls *\\)\rBash\\(cat *\\)\rBash\\(wc *\\)\rBash\\(grep *\\)\rBash\\(sed *\\)\rBash\\(mv *\\)\rBash\\(rm *\\)\rBash\\(mkdir *\\)\rBash\\(echo *)",
+      "Read(*\\)\rWrite\\(*\\)\rEdit\\(*)"
+    ]
+  }
+}

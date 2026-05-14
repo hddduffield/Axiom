@@ -8,6 +8,7 @@ import {
   encodeCursor,
   mapDbError,
 } from "@/lib/api/db_queries";
+import { defaultCadenceForArchetype } from "@/lib/cadence/defaults";
 
 const createSchema = z.object({
   lead_advisor_id: z.string().uuid().optional(),
@@ -15,6 +16,10 @@ const createSchema = z.object({
   status: z.enum(["active", "inactive", "prospect"]).optional(),
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]).nullable().optional(),
   notes: z.string().nullable().optional(),
+  // Phase 17.2 — contact cadence. Range 1..3650 (10y) is a sanity guard;
+  // actual UI surfaces 30..365 presets but custom integers are allowed.
+  cadence_target_days: z.number().int().min(1).max(3650).nullable().optional(),
+  cadence_custom_label: z.string().max(120).nullable().optional(),
 });
 
 // GET /api/clients — list clients with filters + cursor pagination.
@@ -76,6 +81,13 @@ export async function POST(request: Request) {
     return err("validation_failed", "Invalid client payload.", parsed.error.issues);
   }
 
+  // Phase 17.2 — default cadence from archetype when caller omits it.
+  // Custom integer / preset values supplied by the form pass through.
+  const cadenceDays =
+    parsed.data.cadence_target_days !== undefined
+      ? parsed.data.cadence_target_days
+      : defaultCadenceForArchetype(parsed.data.archetype ?? null);
+
   const { data, error } = await auth.supabase
     .from("clients")
     .insert({
@@ -84,6 +96,8 @@ export async function POST(request: Request) {
       status: parsed.data.status ?? "prospect",
       archetype: parsed.data.archetype ?? null,
       notes: parsed.data.notes ?? null,
+      cadence_target_days: cadenceDays,
+      cadence_custom_label: parsed.data.cadence_custom_label ?? null,
     })
     .select("*")
     .single();

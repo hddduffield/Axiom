@@ -9,6 +9,8 @@ const updateSchema = z.object({
   status: z.enum(["active", "inactive", "prospect"]).optional(),
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]).nullable().optional(),
   notes: z.string().nullable().optional(),
+  cadence_target_days: z.number().int().min(1).max(3650).nullable().optional(),
+  cadence_custom_label: z.string().max(120).nullable().optional(),
 });
 
 interface RouteContext {

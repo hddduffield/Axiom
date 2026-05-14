@@ -17,7 +17,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,8 +51,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Chip, Count } from "@/components/axiom/Chip";
+import { CadencePicker } from "@/components/axiom/CadencePicker";
 import { api, isApiError } from "@/lib/api/client";
 import type { Client, ClientArchetype, ClientStatus } from "@/lib/api/types";
+import { defaultCadenceForArchetype } from "@/lib/cadence/defaults";
 
 // Subset of `Client` actually selected by page.tsx — keeps the prop
 // shape honest about which columns the view consumes.
@@ -439,6 +441,11 @@ const newClientSchema = z.object({
   archetype: z.enum(["PRE", "MID", "POST", "NONE"]),
   status: z.enum(["prospect", "active", "inactive"]),
   lead_advisor_id: z.string().uuid("Pick a lead advisor"),
+  cadence_target_days: z
+    .number()
+    .int("Whole number")
+    .min(1, "≥ 1")
+    .max(3650, "≤ 3650"),
 });
 type NewClientValues = z.infer<typeof newClientSchema>;
 
@@ -459,8 +466,22 @@ function NewClientButton({
       archetype: "MID",
       status: "prospect",
       lead_advisor_id: advisors[0]?.id ?? "",
+      cadence_target_days: defaultCadenceForArchetype("MID"),
     },
   });
+
+  // Track whether the advisor has touched the cadence field. While
+  // untouched, swapping archetype auto-syncs the suggested cadence.
+  const [cadenceTouched, setCadenceTouched] = useState(false);
+  const archetypeWatch = form.watch("archetype");
+  useEffect(() => {
+    if (!cadenceTouched) {
+      form.setValue(
+        "cadence_target_days",
+        defaultCadenceForArchetype(archetypeWatch),
+      );
+    }
+  }, [archetypeWatch, cadenceTouched, form]);
 
   async function onSubmit(values: NewClientValues) {
     // "Family" appended automatically if not present (per Claude Design)
@@ -473,9 +494,11 @@ function NewClientButton({
         lead_advisor_id: values.lead_advisor_id,
         status: values.status,
         archetype: values.archetype,
+        cadence_target_days: values.cadence_target_days,
       });
       onOpenChange(false);
       form.reset();
+      setCadenceTouched(false);
       router.push(`/clients/${created.id}`);
     } catch (e) {
       toast.error(isApiError(e) ? e.message : "Could not create client");
@@ -608,6 +631,33 @@ function NewClientButton({
                       </SelectContent>
                     </Select>
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cadence_target_days"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel
+                    className="text-[11px] uppercase"
+                    style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
+                  >
+                    Contact cadence
+                  </FormLabel>
+                  <FormControl>
+                    <CadencePicker
+                      value={field.value}
+                      onChange={(next) => {
+                        setCadenceTouched(true);
+                        field.onChange(next ?? defaultCadenceForArchetype(archetypeWatch));
+                      }}
+                    />
+                  </FormControl>
+                  <p className="text-[11px]" style={{ color: "var(--text-3)" }}>
+                    Days between expected client contacts. Defaults from archetype until you change it.
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}

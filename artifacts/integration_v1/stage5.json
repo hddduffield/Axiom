@@ -1,0 +1,180 @@
+{
+  "_metadata": {
+    "source_input_files": [
+      "artifacts/holloway_clientprofile.json",
+      "artifacts/holloway_selected_recommendations.json"
+    ],
+    "wall_clock_ms": 50650,
+    "cost_cents": 191,
+    "integration_run_v": "v1",
+    "script": "scripts/runIntegrationStage3a4_5.ts",
+    "written_at": "2026-05-03T17:46:08.807Z"
+  },
+  "result": {
+    "findings": [
+      {
+        "finding_id": "F-001",
+        "severity": "warning",
+        "category": "DC8_unused_numbers",
+        "section_ids": [],
+        "description": "Stage 3a quantified_impact.estimate for REC-INV-009 ($290) does not appear in plan prose within tolerance.",
+        "evidence": "REC-INV-009: expected $290 not found in prose (5% tolerance)",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC2-001",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "ES",
+          "RB.5",
+          "RP.9"
+        ],
+        "description": "Top 5 Priorities in Executive Summary lists REC-RSK-008 (umbrella) at ~$42.5M and REC-RSK-017 (cyber) at ~$4.0M as top priorities by 'estimated impact.' These are face-amount coverage figures, not impact/savings figures, while REC-EST-005 (~$6.0M) and REC-EST-004 (~$3.6M) are estate-tax savings figures. Mixing coverage face with tax-savings as a single 'impact' ranking is an apples-to-oranges comparison the client may misread as comparable dollar value.",
+        "evidence": "[{\"rank\":1,\"descriptor\":\"REC-RSK-008 (Risk & Insurance)\",\"estimated_impact_text\":\"~$42.5M\"...},{\"rank\":2,\"descriptor\":\"REC-EST-005 (Estate)\",\"estimated_impact_text\":\"~$6.0M\"...},{\"rank\":3,\"descriptor\":\"REC-RSK-017 (Risk & Insurance)\",\"estimated_impact_text\":\"~$4.0M\"...}]",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC2-003",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "FO",
+          "RP.8"
+        ],
+        "description": "Findings & Observations states '~95%+ of household net worth is concentrated in HIS equity'; RP.8 opens with 'a 95%+ concentration ratio in HIS today' but the same RP.8 closer/discipline bullet says 'an estimated 60-85% of household net worth' and RB.7 says 'Approximately 60–85% of household net worth is currently in HIS equity.' The plan asserts both 95%+ and 60–85% as the current concentration — these cannot both be true.",
+        "evidence": "FO: 'Approximately 95%+ of household net worth is concentrated in HIS equity.' / RP.8 intro: 'a 95%+ concentration ratio in HIS today' / RP.8 bullet: 'an estimated 60-85% of household net worth depending on valuation' / RB.7: 'Approximately 60–85% of household net worth is currently in HIS equity.'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-002",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "GP",
+          "FO",
+          "RB.4",
+          "RP.10"
+        ],
+        "description": "Goals & Priorities states 'reduce projected $11M+ estate-tax exposure' but Findings & Observations, RB.4, and RP.10 all consistently use ~$8M federal estate tax exposure ($20M taxable × 40%). The $11M+ figure in GP is not reconciled anywhere else in the plan and contradicts the consistent $8M figure used in the substantive recommendations.",
+        "evidence": "GP: 'Estate planning — reduce projected $11M+ estate-tax exposure...' vs RB.4: '$20M taxable × 40% = $8M of federal estate tax due 9 months after the second death' and RP.10: 'is roughly $8M against the $30M MFJ exemption'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-005",
+        "severity": "warning",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RB.4",
+          "RP.10"
+        ],
+        "description": "RB.4 closer states the personal estate program transfers '~$30M–$45M of value outside the taxable estate' but RP.10 closer states 'roughly $20M-$30M+ of cumulative federal estate-tax savings.' These are different metrics (value transferred vs tax savings) but the figures sit close enough that a reader could confuse them. Furthermore, RP.10 includes the same line-items as RB.4 (children's trusts ~$4–8M, SLAT ~$10.8M, QPRT ~$840K, ILIT ~$3.6M) but adds them as 'tax savings,' while RB.4 sums similar figures as 'value transferred.' The category label is inconsistent across the two estate sections.",
+        "evidence": "RB.4: 'the Section 4 program transfers approximately $30M–$45M of value outside the taxable estate' / RP.10: 'the personal estate program produces roughly $20M-$30M+ of cumulative federal estate-tax savings across the program (annual exclusion gifting ~$1.2M-$2.6M, children's-trust architecture ~$4M-$8M, SLAT ~$10.8M, QPRT ~$840K, ILIT-owned survivorship UL ~$3.6M)'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC3-001",
+        "severity": "warning",
+        "category": "LC3_strategic_coherence",
+        "section_ids": [
+          "RB.3",
+          "RB.6"
+        ],
+        "description": "RB.3's 3C §1202 analysis recommends evaluating C-Corp conversion ('Variation B (convert mid-stream — most realistic)'), but RB.6's 6B profits-interest bullet says profits-interest grants 'require restructuring HIS away from S-Corp taxation first, or routing the grants through a separate LLC layer.' If the §1202 path is C-Corp conversion, profits interests become unavailable on the converted entity by definition. The two strategies coexist as 'evaluate' items but their interaction is not flagged — a buyer/reader may not see that adopting Variation B forecloses profits-interest grants on Holdco.",
+        "evidence": "RB.3: 'Variation A (C-Corp from start — too late), B (convert mid-stream — most realistic), or C (multiplication via gifting).' / RB.6: 'Profits-interest grants would be tax-efficient under Rev. Proc. 93-27 BUT require restructuring HIS away from S-Corp taxation first, or routing the grants through a separate LLC layer.'",
+        "suggested_action": "verify_with_advisor"
+      },
+      {
+        "finding_id": "LC5-001",
+        "severity": "warning",
+        "category": "LC5_narrative_weaving",
+        "section_ids": [
+          "RB.2",
+          "RB.5"
+        ],
+        "description": "RB.2 closer asserts 'the recovered yield to fund a meaningful share of the buy/sell and key-person life premium recommended in Section 5,' and RB.5 closer reciprocally states 'The buy/sell premium and key-person premium are partially funded by the recovered yield from Section 2's cash restructure.' But RB.2 explicitly states the actual idle balance is unknown ('We do not have the current balance disclosed in our discovery file') and the recommendations include sizing as the first action. The narrative connection is asserted as fact, but the underlying yield number isn't quantified in either section — the connection is rhetorical, not numerical.",
+        "evidence": "RB.2: 'We do not have the current balance disclosed in our discovery file...' yet closer: 'We expect the recovered yield to fund a meaningful share of the buy/sell and key-person life premium recommended in Section 5.' / RB.5: 'The buy/sell premium and key-person premium are partially funded by the recovered yield from Section 2's cash restructure.'",
+        "suggested_action": "hand_edit"
+      },
+      {
+        "finding_id": "LC2-004",
+        "severity": "info",
+        "category": "LC2_numerical_contradictions",
+        "section_ids": [
+          "RP.12",
+          "RB.4"
+        ],
+        "description": "RP.12 states 'midpoint $75K contribution producing about $28,000/year' for the DAF, but the bullet first describes '$50K-$100K of appreciated taxable-account securities' as the funding range. The $28K savings figure aligns with Stage 3a's $75K assumption, but the prose first cites $50K–$100K as the contribution and then references a midpoint $75K — minor but worth confirming the funding figure is consistent with the savings figure presented.",
+        "evidence": "'fund in the current tax year with $50K-$100K of appreciated taxable-account securities... the midpoint $75K contribution producing about $28,000/year'",
+        "suggested_action": "informational_only"
+      },
+      {
+        "finding_id": "LC4-001",
+        "severity": "info",
+        "category": "LC4_findings_alignment",
+        "section_ids": [
+          "FO",
+          "RB.6"
+        ],
+        "description": "Findings & Observations Tax bullet flags 'Underpayment exposure: ...Approximately $40K of avoidable §6654 penalty' which is addressed in RB.3 (REC-TAX-010). Findings & Observations Investment bullet on Catherine's $340K Rollover IRA blocking backdoor Roth is addressed in RB.6 (REC-RET-005). All other Findings opportunities trace cleanly to recommendations. No orphans detected — informational confirmation only.",
+        "evidence": "FO Tax: 'Underpayment exposure... Approximately $40K of avoidable §6654 penalty.' addressed in RB.3 3A REC-TAX-010 bullet.",
+        "suggested_action": "informational_only"
+      }
+    ],
+    "deterministic_checks": {
+      "DC1_unresolved_cross_refs": [],
+      "DC2_roadmap_orphans": [],
+      "DC3_top5_mismatch": null,
+      "DC4_missing_decisions": [],
+      "DC5_unused_glossary": [],
+      "DC6_missing_sections": [],
+      "DC7_archetype_violations": [],
+      "DC8_unused_numbers": [
+        {
+          "rec_id": "REC-INV-009",
+          "expected_value": "$290"
+        }
+      ],
+      "DC9_compliance_issues": [],
+      "DC10_lifecycle_violations": []
+    },
+    "llm_assessment": {
+      "voice_consistency_score": 88,
+      "contradiction_count": 4,
+      "llm_overall_assessment": "review_recommended"
+    },
+    "overall_assessment": "review_recommended",
+    "_flags": {
+      "assessment_disagreement": false,
+      "llm_skipped": false,
+      "llm_skipped_due_to_context_overflow": false,
+      "unresolved_findings_count": 2
+    },
+    "_metadata": {
+      "stage_version": "5-1.0.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 103717,
+      "output_token_count": 3293,
+      "cache_creation_input_tokens": 5532,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 50293,
+          "input_tokens": 103717,
+          "output_tokens": 3293
+        }
+      ],
+      "duration_ms": 50644,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T17:46:08.802Z",
+      "cost_cents": 191,
+      "source_stage4_result_hash": "465be3e88965bf2ccc10ef482ad93953351774c787cae992feef1fb0c1f3530b",
+      "source_quantified_recommendations_hash": "e17c5acb65420ff5ab1c39108ae7fea28a495ade22d78bc5b7f344147b4bf8b9",
+      "source_client_profile_hash": "d3c69f4a03be36c0486ed619f360a561c89f13ee03f0407c3829149e0249c9f4"
+    }
+  }
+}

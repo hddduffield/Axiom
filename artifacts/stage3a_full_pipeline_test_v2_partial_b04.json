@@ -1,0 +1,1328 @@
+{
+  "_partial_metadata": {
+    "batch_index": 4,
+    "rec_ids": [
+      "REC-RSK-008",
+      "REC-RSK-010",
+      "REC-RSK-012",
+      "REC-RSK-017",
+      "REC-RSK-018",
+      "REC-SUC-002",
+      "REC-SUC-007",
+      "REC-SUC-008"
+    ],
+    "resolved_at": "2026-05-03T01:37:58.427Z"
+  },
+  "result": {
+    "batch_index": 4,
+    "total_batches": 11,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-RSK-008",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-008_personal_umbrella.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Personal Risk",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              35000000,
+              50000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Recommended umbrella coverage face amount range; sized to the high end of NW including business equity ($33-46M household NW).",
+            "is_approximate": true
+          },
+          "formula_id": "umbrella_target_face_amount_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-008_personal_umbrella.md",
+          "computation_inputs": {
+            "current_umbrella_usd": 2000000,
+            "household_net_worth_low_usd": 33000000,
+            "household_net_worth_high_usd": 46000000,
+            "target_floor_method": "max(net_worth, $5M) with cushion for income earnings power",
+            "estimated_annual_premium_usd_range": [
+              8000,
+              25000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 35000000,
+          "midpoint_value": 42500000,
+          "high_value": 50000000,
+          "computation_method": "Range bracketing NW low/high with cushion; specialty carrier required above $10M layer."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-008-1",
+            "description": "Audit current primary policies (auto, homeowner) to confirm liability limits meet umbrella underlying requirements.",
+            "sub_steps": [
+              "Pull declarations pages",
+              "Confirm $300K-$500K minimum liability on auto/home"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-008",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-008-2",
+            "description": "Quote umbrella coverage at $25M, $35M, and $50M tiers including specialty carriers (Chubb, AIG, Pure) for layers above $10M.",
+            "sub_steps": [
+              "Get standard market quotes to $10M",
+              "Engage specialty carrier for excess layer"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-008",
+            "source_phase_or_step": "Implementation Step 2-3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-008-3",
+            "description": "Confirm policy includes UM/UIM coverage where appropriate and bind selected umbrella tier.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-008",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-008-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-008-4",
+            "description": "Conduct annual umbrella coverage review against net worth growth, especially post-transaction.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-008",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-008-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual umbrella review: confirm {{description_short}} still adequate vs. current net worth"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "NW estimated $33-46M from FR (business equity $28.2-42.2M + personal assets ~$5M net of mortgage, less $4M PG contingent). Premium range estimated from rec file worked example; final premium quote-driven."
+      },
+      {
+        "recommendation_id": "REC-RSK-010",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-010_auto_home_liability_audit.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Personal Risk",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {
+            "current_auto_liability_per_person_usd": 250000,
+            "current_auto_liability_per_accident_usd": 250000,
+            "target_auto_liability_per_person_usd": 500000,
+            "target_auto_liability_per_accident_usd": 500000,
+            "target_home_liability_usd": 1000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Audit and raise primary auto liability to at least $500K/$500K and home liability to $1M to satisfy umbrella underlying requirements; cost is modest and rec is qualitative-gating for the umbrella increase.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-010-1",
+            "description": "Pull declarations pages for all primary P&C policies (auto, homeowner, vacation home, watercraft).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-010",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-010-2",
+            "description": "Audit limits against underwriting and umbrella underlying requirements; identify coverage gaps.",
+            "sub_steps": [
+              "Auto BI/PD limits",
+              "Home liability/dwelling/replacement cost",
+              "UM/UIM levels",
+              "Blue Ridge vacation home coverage"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-010",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RSK-010-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-010-3",
+            "description": "Raise auto liability to $500K/$500K and home liability to $1M; adjust UM/UIM to match.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-010",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RSK-010-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Gating prerequisite for REC-RSK-008 umbrella increase. Currently with Allstate (mass-market); HNW carrier switch may be appropriate."
+      },
+      {
+        "recommendation_id": "REC-RSK-012",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-012_hybrid_ltc_life.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Long-Term Care",
+        "co_triggered_with": [
+          "REC-EST-004"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "hybrid_ltc_benefit_pool_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-012_hybrid_ltc.md",
+          "computation_inputs": {
+            "marcus_age": 52,
+            "catherine_age": 49,
+            "marcus_health": "preferred",
+            "catherine_health": "preferred",
+            "expected_premium_structure_options": [
+              "single_pay",
+              "10_pay"
+            ],
+            "rec_file_worked_example_age_55_single_pay_100k_db_range_usd": [
+              200000,
+              300000
+            ],
+            "rec_file_worked_example_ltc_pool_range_usd": [
+              400000,
+              700000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "For a $100K-$250K single-pay (or 10-pay equivalent) on each insured, expect roughly $200K-$750K of death benefit and $400K-$1.5M of LTC benefit pool depending on carrier and structure; client decision pending on premium budget and pay structure.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "premium_budget_usd",
+              "blocked_reason": "Client has not selected premium amount or pay structure (single-pay vs 10-pay vs lifetime).",
+              "source": "Client",
+              "would_unblock_when": "Client decides budget allocation to LTC funding"
+            },
+            {
+              "input_name": "carrier_underwriting_offer",
+              "blocked_reason": "Both lives must complete life + LTC underwriting; final benefit/premium is offer-dependent.",
+              "source": "Insurance Broker",
+              "would_unblock_when": "Underwriting offers received from at least 2 carriers"
+            },
+            {
+              "input_name": "product_structure_choice",
+              "blocked_reason": "Pool-separate-from-DB vs DB-acceleration product choice not yet made.",
+              "source": "PSA",
+              "would_unblock_when": "Coverage comparison completed"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-012-1",
+            "description": "Compare standalone LTC vs hybrid LTC life by total cost over time for both Marcus and Catherine.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-012",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-012-2",
+            "description": "Decide premium structure (single-pay vs 10-pay) and budget for hybrid LTC funding.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-012",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-012-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-012-3",
+            "description": "Complete life and LTC underwriting for both insureds with multiple carriers.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-012",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-012-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-012-4",
+            "description": "Issue policies and coordinate with overall life insurance / ILIT plan; verify beneficiary designations.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-012",
+            "source_phase_or_step": "Implementation Steps 4-5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-012-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual policy statement review for {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Coordinated with REC-EST-004 (ILIT) for ownership structuring. Both spouses excellent health / preferred-rate insurable. Eleanor's anticipated LTC need is separate context driving family awareness."
+      },
+      {
+        "recommendation_id": "REC-RSK-017",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-017_cyber_liability.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Business Risk & Continuity",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              3000000,
+              5000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Recommended cyber liability face amount range above current $1M, scaled to hyperscale data-center customer mix and PII handling for 87 FTE.",
+            "is_approximate": true
+          },
+          "formula_id": "cyber_target_limit_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-017_cyber_liability.md",
+          "computation_inputs": {
+            "current_cyber_limit_usd": 1000000,
+            "fte_count": 87,
+            "customer_concentration_top1_pct": 22,
+            "customer_mix": "data center ~55%, healthcare ~28%, advanced manufacturing ~17%",
+            "typical_breach_response_cost_usd_range": [
+              300000,
+              500000
+            ],
+            "estimated_annual_premium_usd_range": [
+              10000,
+              25000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 3000000,
+          "midpoint_value": 4000000,
+          "high_value": 5000000,
+          "computation_method": "Range scaled to hyperscale/healthcare customer exposure; final limit depends on data inventory."
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-017-1",
+            "description": "Inventory data exposure: customer PII, employee PII, financial records, IP, and hyperscale customer contractual cyber requirements.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-017",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-017-2",
+            "description": "Quote cyber coverage at $3M-$5M limits and verify ransomware, social engineering, business interruption inclusions.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-017",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-017-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-017-3",
+            "description": "Coordinate with HIS IT for incident response plan documentation aligned with new policy.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-017",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-017-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-017-4",
+            "description": "Bind upgraded cyber policy and conduct annual renewal review.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-017",
+            "source_phase_or_step": "Implementation Step 5",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-RSK-017-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual cyber policy renewal review with {{partner_type}} for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Hyperscale data-center customer (22% concentration) likely has cyber/InfoSec contractual minimums that may set the floor higher than $3M."
+      },
+      {
+        "recommendation_id": "REC-RSK-018",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-018_directors_officers.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Personal Risk",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {
+            "catherine_board_count": 2,
+            "catherine_board_descriptor": "2 nonprofit boards (one is children's hospital)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Verify entity D&O adequacy at Catherine's two nonprofit boards and add personal D&O endorsement (typically modest premium $1K-$3K/year through HNW carrier) to backstop entity coverage gaps.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-018-1",
+            "description": "Inventory Catherine's board service positions (2 nonprofit boards including children's hospital).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-018",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-018-2",
+            "description": "Request entity D&O policy summaries from each board's corporate secretary; assess limits and exclusions.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-018",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-018-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-018-3",
+            "description": "Add personal D&O endorsement through HNW carrier (Chubb/AIG/Pure) for any identified coverage gaps.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-018",
+            "source_phase_or_step": "Implementation Steps 4-5",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-RSK-018-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Premium estimate is heuristic — actual cost driven by HNW carrier underwriting and entity coverage findings."
+      },
+      {
+        "recommendation_id": "REC-SUC-002",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-002_stay_bonus_pool.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "Retention",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              400000,
+              1200000
+            ],
+            "unit": "USD",
+            "narrative_context": "Stay bonus pool sized at 1-3% of preliminary transaction value range ($32M-$48M enterprise; using $40M midpoint × 1-3% = $400K-$1.2M).",
+            "is_approximate": true
+          },
+          "formula_id": "stay_bonus_pool_size_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-002_stay_bonus_pool.md",
+          "computation_inputs": {
+            "preliminary_transaction_value_low_usd": 32000000,
+            "preliminary_transaction_value_high_usd": 48000000,
+            "preliminary_transaction_value_midpoint_usd": 40000000,
+            "pool_pct_low": 0.01,
+            "pool_pct_high": 0.03,
+            "vesting_structure": "50% at close / 50% at 12-month anniversary",
+            "candidate_recipients": [
+              "Derek Chen (COO, 12% equity)",
+              "Controller",
+              "Lead estimators / project managers"
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 400000,
+          "midpoint_value": 800000,
+          "high_value": 1200000,
+          "computation_method": "1-3% of preliminary transaction midpoint $40M."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-002-1",
+            "description": "Identify key employees critical to transaction (Derek, controller, lead estimators/PMs); finalize recipient list.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-2",
+            "description": "Define stay bonus pool size (target 1-3% of expected transaction value) and per-recipient allocations.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-002-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-3",
+            "description": "Draft individual stay bonus agreements (closing trigger, vesting, separation provisions, non-compete coordination).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Implementation Step 3",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on stay bonus agreement drafting progress for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-002-4",
+            "description": "Communicate stay bonuses to selected key employees on banker-recommended timing (typically post-LOI).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Implementation Step 4",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-5",
+            "description": "Administer payouts (closing + 12-month anniversary) and W-2 reporting via Paychex.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Implementation Steps 5-6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Confirm with {{partner_type}} on stay bonus payout schedule and W-2 reporting"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Coordinated with REC-SUC-008 (Derek economics formalization). Per rec file Holloway-section reference, project-management team often sized at $50K each — final allocations driven by individual criticality."
+      },
+      {
+        "recommendation_id": "REC-SUC-007",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-007_profits_interest.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Succession & Continuity",
+        "subsection_within_section": "Executive Equity Path",
+        "co_triggered_with": [
+          "REC-ENT-002"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "profits_interest_ltcg_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-007_profits_interest_plan.md",
+          "computation_inputs": {
+            "entity_type_at_grant": "LLC taxed as S-Corp (NOT eligible — must convert/structure)",
+            "_entity_type_blocker": "HIS is currently S-Corp-elected per FR; profits interest only works in partnership-taxed entity. Requires REC-ENT-002 (revoke S election OR holdco/partnership layer) as prerequisite.",
+            "preliminary_transaction_value_midpoint_usd": 40000000,
+            "candidate_grant_pct_range": [
+              0.01,
+              0.05
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Profits interest grants would be tax-efficient under Rev. Proc. 93-27 BUT require restructuring HIS away from S-Corp taxation first; computation gated on REC-ENT-002 outcome and final grant percentages.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "partnership_taxed_entity",
+              "blocked_reason": "HIS is S-Corp; profits interest mechanism unavailable until entity is partnership-taxed (or grant moves to a separate LLC layer).",
+              "source": "REC-ENT-002",
+              "would_unblock_when": "Entity restructure decision finalized"
+            },
+            {
+              "input_name": "candidate_recipients_and_grant_pct",
+              "blocked_reason": "Marcus has not selected recipients beyond Derek nor sized grants.",
+              "source": "Client",
+              "would_unblock_when": "Recipient list and target percentages decided"
+            },
+            {
+              "input_name": "transaction_value_at_grant",
+              "blocked_reason": "Grant valuation needs current FMV; no formal valuation yet (Q-of-E pending).",
+              "source": "Valuation Provider",
+              "would_unblock_when": "Formal valuation completed"
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "6-12 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-007-1",
+            "description": "Verify entity classification and confirm path to partnership taxation (coordinate with REC-ENT-002).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-007",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-007-2",
+            "description": "Determine target recipients, grant percentages, and class of profits interest (vested vs time-vested vs performance).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-007",
+            "source_phase_or_step": "Implementation Step 2",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-007-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-007-3",
+            "description": "Amend operating agreement to add profits interest class and execute award agreements with §83(b) elections where applicable.",
+            "sub_steps": [
+              "File §83(b) within 30 days of grant",
+              "Confirm hypothetical liquidation value = $0 at grant"
+            ],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-007",
+            "source_phase_or_step": "Implementation Steps 3-4",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SUC-007-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on profits interest documentation for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-007-4",
+            "description": "Establish K-1 issuance protocol and vesting tracking with CPA.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-007",
+            "source_phase_or_step": "Implementation Steps 5-6",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SUC-007-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual K-1 issuance and vesting tracking review with {{partner_type}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Critical entity-type blocker: HIS is S-Corp; profits interest requires partnership taxation. This rec is gated on REC-ENT-002 outcome; if S-election retained, alternative is phantom equity / SAR (different rec)."
+      },
+      {
+        "recommendation_id": "REC-SUC-008",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-008_internal_equity_buy_in.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 0,
+        "plan_section": "Recommendations — Succession & Continuity",
+        "subsection_within_section": "Equity Path",
+        "co_triggered_with": [
+          "REC-RSK-001",
+          "REC-ENT-004"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-008_internal_equity_buy_in_path.md",
+          "computation_inputs": {
+            "operator_name": "Derek Chen",
+            "current_operator_ownership_pct": 12,
+            "operator_equity_basis": "vested 2022 via 2014 profits-interest plan, 8-year vest",
+            "candidate_target_ownership_pct_range": [
+              20,
+              35
+            ],
+            "preliminary_transaction_value_midpoint_usd": 40000000,
+            "valuation_method_options": [
+              "formula-based",
+              "annual qualified appraisal"
+            ],
+            "candidate_payment_mechanisms": [
+              "seller-financed at AFR",
+              "vesting earn-in",
+              "bonus-applied-to-purchase"
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Formalize Derek's economic position and structure a defined equity-path agreement; specific dollar impact depends on chosen mechanism, target ownership %, and whether the path is consummated pre-transaction or contemplates a post-sale alternative outcome.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-008-1",
+            "description": "Define target ownership and time horizon for Derek (e.g., 20-35% over the pre-transaction window or as alternative-to-sale path).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-008",
+            "source_phase_or_step": "Implementation Step 1",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-008-2",
+            "description": "Determine valuation methodology and acquisition mechanism (seller financing at AFR, vesting earn-in, or profits-interest conversion).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-008",
+            "source_phase_or_step": "Implementation Steps 2-3",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-SUC-008-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-008-3",
+            "description": "Update operating agreement and coordinate buy/sell documentation between Marcus and Derek.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-008",
+            "source_phase_or_step": "Implementation Steps 4-5",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-SUC-008-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on Derek equity-path agreement drafting for {{rec_id}}"
+            }
+          },
+          {
+            "action_item_id": "AI-SUC-008-4",
+            "description": "Establish annual valuation update cadence and periodic equity transfer event documentation.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-008",
+            "source_phase_or_step": "Implementation Step 6",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SUC-008-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual valuation update and equity transfer documentation for {{rec_id}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Coordinated with REC-RSK-001 (buy/sell) and REC-ENT-004 (operating agreement). 'Take care of Derek' is a stated values-position goal (#2). Path could be pre-transaction grant + closing economics OR an alternative-to-sale path."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [
+        {
+          "rec_id": "REC-SUC-002",
+          "source_metadata_text": "Plan section placement: 'Pre-Transaction Sequence' → 'Retention'",
+          "candidate_sections": [
+            "Pre-Transaction Sequence",
+            "Recommendations — Succession & Continuity"
+          ]
+        }
+      ],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-SUC-002-4",
+          "inferred_bucket": "12-24 months",
+          "source_signal": "Rec file: typically 12+ months pre-transaction; communication post-LOI"
+        },
+        {
+          "action_item_id": "AI-SUC-007-3",
+          "inferred_bucket": "4-6 months",
+          "source_signal": "Operating agreement amendment + §83(b) within 30 days of grant; multi-step legal drafting"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-RSK-010",
+          "phrasing_used": "Audit and raise primary auto liability to at least $500K/$500K and home liability to $1M to satisfy umbrella underlying requirements",
+          "reason": "Rec file has no QUANTIFIED IMPACT FRAMEWORK with computable formula; gating prerequisite for umbrella increase"
+        },
+        {
+          "rec_id": "REC-RSK-018",
+          "phrasing_used": "Verify entity D&O adequacy at Catherine's two nonprofit boards and add personal D&O endorsement",
+          "reason": "Rec file QUANTIFIED IMPACT FRAMEWORK is qualitative bullets only; no premium formula"
+        },
+        {
+          "rec_id": "REC-SUC-008",
+          "phrasing_used": "Formalize Derek's economic position and structure a defined equity-path agreement",
+          "reason": "Rec file QUANTIFIED IMPACT FRAMEWORK is component list without a specific formula; impact depends on chosen mechanism"
+        }
+      ],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-RSK-012",
+          "blocked_inputs": [
+            "premium_budget_usd",
+            "carrier_underwriting_offer",
+            "product_structure_choice"
+          ],
+          "awaiting": [
+            "Client decision on premium budget",
+            "Insurance Broker underwriting offers",
+            "PSA product comparison"
+          ]
+        },
+        {
+          "rec_id": "REC-SUC-007",
+          "blocked_inputs": [
+            "partnership_taxed_entity",
+            "candidate_recipients_and_grant_pct",
+            "transaction_value_at_grant"
+          ],
+          "awaiting": [
+            "REC-ENT-002 entity restructure decision",
+            "Client recipient/grant decision",
+            "Valuation Provider formal valuation"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 46959,
+      "output_token_count": 17176,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 175748,
+          "input_tokens": 46959,
+          "output_tokens": 17176
+        }
+      ],
+      "duration_ms": 175770,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:37:58.427Z",
+      "batch_index": 4,
+      "total_batches": 11
+    }
+  }
+}

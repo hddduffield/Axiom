@@ -1,0 +1,2433 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-03T01:26:54.978Z",
+    "input_batch_rec_ids": [
+      "REC-ENT-001",
+      "REC-TAX-001",
+      "REC-RSK-001",
+      "REC-SUC-002",
+      "REC-INV-001",
+      "REC-RET-001",
+      "REC-FAM-001",
+      "REC-CHR-001",
+      "REC-SPC-001",
+      "REC-CHR-002",
+      "REC-ENT-002",
+      "REC-FAM-002"
+    ],
+    "input_batch_categories": [
+      "Charitable",
+      "Entity Structure",
+      "Family",
+      "Investment",
+      "Retirement",
+      "Risk & Insurance",
+      "Specialty",
+      "Succession & Continuity",
+      "Tax"
+    ],
+    "wall_clock_ms": 296146,
+    "script": "scripts/runStage3a1CeilingValidation.ts"
+  },
+  "result": {
+    "batch_index": 0,
+    "total_batches": 1,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-ENT-001",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-001_real_estate_separation.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 1,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Entity & Real Estate Structure → Foundational Move",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              15000,
+              30000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct one-time professional fees (attorney, recording, lender consent) for entity formation and title transfer; downstream year-one tax savings (~$500K paired with cost-seg + §469 grouping) quantified in dependent recs.",
+            "is_approximate": true
+          },
+          "formula_id": "real_estate_separation_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-001_real_estate_separation.md",
+          "computation_inputs": {
+            "property_value_usd": 4200000,
+            "property_descriptor": "Kennesaw HQ / fabrication facility (38,000 sf)",
+            "cost_low_usd": 15000,
+            "cost_high_usd": 30000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 15000,
+          "midpoint_value": 22500,
+          "high_value": 30000,
+          "computation_method": "Range from rec file 'Direct cost' line: $15K-$30K for attorney, transfer documents, recording, lender consent."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "pre_transaction_entity_restructure",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-001-1",
+            "description": "Form Holloway Properties, LLC in Georgia (same state as the real estate).",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 1 — Form new LLC",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-2",
+            "description": "Draft operating agreement for Holloway Properties LLC mirroring HIS ownership proportions.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 2 — Operating agreement",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-ENT-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-3",
+            "description": "Obtain Truist lender consent for transfer of Kennesaw facility to common-ownership entity.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 3 — Lender consent",
+            "owner": "Banker",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-ENT-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-4",
+            "description": "Execute and record deed transferring Kennesaw HQ from HIS to Holloway Properties LLC with Cobb County.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 4 — Title transfer",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-2",
+              "AI-ENT-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-5",
+            "description": "Execute triple-net market-rate lease between Holloway Properties LLC (landlord) and HIS (tenant) supported by third-party broker FMV opinion.",
+            "sub_steps": [
+              "Engage commercial real estate broker for Cobb County industrial FMV rent comps",
+              "Document FMV rent analysis",
+              "Execute lease"
+            ],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 5 — Lease agreement",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-6",
+            "description": "CPA prepares §721/§351 tax memo documenting tax-deferred contribution treatment and basis carryover.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Step 7 — Tax structuring",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-001-7",
+            "description": "Update P&C insurance to reflect Holloway Properties LLC ownership of Kennesaw facility.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-ENT-001",
+            "source_phase_or_step": "Documentation — insurance update",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Commercial P&C",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Real estate separation precedes F-reorg (REC-ENT-002) per must_come_before. Foundational pre-transaction move; year-one tax benefit realized via downstream cost-seg + §469 grouping recs."
+      },
+      {
+        "recommendation_id": "REC-TAX-001",
+        "source_file_path": "kb/v1_2/01_recommendations/tax/REC-TAX-001_georgia_ptet_election.md",
+        "category": "Tax",
+        "status": "Active",
+        "position_in_sequence": 2,
+        "plan_section": "Recommendations — Business Tax",
+        "subsection_within_section": "Tax Strategy → 3A. Implement This Year",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 73112,
+            "unit": "USD",
+            "narrative_context": "Annual federal tax savings from GA PTET election at Marcus's projected K-1 level, post-OBBBA SALT cap with phase-out at $605K+ AGI.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "ga_ptet_federal_savings_post_obbba_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/tax/REC-TAX-001_ga_ptet_election.md",
+          "computation_inputs": {
+            "k1_income_usd": 3400000,
+            "k1_modeled_at_usd": 4000000,
+            "ga_ptet_rate_percent": 5.19,
+            "state_tax_at_entity_usd": 207600,
+            "salt_cap_personally_available_usd": 10000,
+            "additional_federal_deduction_usd": 197600,
+            "federal_marginal_rate_percent": 37,
+            "agi_usd": 3600000,
+            "filing_status": "MFJ"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 65000,
+          "midpoint_value": 73112,
+          "high_value": 85000,
+          "computation_method": "Low: K-1 at $3.4M actual × 5.19% × 37% net of $10K SALT recovery. Mid: K-1 modeled at $4M (rec file worked example). High: with state additional and assuming 37% bracket fully applies."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-TAX-001-1",
+            "description": "CPA prepares with-vs-without PTET projection model for TY2026 confirming benefit at current K-1 income.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 2 — Model the election",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-2",
+            "description": "Confirm HIS has cash flow capacity to make PTET estimated payments at entity level.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 3 — Confirm cash flow",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-TAX-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-3",
+            "description": "File quarterly Form 602-ES PTET estimated payments for HIS via Georgia Tax Center.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 4 — Estimated payments",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-TAX-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Confirm with {{partner_type}} that quarterly PTET estimated payment (Form 602-ES) for HIS has been filed."
+            }
+          },
+          {
+            "action_item_id": "AI-TAX-001-4",
+            "description": "File Form 600S with PTET election checkbox on Schedule 1 at TY2026 year-end.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 5 — File the election",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-5",
+            "description": "Verify owner credit on Marcus's Form 500 personal GA return reflects entity-level PTET payment.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 6 — Verify owner credits",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-TAX-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-TAX-001-6",
+            "description": "Schedule annual review to remake PTET election each year and re-model benefit with current K-1.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-TAX-001",
+            "source_phase_or_step": "Step 7 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that GA PTET election has been remade for the new tax year."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Computed at $73K/year using post-OBBBA SALT cap with phase-out (Marcus AGI $3.6M → SALT cap floor $10K applies). Rec file's worked example explicitly notes Holloway plan cited $148K under pre-OBBBA $10K cap; we use post-OBBBA framework consistent with current law."
+      },
+      {
+        "recommendation_id": "REC-RSK-001",
+        "source_file_path": "kb/v1_2/01_recommendations/risk_insurance/REC-RSK-001_cross_purchase_buy_sell.md",
+        "category": "Risk & Insurance",
+        "status": "Active",
+        "position_in_sequence": 3,
+        "plan_section": "Recommendations — Risk & Insurance",
+        "subsection_within_section": "Buy/Sell Funding",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              8000,
+              30000
+            ],
+            "unit": "USD",
+            "narrative_context": "Aggregate annual term-life premium estimate for cross-purchase policies (20-year term, convertible, both insureds at preferred rates); Marcus owns ~$5M policy on Derek and Derek owns starting-layer $5M policy on Marcus with bonus-and-loan funding for the asymmetric burden.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "cross_purchase_premium_estimate_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/risk/REC-RSK-001_cross_purchase_buy_sell.md",
+          "computation_inputs": {
+            "primary_owner_pct": 88,
+            "co_owner_pct": 12,
+            "business_value_midpoint_usd": 42000000,
+            "primary_policy_face_usd": 5000000,
+            "co_owner_policy_face_starting_layer_usd": 5000000,
+            "marcus_age": 52,
+            "derek_health": "insurable_assumed",
+            "asymmetric_premium_burden": true,
+            "premium_per_5M_term_estimate_usd": [
+              8000,
+              15000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 8000,
+          "midpoint_value": 19000,
+          "high_value": 30000,
+          "computation_method": "Per rec file: 20-year term $5M face on age 50-52 preferred = $8K-$15K/yr per policy. Aggregate of two policies ranges $16K-$30K; low end assumes Derek much younger/healthier."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RSK-001-1",
+            "description": "M&A counsel drafts cross-purchase buy/sell agreement with trigger events, valuation formula, and payment terms.",
+            "sub_steps": [
+              "Specify triggers: death, disability, retirement, voluntary departure, divorce, bankruptcy",
+              "Valuation formula: trailing 3-yr EBITDA × negotiated multiple with floor/ceiling",
+              "Annual update mechanism"
+            ],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 1 — Draft buy/sell agreement",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on buy/sell agreement drafting progress."
+            }
+          },
+          {
+            "action_item_id": "AI-RSK-001-2",
+            "description": "Marcus and Derek complete underwriting (medical exam, financial questionnaire) for cross-purchase term policies.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 2 — Underwriting",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-3",
+            "description": "Marcus applies for $5M 20-year convertible term policy on Derek's life (Marcus as policyowner and beneficiary).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 3 — Policy applications",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-4",
+            "description": "Derek applies for $5M starting-layer 20-year convertible term policy on Marcus's life (Derek as policyowner and beneficiary).",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 3 — Policy applications",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-5",
+            "description": "Establish bonus-and-loan structure at HIS to fund Derek's premium on the larger policy on Marcus, documented at AFR.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 4 — Premium funding",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-6",
+            "description": "Update HIS operating agreement to mirror buy/sell terms (transfer restrictions, valuation mechanism).",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 5 — Coordinate with operating agreement",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-RSK-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Business Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RSK-001-7",
+            "description": "Schedule annual review of valuation formula and coverage adequacy as business value grows.",
+            "sub_steps": [],
+            "category": "Risk & Insurance",
+            "source_recommendation_id": "REC-RSK-001",
+            "source_phase_or_step": "Step 6 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Review buy/sell valuation formula and coverage adequacy for {{rec_id}}."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Cross-purchase (not redemption) chosen per rec file default for 2-owner; preserves basis step-up. Asymmetric ownership (88/12) triggers bonus-and-loan funding pattern. Residual estate-liquidity coverage on Marcus addressed in REC-EST-004/REC-RSK-004 (out-of-batch)."
+      },
+      {
+        "recommendation_id": "REC-SUC-002",
+        "source_file_path": "kb/v1_2/01_recommendations/succession_retention/REC-SUC-002_stay_bonus_pool.md",
+        "category": "Succession & Continuity",
+        "status": "Active",
+        "position_in_sequence": 4,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "Retention",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              400000,
+              1200000
+            ],
+            "unit": "USD",
+            "narrative_context": "Stay bonus pool sized at 1-3% of expected $40M transaction value midpoint, allocated across Derek, controller, and lead estimators (~4-5 individuals). One-time pool cost; preserves multi-million-dollar transaction value.",
+            "is_approximate": true
+          },
+          "formula_id": "stay_bonus_pool_size_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/succession/REC-SUC-002_stay_bonus_pool.md",
+          "computation_inputs": {
+            "expected_transaction_value_usd": 40000000,
+            "pool_pct_low": 0.01,
+            "pool_pct_high": 0.03,
+            "recipient_count_estimate": 4,
+            "structure": "50% at close, 50% at 12-month post-close anniversary"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 400000,
+          "midpoint_value": 800000,
+          "high_value": 1200000,
+          "computation_method": "Pool sized at 1-3% of $40M expected transaction value midpoint per rec file convention."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "pre_transaction_retention",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SUC-002-1",
+            "description": "Identify key employees critical to transaction (Derek, controller, lead estimators) and confirm with Marcus.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Step 1 — Identify key employees",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-2",
+            "description": "Define stay bonus pool size (1-3% of expected transaction value) and per-recipient allocations.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Step 2 — Define pool size",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-SUC-002-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-3",
+            "description": "Draft individual stay bonus agreements with closing trigger, 12-month post-close service requirement, and separation provisions.",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Step 3 — Draft agreements",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-4",
+            "description": "Communicate stay bonus terms confidentially to selected key employees (timed to LOI per banker recommendation).",
+            "sub_steps": [],
+            "category": "Succession & Continuity",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Step 4 — Communication",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SUC-002-5",
+            "description": "CPA models stay bonus tax treatment for seller (deductible in transaction year) and recipients (W-2 income).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-SUC-002",
+            "source_phase_or_step": "Coordination — CPA tax modeling",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-SUC-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Timing tied to LOI signing per Holloway-style guidance. Recipient count estimated at 4 (Derek, controller, 2 lead estimators) per FR succession goals; refine at design time."
+      },
+      {
+        "recommendation_id": "REC-INV-001",
+        "source_file_path": "kb/v1_2/01_recommendations/investment/REC-INV-001_tiered_business_cash.md",
+        "category": "Investment",
+        "status": "Active",
+        "position_in_sequence": 5,
+        "plan_section": "Recommendations — Investment & Cash",
+        "subsection_within_section": "Cash Management",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "tiered_business_cash_yield_differential_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/investment/REC-INV-001_tiered_business_cash_management.md",
+          "computation_inputs": {
+            "yield_differential_assumption_bps": 400,
+            "current_yield_assumption_pct": 0.4,
+            "optimized_blend_yield_pct_estimate": 4
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Tiered business cash structure (operating / reserve / strategic) on idle HIS balances captures roughly 4% additional yield versus regional bank operating account; dollar benefit scales with idle cash balance, which is not separately disclosed in FR.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "his_idle_business_cash_balance_usd",
+              "blocked_reason": "FR provides personal balance sheet but not HIS entity-level cash balance; idle cash beyond working-capital cycle is the formula input.",
+              "source": "Client",
+              "would_unblock_when": "HIS controller provides current operating account balance, monthly OPS cycle data, and AP/AR pattern."
+            },
+            {
+              "input_name": "current_bank_yield_pct",
+              "blocked_reason": "Truist operating account current yield not stated in FR.",
+              "source": "Banker",
+              "would_unblock_when": "Truist relationship confirms current operating account yield."
+            },
+            {
+              "input_name": "monthly_opex_usd",
+              "blocked_reason": "Required to size operating layer (1-2 mo) and reserve layer (3-6 mo).",
+              "source": "CPA",
+              "would_unblock_when": "CPA shares trailing 12-month OPS expense run rate."
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "30-60 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-INV-001-1",
+            "description": "Conduct cash analysis: current HIS balance, monthly OPS cycle, AP/AR pattern.",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 1 — Cash analysis",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-2",
+            "description": "Determine layer sizes: operating (1-2 mo opex), working reserve (3-6 mo opex), strategic capital (excess).",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 2 — Layer sizing",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-INV-001-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-3",
+            "description": "Choose vehicles for each layer (Truist sweep MMF, brokerage MMF, Treasury Direct, CD ladder).",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 3 — Vehicle selection",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-4",
+            "description": "Open accounts, fund layers, configure sweeps with Truist treasury services.",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 4 — Account setup",
+            "owner": "Banker",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-INV-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-INV-001-5",
+            "description": "Establish monthly monitoring and rebalancing cadence as cash grows.",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-INV-001",
+            "source_phase_or_step": "Step 5 — Monitoring",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-INV-001-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Review HIS tiered cash layers and rebalance if needed."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "State B — formula exists and yield differential framework is clear, but FR does not disclose HIS entity-level idle cash balance or current Truist operating account yield."
+      },
+      {
+        "recommendation_id": "REC-RET-001",
+        "source_file_path": "kb/v1_2/01_recommendations/retirement/REC-RET-001_max_401k_deferrals.md",
+        "category": "Retirement",
+        "status": "Active",
+        "position_in_sequence": 6,
+        "plan_section": "Recommendations — Retirement & Benefits",
+        "subsection_within_section": null,
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 12025,
+            "unit": "USD",
+            "narrative_context": "Marcus's current-year federal tax savings on $32,500 max deferral (incl. age-50+ catch-up) at 37% bracket. Catherine not currently on payroll ($0 W-2) — her deferral capacity is blocked until REC-TAX-003 spousal payroll adopted.",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "401k_deferral_current_year_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/retirement/REC-RET-001_max_401k_deferrals.md",
+          "computation_inputs": {
+            "marcus_age": 52,
+            "base_deferral_2026_usd": 24500,
+            "catch_up_50plus_usd": 8000,
+            "marcus_total_deferral_usd": 32500,
+            "federal_marginal_rate_pct": 37,
+            "marcus_2025_fica_wages_usd": 480000,
+            "secure_2_roth_catchup_required": true,
+            "catherine_w2_usd": 0,
+            "catherine_eligible_now": false,
+            "plan_provider": "Empower"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 10400,
+          "midpoint_value": 12025,
+          "high_value": 12025,
+          "computation_method": "Low: $32,500 × 32% bracket. Mid/High: $32,500 × 37% bracket. Catherine's potential additional $32,500 deferral excluded pending REC-TAX-003 spousal payroll."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-RET-001-1",
+            "description": "Confirm with Empower current Marcus deferral amount and capacity to hit 2026 $32,500 cap.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Step 1 — Confirm limits",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-2",
+            "description": "Verify Empower plan supports Roth contributions (required for Marcus's 2026 catch-up under SECURE 2.0 since 2025 FICA wages > $150K).",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Step 2 — Roth catch-up readiness",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-3",
+            "description": "Adjust Marcus's deferral election with HIS payroll (Paychex) to hit $32,500 by year-end with catch-up coded as Roth.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Step 3 — Update deferral election",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-RET-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-RET-001-4",
+            "description": "Annual review of deferral cap and Roth catch-up status.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-RET-001",
+            "source_phase_or_step": "Step 5 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Review {{description_short}} for the new tax year."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Catherine has $0 W-2 currently; her 401(k) deferral capacity is conditional on adopting spousal payroll via REC-TAX-003 (cross-batch coordination). Roth catch-up is mandatory for Marcus in 2026 under SECURE 2.0 §603."
+      },
+      {
+        "recommendation_id": "REC-FAM-001",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-001_529_with_5yr_frontload.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 7,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": null,
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 380000,
+            "unit": "USD",
+            "narrative_context": "Year-1 5-year-front-load deployment for Sophie (age 12) and James (age 16): $190K each via gift-splitting. Olivia (age 19) excluded as already in college and presumed beyond optimal front-load horizon.",
+            "is_approximate": true
+          },
+          "formula_id": "529_5yr_frontload_deployment_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-001_529_funding.md",
+          "computation_inputs": {
+            "annual_exclusion_2026_usd": 19000,
+            "frontload_years": 5,
+            "per_donor_frontload_usd": 95000,
+            "couple_frontload_per_beneficiary_usd": 190000,
+            "beneficiary_count": 2,
+            "beneficiaries": [
+              "Sophie (age 12)",
+              "James (age 16)"
+            ],
+            "ga_state_deduction_per_beneficiary_mfj_usd": 8000,
+            "total_year1_deployment_usd": 380000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 190000,
+          "midpoint_value": 380000,
+          "high_value": 570000,
+          "computation_method": "Low: only Sophie front-loaded. Mid: Sophie + James (rec recommendation). High: include Olivia (less optimal but possible)."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-001-1",
+            "description": "Open Georgia Path2College 529 accounts for Sophie and James (parent-owned).",
+            "sub_steps": [],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 1 — Open accounts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-2",
+            "description": "Make $190,000 front-load contribution to each of Sophie's and James's 529 accounts (gift-split between Marcus and Catherine).",
+            "sub_steps": [],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 2 — Front-load contribution",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-FAM-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-3",
+            "description": "File Form 709 for Marcus and Catherine electing 5-year averaging on the 529 contributions.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 3 — Form 709 filing",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-FAM-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-4",
+            "description": "Select age-based investment portfolio for each 529 account.",
+            "sub_steps": [],
+            "category": "Investment",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 5 — Investment selection",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-FAM-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-001-5",
+            "description": "Annual review of 529 balances and exclusion availability (no additional gifts to same beneficiary in years 2-5 of front-load).",
+            "sub_steps": [],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-001",
+            "source_phase_or_step": "Step 6 — Annual review",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Review 529 balances and exclusion remaining for {{description_short}}."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Olivia (19, sophomore at UGA) excluded from front-load — already in college, optimal compounding window past. Sophie (12) and James (16) targeted per Stage-2 brief_rationale."
+      },
+      {
+        "recommendation_id": "REC-CHR-001",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-001_daf.md",
+        "category": "Charitable",
+        "status": "Active",
+        "position_in_sequence": 8,
+        "plan_section": "Recommendations — Charitable Planning",
+        "subsection_within_section": null,
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              50000,
+              100000
+            ],
+            "unit": "USD",
+            "narrative_context": "Annual DAF funding target of $50K-$100K through transaction window per rec file Holloway-style framing; pre-transaction year may absorb materially larger appreciated-stock contribution (modeled separately under REC-CHR-002).",
+            "is_approximate": true,
+            "is_annual": true
+          },
+          "formula_id": "daf_annual_funding_target_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-001_donor_advised_fund.md",
+          "computation_inputs": {
+            "target_low_usd": 50000,
+            "target_high_usd": 100000,
+            "federal_marginal_rate_pct": 37,
+            "agi_60pct_cash_limit_usd": 2160000,
+            "agi_30pct_appreciated_limit_usd": 1080000,
+            "sponsor_recommended": "Schwab Charitable (consistent with existing Schwab relationship)"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 18500,
+          "midpoint_value": 27750,
+          "high_value": 37000,
+          "computation_method": "Annual federal tax savings: $50K-$100K × 37% marginal rate = $18,500-$37,000."
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "charitable_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-001-1",
+            "description": "Select DAF sponsor (Schwab Charitable recommended given existing Schwab relationship).",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 1 — Choose sponsor",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-2",
+            "description": "Open DAF account; designate Marcus and Catherine as primary advisors and three children as successors.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 2 — Open account",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-CHR-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-3",
+            "description": "Fund initial DAF contribution from appreciated taxable brokerage holdings (preferred over cash for capital-gains efficiency).",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 3 — Funding",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-CHR-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-4",
+            "description": "CPA files Form 8283 for non-cash contributions over $500 with personal return.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Documentation — Form 8283",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-001-5",
+            "description": "Establish ongoing grant recommendation cadence (Marcus's North Cobb Tech trade scholarships; Catherine's children's hospital).",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-001",
+            "source_phase_or_step": "Step 5 — Grant recommendations",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-CHR-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Review DAF grant recommendations for {{description_short}}."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "DAF positioned as primary giving vehicle through transaction window; post-liquidity transition to family foundation is a separate downstream rec. Successor structure includes children to support Catherine's values-formation goal."
+      },
+      {
+        "recommendation_id": "REC-SPC-001",
+        "source_file_path": "kb/v1_2/01_recommendations/specialty/REC-SPC-001_multi_state_trust_situs.md",
+        "category": "Specialty",
+        "status": "Advanced",
+        "position_in_sequence": 9,
+        "plan_section": "Recommendations — Specialty",
+        "subsection_within_section": "Trust Situs",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": "trust_situs_state_tax_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/specialty/REC-SPC-001_multi_state_trust_situs.md",
+          "computation_inputs": {
+            "ga_trust_income_tax_rate_pct": 5.19,
+            "candidate_states_no_trust_income_tax": [
+              "South Dakota",
+              "Delaware",
+              "Nevada",
+              "Wyoming",
+              "Alaska"
+            ],
+            "estimated_long_duration_trust_funding_usd": [
+              10000000,
+              25000000
+            ],
+            "horizon_years_assumed": 50
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Siting long-duration dynasty / GST-exempt trusts in a no-state-income-tax jurisdiction (Delaware or South Dakota recommended; Georgia retained for grantor trusts) avoids GA's 5.19% trust-income tax over multi-decade horizons; over a 50-year horizon on $10-25M of dynasty funding the difference compounds to multi-million-dollar additional family wealth.",
+          "reason_no_formula": null,
+          "blocked_inputs": [
+            {
+              "input_name": "specific_long_duration_trust_funding_amount",
+              "blocked_reason": "Funding amounts depend on which downstream estate vehicles (REC-EST-005 dynasty, REC-EST-008 IDGT, REC-EST-012) are activated and at what level — those are out-of-batch coordinated recs.",
+              "source": "Estate Attorney",
+              "would_unblock_when": "Estate plan design is finalized with specific trust vehicles and funding amounts."
+            },
+            {
+              "input_name": "expected_trust_investment_yield_pct",
+              "blocked_reason": "Required to estimate annual taxable income inside trust.",
+              "source": "PSA",
+              "would_unblock_when": "PSA investment policy for the trust corpus is finalized."
+            }
+          ]
+        },
+        "scenario_range": null,
+        "timing_bucket": "4-6 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_planning_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-SPC-001-1",
+            "description": "Document situs analysis comparing GA vs DE/SD for the long-duration dynasty trust.",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 1 — Situs analysis",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-001-2",
+            "description": "Engage institutional trustee in chosen state (DE or SD) for long-duration trusts.",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 2 — Engage trustee",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SPC-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-SPC-001-3",
+            "description": "Coordinate trust documents with appropriate situs clauses (governing law, place of administration).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 3 — Document drafting",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-SPC-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on multi-state trust documentation progress."
+            }
+          },
+          {
+            "action_item_id": "AI-SPC-001-4",
+            "description": "Establish administration discipline to maintain situs (trustee acts in chosen state, no GA nexus).",
+            "sub_steps": [],
+            "category": "Specialty",
+            "source_recommendation_id": "REC-SPC-001",
+            "source_phase_or_step": "Step 4 — Administration",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-SPC-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that trust administration discipline maintains chosen situs."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "State B — formula well-defined but specific trust funding amounts depend on out-of-batch estate recs. Status set to Advanced per rec metadata."
+      },
+      {
+        "recommendation_id": "REC-CHR-002",
+        "source_file_path": "kb/v1_2/01_recommendations/charitable/REC-CHR-002_pre_transaction_charitable_gifting.md",
+        "category": "Charitable",
+        "status": "Active",
+        "position_in_sequence": 10,
+        "plan_section": "Pre-Transaction Sequence",
+        "subsection_within_section": "Charitable",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 894000,
+            "unit": "USD",
+            "narrative_context": "Combined federal income-tax deduction benefit + capital gains avoidance from gifting 5% of non-voting Holdco units (with 30% valuation discount) to DAF pre-LOI; charity ultimately receives ~$2.1M at full transaction value.",
+            "is_approximate": true
+          },
+          "formula_id": "pre_transaction_charitable_gift_savings_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/charitable/REC-CHR-002_pre_transaction_charitable_gifting.md",
+          "computation_inputs": {
+            "business_value_midpoint_usd": 42000000,
+            "gift_pct": 5,
+            "pre_discount_value_usd": 2100000,
+            "valuation_discount_pct": 30,
+            "discounted_gift_value_usd": 1470000,
+            "federal_marginal_rate_pct": 37,
+            "federal_deduction_benefit_usd": 543900,
+            "capital_gains_rate_pct": 23.8,
+            "capital_gains_avoided_usd": 349860,
+            "combined_federal_savings_usd": 893760,
+            "charity_proceeds_at_sale_usd": 2100000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 600000,
+          "midpoint_value": 894000,
+          "high_value": 1500000,
+          "computation_method": "Low: 3% gift × business low end ($32M) × discount × combined rate. Mid: rec file worked example at 5% × $42M midpoint. High: 7% gift × business high end ($48M) × discount × combined rate."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "charitable_pre_transaction",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-CHR-002-1",
+            "description": "Confirm timing: transaction is NOT past binding LOI (anticipatory assignment of income guard).",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 1 — Timing confirmation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-2",
+            "description": "Engage qualified, USPAP-compliant business valuation appraiser for FMV with appropriate non-voting/minority discounts.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 2 — Qualified appraisal",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on qualified appraisal for pre-transaction charitable gift."
+            }
+          },
+          {
+            "action_item_id": "AI-CHR-002-3",
+            "description": "Attorney prepares formal gift documentation transferring non-voting Holdco units to DAF.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 3 — Gift documentation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-4",
+            "description": "Transfer non-voting Holdco units to DAF and obtain sponsor acknowledgment.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 4 — Transfer",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-5",
+            "description": "CPA files Form 8283 with appraiser's report attached for the gift year.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 5 — Form 8283",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-CHR-002-6",
+            "description": "Coordinate with banker/M&A counsel that DAF appears as Holdco shareholder of record at closing.",
+            "sub_steps": [],
+            "category": "Charitable",
+            "source_recommendation_id": "REC-CHR-002",
+            "source_phase_or_step": "Step 6 — Transaction coordination",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-CHR-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Strict timing: must precede binding LOI per Palmer/Rauenhorst doctrine. Depends on F-reorg (REC-ENT-002) and recap (REC-ENT-003 — out of batch) to have non-voting Holdco units to gift."
+      },
+      {
+        "recommendation_id": "REC-ENT-002",
+        "source_file_path": "kb/v1_2/01_recommendations/entity_structure/REC-ENT-002_f_reorganization_to_holdco.md",
+        "category": "Entity Structure",
+        "status": "Active",
+        "position_in_sequence": 11,
+        "plan_section": "Recommendations — Entity Structure",
+        "subsection_within_section": "Pre-Transaction Restructuring",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              20000,
+              35000
+            ],
+            "unit": "USD",
+            "narrative_context": "One-time direct professional fee cost of the F-reorg itself (specialist M&A counsel + CPA tax memo + filings). Standalone benefit is structural option value (~$8M+ unlocked across downstream GRAT/IDGT, charitable, and stock-vs-asset deal bridge moves) — see worked example in rec file.",
+            "is_approximate": true
+          },
+          "formula_id": "f_reorg_direct_cost_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/entity/REC-ENT-002_f_reorganization_holdco.md",
+          "computation_inputs": {
+            "attorney_fees_low_usd": 15000,
+            "attorney_fees_high_usd": 25000,
+            "cpa_fees_low_usd": 5000,
+            "cpa_fees_high_usd": 10000,
+            "total_low_usd": 20000,
+            "total_high_usd": 35000,
+            "downstream_value_unlocked_estimate_usd": 8000000,
+            "business_value_midpoint_usd": 42000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 20000,
+          "midpoint_value": 27500,
+          "high_value": 35000,
+          "computation_method": "Direct cost range from rec file: $20K-$35K total professional fees. Per rec file, downstream option value is ~$8M+ (~250x ROI) but is allocated to dependent recs."
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "pre_transaction_entity_restructure",
+        "cluster_sequence_closer": "REC-ENT-002",
+        "action_items": [
+          {
+            "action_item_id": "AI-ENT-002-1",
+            "description": "Confirm S-election integrity with CPA: pull Form 2553 acceptance, review prior 5 years for inadvertent terminations.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-2",
+            "description": "Confirm shareholder eligibility (Marcus and Derek both US individuals — eligible).",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-3",
+            "description": "Inventory HIS contracts, licenses, and Truist LOC for change-of-control or anti-assignment provisions.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-4",
+            "description": "Engage specialist M&A counsel with documented F-reorg experience.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 1 — Pre-Reorg Diligence",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-ENT-002-1",
+              "AI-ENT-002-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-5",
+            "description": "Form Holloway Holdings LLC in Georgia (S-Corp electing) and obtain EIN.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 2 — Document Drafting",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-002-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-6",
+            "description": "Draft Plan of Reorganization, Share Exchange Agreement, Holdco operating agreement, Form 2553, and Form 8869.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 2 — Document Drafting",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-002-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on F-reorg document drafting progress."
+            }
+          },
+          {
+            "action_item_id": "AI-ENT-002-7",
+            "description": "CPA prepares §368(a)(1)(F) tax memo documenting tax-free treatment and basis carryover.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 2 — Tax memo",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-ENT-002-5"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-8",
+            "description": "Execute Share Exchange per Plan of Reorganization with Marcus (88%) and Derek (12%) receiving identical Holdco interests.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 3 — Execution",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-ENT-002-6",
+              "AI-ENT-002-7"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "M&A Counsel",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-9",
+            "description": "File Form 2553 (Holdco S-election) and Form 8869 (QSub election for HIS) with IRS at exchange-date effective date.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 3 — Execution",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-ENT-002-8"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-10",
+            "description": "Obtain Truist lender consent and update banking documentation reflecting Holdco/QSub structure.",
+            "sub_steps": [],
+            "category": "Entity Structure",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 3 — Execution",
+            "owner": "Banker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-ENT-002-8"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Banker",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-ENT-002-11",
+            "description": "Confirm IRS acceptance of Form 2553 and Form 8869; track first post-reorg K-1 cycle reflects Holdco issuance.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-ENT-002",
+            "source_phase_or_step": "Phase 4 — Integration",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "4-6 months",
+            "depends_on": [
+              "AI-ENT-002-9"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "F-reorg is structural-option enabler for downstream GRAT/IDGT (REC-EST-006/008), pre-transaction charitable (REC-CHR-002), and stock-vs-asset deal bridge. Variation A (S-Corp Holdco/QSub) is the default for Holloway profile; C-Corp conversion for §1202 path is a separate downstream evaluation."
+      },
+      {
+        "recommendation_id": "REC-FAM-002",
+        "source_file_path": "kb/v1_2/01_recommendations/family/REC-FAM-002_529_to_roth_secure2.md",
+        "category": "Family",
+        "status": "Active",
+        "position_in_sequence": 12,
+        "plan_section": "Recommendations — Family",
+        "subsection_within_section": null,
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 105000,
+            "unit": "USD",
+            "narrative_context": "Lifetime $35K rollover capacity per beneficiary × 3 children = $105K of next-gen Roth capacity, available beginning when each new 529 reaches its 15-year age (Sophie/James 529s started in 2026 reach 15-year mark in 2041).",
+            "is_approximate": true
+          },
+          "formula_id": "529_to_roth_lifetime_rollover_capacity_v1",
+          "formula_source_file": "kb/v1_2/01_recommendations/family/REC-FAM-002_529_to_roth_rollover.md",
+          "computation_inputs": {
+            "lifetime_rollover_per_beneficiary_usd": 35000,
+            "annual_rollover_limit_usd": 7500,
+            "beneficiary_count": 3,
+            "fifteen_year_account_age_required": true,
+            "earliest_eligibility_year_estimate": 2041
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 70000,
+          "midpoint_value": 105000,
+          "high_value": 105000,
+          "computation_method": "Low: 2 beneficiaries (only newly funded Sophie/James 529s reach 15 years on horizon). Mid/High: assume 3 beneficiaries fully utilize $35K each."
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": null,
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-FAM-002-1",
+            "description": "Document each 529 account's funding date for 15-year-clock tracking.",
+            "sub_steps": [],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Step 1 — 529 age verification",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-FAM-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-002-2",
+            "description": "Build 529 design with 529-to-Roth rollover endpoint in mind: prefer modest over-funding to preserve excess for rollover.",
+            "sub_steps": [],
+            "category": "Family",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Step 1 — Design coordination",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-002-3",
+            "description": "When beneficiary turns 18+ and has earned income, open Roth IRA in beneficiary's name.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Step 3 — Open Roth IRA",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-FAM-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-FAM-002-4",
+            "description": "Execute annual direct rollovers from 529 to beneficiary's Roth IRA up to $7,500/year subject to lifetime $35K cap and 15-year clock.",
+            "sub_steps": [],
+            "category": "Retirement",
+            "source_recommendation_id": "REC-FAM-002",
+            "source_phase_or_step": "Step 4 — Direct rollover",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-FAM-002-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Execute annual 529-to-Roth rollover for eligible beneficiary; track lifetime $35K cap."
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "15-year clock for newly-funded Sophie/James 529s starts 2026; first eligibility ~2041. Olivia's 529 (if any pre-existing) age unknown. Long-horizon design coordination per rec file guidance."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [
+        {
+          "rec_id": "REC-CHR-002",
+          "source_metadata_text": "Plan section placement: Pre-Transaction Sequence → Charitable",
+          "candidate_sections": [
+            "Pre-Transaction Sequence",
+            "Recommendations — Charitable Planning"
+          ]
+        },
+        {
+          "rec_id": "REC-SUC-002",
+          "source_metadata_text": "Plan section placement: Pre-Transaction Sequence → Retention",
+          "candidate_sections": [
+            "Pre-Transaction Sequence",
+            "Recommendations — Succession & Continuity"
+          ]
+        }
+      ],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-CHR-002-1",
+          "inferred_bucket": "6-12 months",
+          "source_signal": "Pre-LOI timing constraint; transaction window 3-5 years suggests timing confirmation in advance of T-12 banker engagement."
+        },
+        {
+          "action_item_id": "AI-SUC-002-1",
+          "inferred_bucket": "6-12 months",
+          "source_signal": "Stay bonus pre-LOI design; transaction window 3-5 years."
+        }
+      ],
+      "qualitative_fallback_used": [],
+      "blocked_inputs_summary": [
+        {
+          "rec_id": "REC-INV-001",
+          "blocked_inputs": [
+            "his_idle_business_cash_balance_usd",
+            "current_bank_yield_pct",
+            "monthly_opex_usd"
+          ],
+          "awaiting": [
+            "Client",
+            "Banker",
+            "CPA"
+          ]
+        },
+        {
+          "rec_id": "REC-SPC-001",
+          "blocked_inputs": [
+            "specific_long_duration_trust_funding_amount",
+            "expected_trust_investment_yield_pct"
+          ],
+          "awaiting": [
+            "Estate Attorney",
+            "PSA"
+          ]
+        }
+      ],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 74838,
+      "output_token_count": 29206,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 296141,
+          "input_tokens": 74838,
+          "output_tokens": 29206
+        }
+      ],
+      "duration_ms": 296145,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T01:26:54.978Z",
+      "batch_index": 0,
+      "total_batches": 1
+    }
+  }
+}

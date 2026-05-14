@@ -1,0 +1,1924 @@
+{
+  "_test_metadata": {
+    "ran_at": "2026-05-03T00:45:19.709Z",
+    "input_batch_rec_ids": [
+      "REC-EST-001",
+      "REC-EST-002",
+      "REC-EST-003",
+      "REC-EST-004",
+      "REC-EST-005",
+      "REC-EST-006",
+      "REC-EST-008",
+      "REC-EST-009",
+      "REC-EST-012",
+      "REC-EST-011",
+      "REC-EST-020"
+    ],
+    "wall_clock_ms": 232095,
+    "script": "scripts/runStage3a1SingleBatchLive.ts"
+  },
+  "result": {
+    "batch_index": 0,
+    "total_batches": 1,
+    "recommendations": [
+      {
+        "recommendation_id": "REC-EST-001",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-001_joint_revocable_living_trust.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 1,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 1 — Foundation",
+        "co_triggered_with": [
+          "REC-SPC-001"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              50000,
+              150000
+            ],
+            "unit": "USD",
+            "narrative_context": "Probate cost avoidance on ~$5M probate estate at GA attorney fee range 1-3%",
+            "is_approximate": true
+          },
+          "formula_id": "joint_rev_trust_probate_avoidance_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-001_joint_revocable_living_trust.md",
+          "computation_inputs": {
+            "probate_estate_estimate_usd": 5000000,
+            "ga_attorney_fee_pct_low": 0.01,
+            "ga_attorney_fee_pct_high": 0.03,
+            "incapacity_conservatorship_avoidance_usd_range": [
+              5000,
+              25000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 50000,
+          "midpoint_value": 100000,
+          "high_value": 150000,
+          "computation_method": "GA probate attorney fees 1%-3% on ~$5M probate estate"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-001-1",
+            "description": "Estate attorney drafts joint revocable trust document for Marcus and Catherine.",
+            "sub_steps": [
+              "Confirm joint vs. separate structure",
+              "Identify successor trustees",
+              "Specify distribution terms at first and second death"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-001-2",
+            "description": "Execute pour-over wills naming the joint revocable trust as residual beneficiary.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-001-3",
+            "description": "Fund the trust by retitling investment accounts, real estate, and (post-recap) business voting interest.",
+            "sub_steps": [
+              "Retitle Schwab taxable brokerage",
+              "Re-deed East Cobb residence and Blue Ridge home into trust",
+              "Transfer voting interest after REC-ENT-003 recap"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-001-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "biweekly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 14,
+              "cadence": "biweekly",
+              "reminder_text_template": "Check in with {{partner_type}} on trust funding completion: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-001-4",
+            "description": "Update beneficiary designations on retirement accounts and life insurance to reflect estate plan.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-001-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-001-5",
+            "description": "Schedule annual review of trust funding and successor trustee status.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-001",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-001-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual review: {{description_short}} ({{rec_id}})"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Probate-cost range based on GA attorney fees 1-3% on assumed $5M probate estate (East Cobb home, Blue Ridge, brokerage). Foundational rec — primary value is enabling downstream irrevocable trusts."
+      },
+      {
+        "recommendation_id": "REC-EST-002",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-002_pour_over_will_poas.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 2,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 1 — Foundation",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              8000,
+              18000
+            ],
+            "unit": "USD",
+            "narrative_context": "Direct attorney fee for full document set; avoidance value (probate, conservatorship, family disputes) substantially larger",
+            "is_approximate": true
+          },
+          "formula_id": "estate_doc_set_attorney_fee_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-002_pour_over_will_poa_hipaa.md",
+          "computation_inputs": {
+            "doc_set_attorney_fee_low_usd": 8000,
+            "doc_set_attorney_fee_high_usd": 18000,
+            "conservatorship_avoidance_usd_range": [
+              5000,
+              25000
+            ],
+            "documents_required": [
+              "pour_over_will",
+              "DPOA_financial",
+              "healthcare_directive",
+              "HIPAA",
+              "guardianship_for_Sophie",
+              "adult_HIPAA_for_Olivia"
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 8000,
+          "midpoint_value": 13000,
+          "high_value": 18000,
+          "computation_method": "Attorney-fee range for full HNW estate document set"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-002-1",
+            "description": "Estate attorney drafts complete document set: wills, DPOAs, healthcare directives, HIPAA, guardianship designation for Sophie.",
+            "sub_steps": [
+              "Pour-over will for Marcus",
+              "Pour-over will for Catherine",
+              "DPOA financial each spouse",
+              "Healthcare directive each spouse",
+              "HIPAA each adult family member",
+              "Guardianship designation naming guardian for Sophie (age 12)"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-002-2",
+            "description": "Notarize and witness all documents per Georgia execution requirements.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-002-3",
+            "description": "Distribute copies to providers, agents, successor trustees, and PSA file.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-002-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-002-4",
+            "description": "Execute Olivia's HIPAA and healthcare POA — she is 19 and parents have no default access.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-002",
+            "source_phase_or_step": "Step 1 — Foundation",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-EST-002-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Wills dated 2014 (12 yrs stale), no DPOA, no HIPAA, no healthcare directive, Sophie (12) has no named guardian, Olivia (19) needs adult HIPAA. Decision needed on guardian selection — flagged."
+      },
+      {
+        "recommendation_id": "REC-EST-003",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-003_annual_exclusion_gifting.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 3,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 2 — Annual Exclusion Gifts",
+        "co_triggered_with": [
+          "REC-FAM-001",
+          "REC-CHR-002",
+          "REC-CHR-003"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 1216000,
+            "unit": "USD",
+            "narrative_context": "Federal estate tax saved at 40% on $3.04M of cumulative annual exclusion gifts over 20 years to 4 donees (3 children + Marcus's mother Eleanor); excludes compound growth outside estate",
+            "is_approximate": true
+          },
+          "formula_id": "annual_exclusion_gifting_estate_savings_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-003_annual_exclusion_gifting.md",
+          "computation_inputs": {
+            "annual_exclusion_per_donor_per_donee_usd": 19000,
+            "spouses": 2,
+            "donee_count": 4,
+            "annual_capacity_usd": 152000,
+            "years_of_program": 20,
+            "cumulative_gifted_usd": 3040000,
+            "federal_estate_tax_rate": 0.4,
+            "estate_tax_saved_no_growth_usd": 1216000,
+            "estate_tax_saved_with_7pct_growth_usd_estimate": 2640000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 1216000,
+          "midpoint_value": 1900000,
+          "high_value": 2640000,
+          "computation_method": "Low: $3.04M cumulative × 40%; High: includes 7% compound growth on gifted assets outside estate over 20 years"
+        },
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-003-1",
+            "description": "Identify donees and confirm gifting vehicles (direct, Crummey trusts).",
+            "sub_steps": [
+              "Olivia (19)",
+              "James (16)",
+              "Sophie (12)",
+              "Eleanor (Marcus's mother, 78)"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 2 — Annual Exclusion Gifts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-003-2",
+            "description": "Calendar annual gifts for January each year capturing full exclusion immediately.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 2 — Annual Exclusion Gifts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-003-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Execute January annual exclusion gifts: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-003-3",
+            "description": "Coordinate Crummey notice mechanics with trustee for gifts to children's trusts.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 2 — Annual Exclusion Gifts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that Crummey notices issued and acknowledged: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-003-4",
+            "description": "CPA files Form 709 annually (gift-splitting election always requires filing).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-003",
+            "source_phase_or_step": "Step 2 — Annual Exclusion Gifts",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-003-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that Form 709 filed for prior year: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "4 donees: 3 children + Eleanor. $19K × 2 × 4 = $152K/yr capacity. 20-year horizon assumed."
+      },
+      {
+        "recommendation_id": "REC-EST-004",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-004_ilit.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 4,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 3 — ILIT for buy/sell and estate liquidity",
+        "co_triggered_with": [
+          "REC-RSK-001",
+          "REC-RSK-004",
+          "REC-RSK-012",
+          "REC-SPC-006"
+        ],
+        "quantified_impact": {
+          "estimate": {
+            "value": 3600000,
+            "unit": "USD",
+            "narrative_context": "Federal estate tax avoided at 40% on $9M ILIT-owned death benefit (estimated $5M buy/sell + $4M estate liquidity); face amounts pending insurance underwriting",
+            "is_approximate": true
+          },
+          "formula_id": "ilit_estate_tax_avoidance_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-004_ilit.md",
+          "computation_inputs": {
+            "buy_sell_face_amount_usd_estimate": 5000000,
+            "estate_liquidity_face_amount_usd_estimate": 4000000,
+            "total_face_amount_usd": 9000000,
+            "federal_estate_tax_rate": 0.4,
+            "annual_premium_estimate_usd": 80000,
+            "crummey_capacity_usd": 152000,
+            "beneficiary_count": 4
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 2000000,
+          "midpoint_value": 3600000,
+          "high_value": 4800000,
+          "computation_method": "Range based on $5M-$12M ILIT-owned face × 40% estate tax rate"
+        },
+        "timing_bucket": "60-120 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-004-1",
+            "description": "Estate attorney drafts ILIT document; select corporate or non-beneficiary individual trustee.",
+            "sub_steps": [
+              "Trustee selection — corporate preferred",
+              "Crummey provisions",
+              "Distribution standards"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-004",
+            "source_phase_or_step": "Step 3 — ILIT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-001-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-004-2",
+            "description": "ILIT obtains EIN and opens trust bank account.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-004",
+            "source_phase_or_step": "Step 3 — ILIT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-004-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-004-3",
+            "description": "ILIT applies for and owns the new policy from inception (avoids §2035 3-year lookback).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-004",
+            "source_phase_or_step": "Step 3 — ILIT",
+            "owner": "Insurance Broker",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-004-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "monthly",
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 30,
+              "cadence": "monthly",
+              "reminder_text_template": "Check in with {{partner_type}} on ILIT policy underwriting: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-004-4",
+            "description": "Annual premium funding via Crummey-noticed gifts; trustee issues notices to beneficiaries.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-004",
+            "source_phase_or_step": "Step 3 — ILIT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-004-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm Crummey notices and premium funding: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Existing $2M term on Marcus + $500K on Catherine NOT in trust; new ILIT applies for new coverage from inception to avoid 3-year lookback. Face amounts pending broker quotes."
+      },
+      {
+        "recommendation_id": "REC-EST-005",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-005_childrens_trusts.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 5,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 2 — Children's Trusts",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              4000000,
+              8000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Cumulative estate-tax savings as the receiving vehicle for annual exclusion gifts, GRAT remainder, IDGT distributions, and compound growth outside estate",
+            "is_approximate": true
+          },
+          "formula_id": "childrens_trust_aggregate_estate_savings_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-005_childrens_trusts.md",
+          "computation_inputs": {
+            "child_count": 3,
+            "annual_exclusion_inflows_usd_range": [
+              3000000,
+              4000000
+            ],
+            "grat_remainder_usd_range": [
+              2000000,
+              5000000
+            ],
+            "idgt_distributions_usd_range": [
+              5000000,
+              15000000
+            ],
+            "federal_estate_tax_rate": 0.4,
+            "trustee_recommendation": "corporate"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 4000000,
+          "midpoint_value": 6000000,
+          "high_value": 8000000,
+          "computation_method": "Aggregate estate-tax savings across all transfer vehicles funneling into children's trusts"
+        },
+        "timing_bucket": "30-60 days",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-005-1",
+            "description": "Decide between per-child trusts (3 trusts) or single pot trust structure.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-005",
+            "source_phase_or_step": "Step 2 — Children's Trusts",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-005-2",
+            "description": "Estate attorney drafts trust documents with HEMS standard to age 35, broader thereafter; Crummey provisions.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-005",
+            "source_phase_or_step": "Step 2 — Children's Trusts",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-005-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-005-3",
+            "description": "Select corporate trustee; obtain trust EIN(s) and open trust account(s).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-005",
+            "source_phase_or_step": "Step 2 — Children's Trusts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-005-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Other",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-005-4",
+            "description": "Establish Crummey notice procedures and contribution program coordination with REC-EST-003.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-005",
+            "source_phase_or_step": "Step 2 — Children's Trusts",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-005-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual trustee report and Crummey cycle review: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Per-child vs pot trust is values-driven decision pending. Corporate trustee strongly recommended. Hard rule: no unrestricted access before age 35."
+      },
+      {
+        "recommendation_id": "REC-EST-006",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-006_3year_zeroed_out_grat.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 6,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 4 — 3-Year Zeroed-Out GRAT",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              4000000,
+              4200000
+            ],
+            "unit": "USD",
+            "narrative_context": "Value transferred to children's trusts free of gift tax over 3-year GRAT term assuming 18%/year business growth vs 5.0% §7520 hurdle (May 2026); §7520 rate locks at funding",
+            "is_approximate": true
+          },
+          "formula_id": "grat_zeroed_out_3yr_value_transfer_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-006_grat.md",
+          "computation_inputs": {
+            "business_valuation_midpoint_usd": 40000000,
+            "marcus_ownership_pct": 0.88,
+            "non_voting_pct_of_total": 0.78,
+            "discount_pct": 0.3,
+            "grat_funding_after_discount_usd": 8200000,
+            "s7520_rate_at_funding_percent": 5,
+            "s7520_rate_source_month": "May 2026",
+            "term_years": 3,
+            "annuity_per_year_usd": 3010000,
+            "growth_assumption_percent": 18,
+            "historical_cagr_percent": 22.7,
+            "transfer_estimate_low_usd": 4000000,
+            "transfer_estimate_high_usd": 4200000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 4100000,
+          "high_value": 6000000,
+          "computation_method": "Low: business stalls and assets revert (asymmetric); Mid: 18% growth (Holloway base case); High: growth exceeds 18% or transaction event during term"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-006-1",
+            "description": "Confirm prerequisites complete: F-reorg (REC-ENT-002), recap (REC-ENT-003), qualified appraisal of non-voting interest.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-006",
+            "source_phase_or_step": "Step 4 — GRAT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-006-2",
+            "description": "Estate attorney drafts 3-year zeroed-out (Walton) GRAT document.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-006",
+            "source_phase_or_step": "Step 4 — GRAT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-EST-006-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-006-3",
+            "description": "CPA runs Walton-zeroed annuity calculation at §7520 rate at funding (currently 5.0% May 2026).",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-006",
+            "source_phase_or_step": "Step 4 — GRAT",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-EST-006-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-006-4",
+            "description": "Fund GRAT with appraised non-voting interest (~$8.2M after-discount tranche).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-006",
+            "source_phase_or_step": "Step 4 — GRAT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-006-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-006-5",
+            "description": "Coordinate annuity payment schedule with attorney and CPA over 3-year term.",
+            "sub_steps": [
+              "Annual annuity payment",
+              "In-kind payment FMV documentation if applicable",
+              "Re-appraisal at term"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-006",
+            "source_phase_or_step": "Step 4 — GRAT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-006-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "quarterly",
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 90,
+              "cadence": "quarterly",
+              "reminder_text_template": "Check in with {{partner_type}} on GRAT annuity milestones: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "§7520 5.0% sourced from May 2026 volatile_rates_lookup. Marcus excellent health supports 3-year mortality assumption. GRAT is asymmetric: heads I win, tails I tie."
+      },
+      {
+        "recommendation_id": "REC-EST-008",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-008_sale_to_idgt.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 7,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 5 — IDGT Sale",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": [
+              6000000,
+              10000000
+            ],
+            "unit": "USD",
+            "narrative_context": "Additional value transferred to trust beneficiaries via IDGT installment sale at AFR over 9-year note plus transaction event; income-tax-burn paid by grantor adds further estate reduction. Mid-term/long-term AFR pending May 2026 IRS publication; estimated at ~4.5%.",
+            "is_approximate": true
+          },
+          "formula_id": "idgt_installment_sale_value_transfer_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-008_idgt.md",
+          "computation_inputs": {
+            "non_voting_sale_value_pre_discount_usd": 25000000,
+            "discount_pct": 0.3,
+            "after_discount_sale_price_usd": 17500000,
+            "seed_gift_pct": 0.1,
+            "seed_gift_usd": 1750000,
+            "installment_note_usd": 15750000,
+            "afr_rate_estimate_percent": 4.5,
+            "afr_source_month": "May 2026",
+            "afr_status": "estimate_pending_volatile_rates_publication",
+            "note_term_years": 9,
+            "annual_note_interest_usd": 709000,
+            "annual_grantor_income_tax_burn_usd_range": [
+              200000,
+              500000
+            ]
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 6000000,
+          "midpoint_value": 8000000,
+          "high_value": 15000000,
+          "computation_method": "Low/mid: 9-year note repayment with modest growth; high: transaction event during note + income-tax-burn cumulative additional gift effect"
+        },
+        "timing_bucket": "12-24 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": "REC-EST-008",
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-008-1",
+            "description": "Establish IDGT with §675(4) substitute power triggering grantor trust status; or use existing children's trust if structured as IDGT.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-008-2",
+            "description": "Make seed gift of ~10% of intended sale value (~$1.75M) using lifetime exemption; file Form 709.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-EST-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-008-3",
+            "description": "Obtain qualified appraisal of non-voting interest at sale.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-008-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-008-4",
+            "description": "Execute sale documents: unit purchase agreement and AFR-bearing installment note (9-year term).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-008-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-008-5",
+            "description": "CPA tax memo confirming grantor-trust status and §1014 basis treatment.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-008-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-008-6",
+            "description": "Administer annual note interest payments and grantor-trust filings over 9-year term.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-008",
+            "source_phase_or_step": "Step 5 — IDGT Sale",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-008-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that IDGT note interest paid and grantor trust filing complete: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "AFR for May 2026 not published in volatile_rates_lookup AFR table (marked VERIFY); using ~4.5% estimate per Holloway plan reference. AFR should be confirmed at execution. Sequenced after GRAT per rec file."
+      },
+      {
+        "recommendation_id": "REC-EST-009",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-009_slat.md",
+        "category": "Estate",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 8,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "SLAT",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 10800000,
+            "unit": "USD",
+            "narrative_context": "Federal estate tax avoided on $5M SLAT funding growing at 7%/year over 25 years to ~$27M, 40% estate tax avoided",
+            "is_approximate": true
+          },
+          "formula_id": "slat_estate_tax_savings_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-009_slat.md",
+          "computation_inputs": {
+            "exemption_used_usd": 5000000,
+            "growth_horizon_years": 25,
+            "growth_rate_percent": 7,
+            "future_value_usd": 27000000,
+            "federal_estate_tax_rate": 0.4,
+            "tax_avoided_usd": 10800000,
+            "lifetime_exemption_2026_usd": 15000000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 5000000,
+          "midpoint_value": 10800000,
+          "high_value": 18000000,
+          "computation_method": "Range based on $3M-$10M exemption use × 7% growth × 25-30 yr horizon × 40%"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-009-1",
+            "description": "Confirm both spouses understand SLAT survives divorce (irrevocable, ex-spouse retains beneficiary status).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-009",
+            "source_phase_or_step": "SLAT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-009-2",
+            "description": "Estate attorney drafts SLAT with HEMS distributions to spouse + children, independent trustee, §2036-avoidance drafting.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-009",
+            "source_phase_or_step": "SLAT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-009-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-009-3",
+            "description": "Select funding asset (appreciating asset preferred); fund SLAT and file Form 709 documenting exemption use.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-009",
+            "source_phase_or_step": "SLAT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-EST-009-2"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-009-4",
+            "description": "Annual trustee accounting and beneficiary distribution administration.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-009",
+            "source_phase_or_step": "SLAT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-009-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual SLAT trustee accounting review: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Catherine and Marcus both US citizens, married since long-stable marriage; SLAT viable. If both spouses do SLATs, must avoid reciprocal trust doctrine — sequence and differentiate substantively. Decision needed on which spouse funds and amount."
+      },
+      {
+        "recommendation_id": "REC-EST-012",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-012_dynasty_gst_planning.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 9,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Dynasty / GST Planning",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 224000000,
+            "unit": "USD",
+            "narrative_context": "GST tax avoidance on $30M GST exemption allocation growing at 5%/yr over 60 years to ~$560M; 40% GST tax otherwise applies at child-to-grandchild transfer",
+            "is_approximate": true
+          },
+          "formula_id": "dynasty_gst_avoidance_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-012_dynasty_gst.md",
+          "computation_inputs": {
+            "gst_exemption_couple_2026_usd": 30000000,
+            "growth_rate_percent": 5,
+            "growth_horizon_years": 60,
+            "future_value_usd": 560000000,
+            "gst_tax_rate": 0.4,
+            "gst_tax_avoided_usd": 224000000,
+            "ga_rap_applies": true,
+            "preferred_situs": "DE/SD/NV"
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 50000000,
+          "midpoint_value": 150000000,
+          "high_value": 224000000,
+          "computation_method": "Range reflects sensitivity to growth rate (3-7%) and horizon (40-80 yrs)"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-012-1",
+            "description": "Estate attorney drafts GST-exempt trust language for children's trusts and other irrevocable vehicles.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-012",
+            "source_phase_or_step": "Dynasty / GST",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-012-2",
+            "description": "Decide trust situs: Georgia (RAP applies, limited duration) vs Delaware/SD/NV (true dynasty).",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-012",
+            "source_phase_or_step": "Dynasty / GST",
+            "owner": "Client",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-012-1"
+            ],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-012-3",
+            "description": "CPA files Form 709 with explicit GST exemption allocation at each funding event.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-012",
+            "source_phase_or_step": "Dynasty / GST",
+            "owner": "CPA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-012-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": true,
+            "partner_type": "CPA",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Confirm with {{partner_type}} that GST allocation reported on Form 709: {{description_short}}"
+            }
+          },
+          {
+            "action_item_id": "AI-EST-012-4",
+            "description": "Track inclusion ratio across all trust funding events to maintain GST-exempt status.",
+            "sub_steps": [],
+            "category": "Tax",
+            "source_recommendation_id": "REC-EST-012",
+            "source_phase_or_step": "Dynasty / GST",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-012-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual GST inclusion-ratio tracking review: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Trust situs decision (GA vs DE/SD/NV) coordinates with REC-SPC-001. $30M couple GST allocation potentially over many decades shields very large amounts."
+      },
+      {
+        "recommendation_id": "REC-EST-011",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-011_qprt.md",
+        "category": "Estate",
+        "status": "Active-Cautioned",
+        "position_in_sequence": 10,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "QPRT",
+        "co_triggered_with": [],
+        "quantified_impact": {
+          "estimate": {
+            "value": 800000,
+            "unit": "USD",
+            "narrative_context": "Estate-tax savings on Blue Ridge vacation home QPRT (12-year term, §7520 5.0% May 2026): residence appreciates outside estate after term, residual gift only ~$400K of exemption used",
+            "is_approximate": true
+          },
+          "formula_id": "qprt_estate_savings_v1",
+          "formula_source_file": "kb/recommendations/estate/REC-EST-011_qprt.md",
+          "computation_inputs": {
+            "residence_value_usd": 1400000,
+            "residence_descriptor": "Blue Ridge vacation home",
+            "term_years": 12,
+            "s7520_rate_at_funding_percent": 5,
+            "s7520_rate_source_month": "May 2026",
+            "donor_age": 52,
+            "retained_term_value_estimate_usd": 1000000,
+            "gift_value_estimate_usd": 400000,
+            "future_residence_value_estimate_usd": 2200000,
+            "federal_estate_tax_rate": 0.4,
+            "estate_tax_savings_estimate_usd": 800000
+          },
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": null,
+          "reason_no_formula": null,
+          "blocked_inputs": []
+        },
+        "scenario_range": {
+          "low_value": 0,
+          "midpoint_value": 800000,
+          "high_value": 1500000,
+          "computation_method": "Low: mortality during term ruins benefit; mid: 12-year term, 4% appreciation; high: longer horizon and stronger appreciation"
+        },
+        "timing_bucket": "6-12 months",
+        "owner": "Attorney",
+        "owner_name": null,
+        "decisions_needed": true,
+        "cluster_id": "estate_transfer_program",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-011-1",
+            "description": "Confirm Catherine's real-estate intent and Marcus's commitment to long-term residence/post-term FMV rent.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-011",
+            "source_phase_or_step": "QPRT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": true,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-011-2",
+            "description": "Estate attorney drafts QPRT with proper §2702 qualifications.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-011",
+            "source_phase_or_step": "QPRT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-011-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-011-3",
+            "description": "Obtain qualified appraisal of Blue Ridge residence at funding.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-011",
+            "source_phase_or_step": "QPRT",
+            "owner": "Other",
+            "owner_name": null,
+            "timing_bucket": "60-120 days",
+            "depends_on": [
+              "AI-EST-011-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Valuation Provider",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-011-4",
+            "description": "Re-deed residence to QPRT and file Form 709 reporting gift of remainder interest.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-011",
+            "source_phase_or_step": "QPRT",
+            "owner": "Attorney",
+            "owner_name": null,
+            "timing_bucket": "6-12 months",
+            "depends_on": [
+              "AI-EST-011-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "point_in_time",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-011-5",
+            "description": "At term end (year 12), execute FMV lease agreement or move; ongoing rent payment to children's trusts.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-011",
+            "source_phase_or_step": "QPRT",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "12-24 months",
+            "depends_on": [
+              "AI-EST-011-4"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual QPRT term tracking and post-term rent administration: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "borderline",
+        "_audit_notes": "Borderline per match_strength — Catherine RE intent uncertain. Used Blue Ridge ($1.4M, no mortgage) rather than primary East Cobb residence ($2.1M with $680K mortgage) — mortgaged property complicates QPRT mechanics."
+      },
+      {
+        "recommendation_id": "REC-EST-020",
+        "source_file_path": "kb/v1_2/01_recommendations/estate/REC-EST-020_beneficiary_audit.md",
+        "category": "Estate",
+        "status": "Active",
+        "position_in_sequence": 11,
+        "plan_section": "Recommendations — Estate Planning",
+        "subsection_within_section": "Step 1 — Foundation rollout (concurrent)",
+        "co_triggered_with": [
+          "REC-EST-001",
+          "REC-EST-002"
+        ],
+        "quantified_impact": {
+          "estimate": null,
+          "formula_id": null,
+          "formula_source_file": null,
+          "computation_inputs": {},
+          "pending_reconciliation": false,
+          "alternative_values": [],
+          "qualitative_phrasing": "Beneficiary designation audit prevents probate, family disputes, and loss of stretch benefits; savings vary by asset and scenario but address the most-overlooked failure point in estate planning.",
+          "reason_no_formula": "all_inputs_qualitative",
+          "blocked_inputs": []
+        },
+        "scenario_range": null,
+        "timing_bucket": "0-30 days",
+        "owner": "PSA",
+        "owner_name": null,
+        "decisions_needed": false,
+        "cluster_id": "estate_foundation",
+        "cluster_sequence_closer": null,
+        "action_items": [
+          {
+            "action_item_id": "AI-EST-020-1",
+            "description": "Inventory all accounts with beneficiary designations: 401(k), IRAs, life insurance, annuities, TOD/POD accounts, HSA.",
+            "sub_steps": [
+              "Marcus 401(k) at Empower",
+              "Catherine Rollover IRA at Schwab",
+              "Schwab taxable brokerage TOD",
+              "Marcus $2M term life",
+              "Catherine $500K term life",
+              "Truist banking POD if applicable"
+            ],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-020",
+            "source_phase_or_step": "Step 1 — Foundation rollout",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-020-2",
+            "description": "Pull current beneficiary designations from each custodian and compare against current estate plan.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-020",
+            "source_phase_or_step": "Step 1 — Foundation rollout",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "0-30 days",
+            "depends_on": [
+              "AI-EST-020-1"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-020-3",
+            "description": "Submit updated designations via each custodian's form; coordinate trust see-through language with attorney for retirement accounts.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-020",
+            "source_phase_or_step": "Step 1 — Foundation rollout",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "30-60 days",
+            "depends_on": [
+              "AI-EST-020-2"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "short_running",
+            "check_in_cadence": null,
+            "partner_required": true,
+            "partner_type": "Estate Attorney",
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": null
+          },
+          {
+            "action_item_id": "AI-EST-020-4",
+            "description": "Retain confirmation receipts and maintain central beneficiary log; schedule annual review.",
+            "sub_steps": [],
+            "category": "Estate",
+            "source_recommendation_id": "REC-EST-020",
+            "source_phase_or_step": "Step 1 — Foundation rollout",
+            "owner": "PSA",
+            "owner_name": null,
+            "timing_bucket": "Ongoing",
+            "depends_on": [
+              "AI-EST-020-3"
+            ],
+            "is_decision_needed": false,
+            "duration_class": "long_running",
+            "check_in_cadence": "annually",
+            "partner_required": false,
+            "partner_type": null,
+            "parent_action_item_id": null,
+            "is_derivative_reminder": false,
+            "source_plan_id": null,
+            "auto_generated_reminder_template": {
+              "trigger_threshold_days": 365,
+              "cadence": "annually",
+              "reminder_text_template": "Annual beneficiary designation review: {{description_short}}"
+            }
+          }
+        ],
+        "landmine": false,
+        "landmine_status": "not_a_landmine",
+        "default_excluded": false,
+        "plan_output_variant": null,
+        "match_strength": "strong",
+        "_audit_notes": "Rec file lacks a quantified framework — savings depend on assets and scenarios. State D with qualitative phrasing per rec file guidance."
+      }
+    ],
+    "_stage_flags": {
+      "unenumerated_question_ids": [],
+      "formula_yielded_unviable_value": [],
+      "cluster_closer_skipped": [],
+      "section_assignment_ambiguity": [],
+      "timing_bucket_inferred": [
+        {
+          "action_item_id": "AI-EST-006-1",
+          "inferred_bucket": "6-12 months",
+          "source_signal": "GRAT prerequisites (F-reorg, recap, appraisal) typically run 6-12 months pre-funding"
+        },
+        {
+          "action_item_id": "AI-EST-008-1",
+          "inferred_bucket": "6-12 months",
+          "source_signal": "IDGT setup begins after recap mature; rec file states 'year two'"
+        }
+      ],
+      "qualitative_fallback_used": [
+        {
+          "rec_id": "REC-EST-020",
+          "phrasing_used": "Beneficiary designation audit prevents probate, family disputes, and loss of stretch benefits; savings vary by asset and scenario but address the most-overlooked failure point in estate planning.",
+          "reason": "Rec file QUANTIFIED IMPACT FRAMEWORK acknowledges savings are highly variable; intentionally qualitative"
+        }
+      ],
+      "blocked_inputs_summary": [],
+      "orphan_action_item_dependencies": [],
+      "orphan_sequencing_references": [],
+      "batch_failures_summary": [],
+      "coverage_gaps": [],
+      "volatile_rates_stale": []
+    },
+    "_metadata": {
+      "stage_version": "3a.1-1.1.0",
+      "model_used": "claude-opus-4-7",
+      "input_token_count": 66764,
+      "output_token_count": 24191,
+      "cache_creation_input_tokens": 16344,
+      "cache_read_input_tokens": 0,
+      "attempts_made": 1,
+      "attempt_history": [
+        {
+          "attempt_number": 1,
+          "outcome": "success",
+          "failure_details": null,
+          "duration_ms": 232091,
+          "input_tokens": 66764,
+          "output_tokens": 24191
+        }
+      ],
+      "duration_ms": 232094,
+      "source_fr_content_hash": "5eb13aeb24467b2d08b197bf7bef376325de4c79800311cb1b1fc051e8336582",
+      "parsed_at": "2026-05-03T00:45:19.708Z",
+      "batch_index": 0,
+      "total_batches": 1
+    }
+  }
+}

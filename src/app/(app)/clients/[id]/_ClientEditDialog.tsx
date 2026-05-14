@@ -47,6 +47,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { CadencePicker } from "@/components/axiom/CadencePicker";
+import { defaultCadenceForArchetype } from "@/lib/cadence/defaults";
 import { api, isApiError } from "@/lib/api/client";
 import type { Client, ClientsApi } from "@/lib/api/types";
 
@@ -62,6 +64,11 @@ const editClientSchema = z.object({
   status: z.enum(["active", "prospect"]),
   lead_advisor_id: z.string().uuid("Pick a lead advisor"),
   notes: z.string(),
+  cadence_target_days: z
+    .number()
+    .int("Whole number")
+    .min(1, "≥ 1")
+    .max(3650, "≤ 3650"),
 });
 type EditClientValues = z.infer<typeof editClientSchema>;
 
@@ -76,6 +83,9 @@ function buildPatch(
   if (values.lead_advisor_id !== client.lead_advisor_id) patch.lead_advisor_id = values.lead_advisor_id;
   const cleanNotes = values.notes.trim().length > 0 ? values.notes : null;
   if (cleanNotes !== (client.notes ?? null)) patch.notes = cleanNotes;
+  if (values.cadence_target_days !== (client.cadence_target_days ?? null)) {
+    patch.cadence_target_days = values.cadence_target_days;
+  }
   return Object.keys(patch).length === 0 ? null : patch;
 }
 
@@ -103,6 +113,9 @@ export function ClientEditDialog({
       status: initialStatus,
       lead_advisor_id: client.lead_advisor_id,
       notes: client.notes ?? "",
+      cadence_target_days:
+        client.cadence_target_days ??
+        defaultCadenceForArchetype(client.archetype),
     },
   });
 
@@ -134,6 +147,9 @@ export function ClientEditDialog({
         status: initialStatus,
         lead_advisor_id: client.lead_advisor_id,
         notes: client.notes ?? "",
+        cadence_target_days:
+          client.cadence_target_days ??
+          defaultCadenceForArchetype(client.archetype),
       });
     }
   }
@@ -267,6 +283,34 @@ export function ClientEditDialog({
                       </SelectContent>
                     </Select>
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cadence_target_days"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel
+                    className="text-[11px] uppercase"
+                    style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
+                  >
+                    Contact cadence
+                  </FormLabel>
+                  <FormControl>
+                    <CadencePicker
+                      value={field.value}
+                      onChange={(next) =>
+                        field.onChange(
+                          next ?? defaultCadenceForArchetype(client.archetype),
+                        )
+                      }
+                    />
+                  </FormControl>
+                  <p className="text-[11px]" style={{ color: "var(--text-3)" }}>
+                    Days between expected client contacts. Drives the Going Stale dashboard.
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}
