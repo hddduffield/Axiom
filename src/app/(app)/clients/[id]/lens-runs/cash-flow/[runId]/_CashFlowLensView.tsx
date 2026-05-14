@@ -21,6 +21,8 @@ import {
 import { LensSourceBanner } from "@/components/axiom/LensSourceBanner";
 import { LensReopenDialog } from "@/components/axiom/LensReopenDialog";
 import { LensSummaryBanner } from "@/components/axiom/LensSummaryBanner";
+import { LensScenarioTitle } from "@/components/axiom/LensScenarioTitle";
+import { generateCashFlowLensName } from "@/lib/lens-naming";
 import { applyEditedFields, diffSourcedFields } from "@/lib/lens-prefill";
 
 import { CashFlowInputTab } from "./_CashFlowInputTab";
@@ -159,18 +161,28 @@ export function CashFlowLensView({ lensRun: initialLens, client, initialOutput }
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1
-              className="text-3xl font-medium"
+          <div className="flex flex-col gap-1">
+            <p
+              className="text-[11px] uppercase"
               style={{
-                fontFamily: "var(--font-display)",
-                letterSpacing: "-0.01em",
-                color: "var(--text)",
+                color: "var(--text-3)",
+                letterSpacing: "0.06em",
+                fontFamily: "var(--font-mono)",
               }}
             >
               Cash Flow Lens
-            </h1>
-            {headerStatusPill}
+            </p>
+            <div className="flex items-center gap-2">
+              <LensScenarioTitle
+                lensRunId={lensRun.id}
+                currentName={
+                  lensRun.context_input ?? generateCashFlowLensName(output)
+                }
+                computeAutoName={() => generateCashFlowLensName(output)}
+                canEdit={!isArchived}
+              />
+              {headerStatusPill}
+            </div>
           </div>
           <p className="mt-1 text-sm" style={{ color: "var(--text-2)" }}>
             {client.household_name}

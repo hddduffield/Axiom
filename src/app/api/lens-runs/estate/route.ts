@@ -14,6 +14,7 @@ import {
   extractEstateFromClientProfile,
   getLatestFinalizedPlanForClient,
 } from "@/lib/lens-prefill";
+import { generateEstateLensName } from "@/lib/lens-naming";
 import type { Json } from "@/lib/supabase/database.types";
 
 const createSchema = z.object({
@@ -52,8 +53,13 @@ export async function POST(request: Request) {
     .eq("client_id", client.id)
     .eq("lens_type", "estate");
 
-  const scenarioName =
-    parsed.data.scenario_name ?? `Scenario ${(count ?? 0) + 1}`;
+  // Phase 18.7 — default scenario name is now auto-generated from
+  // the seed inputs; advisor-supplied scenario_name wins. We pass
+  // a placeholder for scenarioName here and overwrite below after the
+  // seed is built (so the auto-name can read actual inputs).
+  const defaultIndex = (count ?? 0) + 1;
+  const scenarioNameSeed =
+    parsed.data.scenario_name ?? `Scenario ${defaultIndex}`;
 
   // Phase 16 — pre-fill from latest finalized plan if one exists.
   let seed: EstateLensOutput;
@@ -63,7 +69,7 @@ export async function POST(request: Request) {
       profile: latest.client_profile,
       household_name: client.household_name,
       archetype: client.archetype ?? null,
-      scenario_name: scenarioName,
+      scenario_name: scenarioNameSeed,
     });
     // Allow caller-supplied state_code to override the extracted one
     // (useful for "what-if I move to FL" scenarios).
@@ -84,9 +90,16 @@ export async function POST(request: Request) {
       household_name: client.household_name,
       archetype: client.archetype ?? null,
       state_code: parsed.data.state_code ?? null,
-      scenario_name: scenarioName,
+      scenario_name: scenarioNameSeed,
     });
   }
+
+  // Phase 18.7 — auto-name from the seed inputs when the advisor
+  // didn't supply scenario_name. The auto-name reads estate today +
+  // planning move + discount + FMV, so a meaningful default appears
+  // immediately in the lens runs table.
+  const autoName = parsed.data.scenario_name ?? generateEstateLensName(seed);
+  seed.scenario_name = autoName;
 
   const { data, error } = await auth.supabase
     .from("lens_runs")
@@ -97,7 +110,7 @@ export async function POST(request: Request) {
       status: "draft",
       output: seed as unknown as Json,
       cost_cents: 0,
-      context_input: scenarioName,
+      context_input: autoName,
     })
     .select("*")
     .single();

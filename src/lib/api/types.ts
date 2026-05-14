@@ -350,6 +350,10 @@ export namespace LensRunsApi {
   // advisor-edited string and marks generated_by='manual'.
   export type GenerateSummaryResponse = LensRun;
   export type UpdateSummaryResponse = LensRun;
+  // Phase 18.7 — rename the scenario; stored in context_input (+
+  // mirrored into output.scenario_name for estate lenses so the PDF
+  // header matches).
+  export type RenameResponse = LensRun;
 
   export type CashFlowSuggestAllocationResponse = LensRun;
   export type CashFlowGenerateRecommendationsResponse = LensRun;

@@ -12,6 +12,7 @@ import {
   extractCashFlowFromClientProfile,
   getLatestFinalizedPlanForClient,
 } from "@/lib/lens-prefill";
+import { generateCashFlowLensName } from "@/lib/lens-naming";
 import type { Json } from "@/lib/supabase/database.types";
 
 const createSchema = z.object({
@@ -69,6 +70,10 @@ export async function POST(request: Request) {
     });
   }
 
+  // Phase 18.7 — auto-name the scenario from the seed values so the
+  // advisor sees a meaningful default in the lens runs table.
+  const autoName = generateCashFlowLensName(seed);
+
   const { data, error } = await auth.supabase
     .from("lens_runs")
     .insert({
@@ -78,7 +83,7 @@ export async function POST(request: Request) {
       status: "draft",
       output: seed as unknown as Json,
       cost_cents: 0,
-      context_input: null,
+      context_input: autoName,
     })
     .select("*")
     .single();

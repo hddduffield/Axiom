@@ -256,6 +256,12 @@ export const api = {
         `/api/lens-runs/${id}/update-summary`,
         { method: "POST", body },
       ),
+    // Phase 18.7 — rename the scenario (context_input + scenario_name).
+    rename: (id: string, body: { name: string }) =>
+      request<LensRunsApi.RenameResponse>(
+        `/api/lens-runs/${id}/rename`,
+        { method: "POST", body },
+      ),
     exportPdf: (id: string) => requestBlob(`/api/lens-runs/${id}/pdf`),
     cashFlow: {
       create: (body: LensRunsApi.CashFlowCreateRequest) =>
