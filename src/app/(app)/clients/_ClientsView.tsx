@@ -54,14 +54,23 @@ import { Chip, Count } from "@/components/axiom/Chip";
 import { CadencePicker } from "@/components/axiom/CadencePicker";
 import { api, isApiError } from "@/lib/api/client";
 import type { Client, ClientArchetype, ClientStatus } from "@/lib/api/types";
-import { defaultCadenceForArchetype } from "@/lib/cadence/defaults";
+import { cadenceLabel, defaultCadenceForArchetype } from "@/lib/cadence/defaults";
 
 // Subset of `Client` actually selected by page.tsx — keeps the prop
 // shape honest about which columns the view consumes.
 interface ClientRow
   extends Pick<
     Client,
-    "id" | "household_name" | "lead_advisor_id" | "status" | "archetype" | "created_at"
+    | "id"
+    | "household_name"
+    | "lead_advisor_id"
+    | "status"
+    | "archetype"
+    | "created_at"
+    // Phase 18.8 — cadence info for the Last Contact + Cadence columns
+    | "cadence_target_days"
+    | "cadence_custom_label"
+    | "last_meaningful_contact_at"
   > {
   advisors: { first_name: string; last_name: string } | null;
   open_items: number;
@@ -75,7 +84,55 @@ interface AdvisorOption {
 
 type StatusFilter = "all" | ClientStatus;
 type ArchetypeFilter = "all" | ClientArchetype;
-type SortKey = "household" | "open" | "activity";
+type SortKey = "household" | "open" | "activity" | "last_contact";
+
+// Phase 18.8 — Cadence severity tone for the Last Contact column.
+function cadenceTone(
+  cadenceDays: number | null,
+  lastTouch: string | null,
+): {
+  fg: string;
+  bg: string;
+  label: "on track" | "due soon" | "1-30d overdue" | ">30d overdue" | "never contacted" | "no cadence";
+  daysOverdue: number;
+} {
+  if (!cadenceDays) {
+    return { fg: "var(--text-3)", bg: "transparent", label: "no cadence", daysOverdue: -1 };
+  }
+  if (!lastTouch) {
+    return {
+      fg: "var(--s-slate)",
+      bg: "var(--s-slate-bg)",
+      label: "never contacted",
+      daysOverdue: -1,
+    };
+  }
+  const ms = Date.now() - new Date(lastTouch).getTime();
+  const daysSince = Math.floor(ms / 86_400_000);
+  const daysOverdue = daysSince - cadenceDays;
+  if (daysOverdue <= 0) {
+    return {
+      fg: "var(--s-green)",
+      bg: "var(--s-green-bg)",
+      label: "on track",
+      daysOverdue: 0,
+    };
+  }
+  if (daysOverdue > 30) {
+    return {
+      fg: "var(--s-red)",
+      bg: "var(--s-red-bg)",
+      label: ">30d overdue",
+      daysOverdue,
+    };
+  }
+  return {
+    fg: "var(--s-amber)",
+    bg: "var(--s-amber-bg)",
+    label: "1-30d overdue",
+    daysOverdue,
+  };
+}
 
 interface Props {
   clients: ClientRow[];
@@ -125,7 +182,10 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [archetypeFilter, setArchetypeFilter] = useState<ArchetypeFilter>("all");
   const [advisorFilter, setAdvisorFilter] = useState<string>("all");
-  const [sortKey, setSortKey] = useState<SortKey>("activity");
+  // Phase 18.8 — default sort by last contact desc puts the most-
+  // recently-touched at the top; combined with the color cues, makes
+  // the overdue rows immediately visible at the bottom.
+  const [sortKey, setSortKey] = useState<SortKey>("last_contact");
   const [newOpen, setNewOpen] = useState(false);
 
   const filtered = useMemo(() => {
@@ -144,6 +204,13 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
     rows = [...rows].sort((a, b) => {
       if (sortKey === "household") return a.household_name.localeCompare(b.household_name);
       if (sortKey === "open") return b.open_items - a.open_items;
+      if (sortKey === "last_contact") {
+        // Most-recently-touched first; null last contacts sort to the
+        // bottom (treated as oldest).
+        const aTs = a.last_meaningful_contact_at ?? "";
+        const bTs = b.last_meaningful_contact_at ?? "";
+        return bTs.localeCompare(aTs);
+      }
       // "activity" → use created_at (schema gap; see file header)
       return b.created_at.localeCompare(a.created_at);
     });
@@ -285,24 +352,35 @@ export function ClientsView({ clients, advisors, loadError }: Props) {
                 <SortableTh active={sortKey === "household"} onClick={() => setSortKey("household")}>
                   Household
                 </SortableTh>
-                <th className="w-28 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
+                <th className="w-24 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
                   Status
                 </th>
-                <th className="w-32 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
-                  Lead advisor
+                <th className="w-28 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
+                  Lead
                 </th>
-                <th className="w-24 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
-                  Archetype
+                <th className="w-20 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
+                  Arch.
+                </th>
+                {/* Phase 18.8 — Last contact + Cadence columns. */}
+                <SortableTh
+                  className="w-40"
+                  active={sortKey === "last_contact"}
+                  onClick={() => setSortKey("last_contact")}
+                >
+                  Last contact
+                </SortableTh>
+                <th className="w-28 px-3 py-2 text-left text-[11px] font-medium uppercase" style={{ letterSpacing: "0.04em" }}>
+                  Cadence
                 </th>
                 <SortableTh
-                  className="w-28"
+                  className="w-20"
                   active={sortKey === "open"}
                   onClick={() => setSortKey("open")}
                 >
-                  Open items
+                  Open
                 </SortableTh>
                 <SortableTh
-                  className="w-32"
+                  className="w-24"
                   active={sortKey === "activity"}
                   onClick={() => setSortKey("activity")}
                 >
@@ -363,6 +441,16 @@ function ClientRowEl({ c }: { c: ClientRow }) {
           <span style={{ color: "var(--text-3)" }}>—</span>
         )}
       </td>
+      {/* Phase 18.8 — Last contact column with cadence color dot. */}
+      <td className="px-3 py-2.5">
+        <LastContactCell c={c} />
+      </td>
+      {/* Phase 18.8 — Cadence target label. */}
+      <td className="px-3 py-2.5" style={{ color: "var(--text-2)" }}>
+        <span className="text-[12px]">
+          {cadenceLabel(c.cadence_target_days, c.cadence_custom_label)}
+        </span>
+      </td>
       <td
         className="px-3 py-2.5"
         style={{ fontFamily: "var(--font-mono)", color: "var(--text)" }}
@@ -380,6 +468,43 @@ function ClientRowEl({ c }: { c: ClientRow }) {
         {fmtRelative(c.created_at)}
       </td>
     </tr>
+  );
+}
+
+// Phase 18.8 — Last Contact cell with colored cadence dot.
+function LastContactCell({ c }: { c: ClientRow }) {
+  const tone = cadenceTone(
+    c.cadence_target_days,
+    c.last_meaningful_contact_at,
+  );
+  const label = c.last_meaningful_contact_at
+    ? fmtRelative(c.last_meaningful_contact_at)
+    : "never";
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="h-1.5 w-1.5 flex-none rounded-full"
+        style={{ background: tone.fg }}
+        title={tone.label}
+      />
+      <span
+        className="text-[12px]"
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: tone.label.includes("overdue") ? tone.fg : "var(--text-2)",
+        }}
+      >
+        {label}
+      </span>
+      {tone.daysOverdue > 0 ? (
+        <span
+          className="text-[10px] uppercase"
+          style={{ color: tone.fg, letterSpacing: "0.04em" }}
+        >
+          +{tone.daysOverdue}d
+        </span>
+      ) : null}
+    </div>
   );
 }
 

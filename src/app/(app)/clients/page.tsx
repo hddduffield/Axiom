@@ -23,7 +23,7 @@ export default async function ClientsPage() {
     supabase
       .from("clients")
       .select(
-        "id, household_name, lead_advisor_id, status, archetype, created_at, advisors:lead_advisor_id(first_name, last_name)",
+        "id, household_name, lead_advisor_id, status, archetype, created_at, cadence_target_days, cadence_custom_label, last_meaningful_contact_at, advisors:lead_advisor_id(first_name, last_name)",
       )
       .order("created_at", { ascending: false }),
     // Aggregate by hand: pull (id, client_id, status) for every non-complete
