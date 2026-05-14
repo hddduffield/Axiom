@@ -93,6 +93,10 @@ export interface Database {
           notes: string | null;
           created_at: string;
           updated_at: string;
+          // Phase 17.1 — Cadence engine fields:
+          cadence_target_days: number | null;
+          cadence_custom_label: string | null;
+          last_meaningful_contact_at: string | null;
         };
         Insert: {
           id?: string;
@@ -103,6 +107,9 @@ export interface Database {
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
+          cadence_target_days?: number | null;
+          cadence_custom_label?: string | null;
+          last_meaningful_contact_at?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
         Relationships: [
@@ -227,6 +234,9 @@ export interface Database {
           client_id: string;
           source_plan_id: string | null;
           source_lens_run_id: string | null;
+          // Phase 17.1 — REC-XX identifier from originating plan
+          // recommendation; idempotency key together with source_plan_id.
+          source_recommendation_id: string | null;
           parent_action_item_id: string | null;
           description: string;
           category: string;
@@ -248,6 +258,7 @@ export interface Database {
           client_id: string;
           source_plan_id?: string | null;
           source_lens_run_id?: string | null;
+          source_recommendation_id?: string | null;
           parent_action_item_id?: string | null;
           description: string;
           category: string;

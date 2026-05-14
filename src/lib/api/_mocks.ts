@@ -86,6 +86,9 @@ export const MOCK_CLIENT_HOLLOWAY: Client = {
   notes: "Marcus + Catherine; HIS owner-operator with $32–$48M valuation; transaction window 3–5 yrs.",
   created_at: ISO(-60),
   updated_at: ISO(-2),
+  cadence_target_days: 30,
+  cadence_custom_label: null,
+  last_meaningful_contact_at: ISO(-7),
 };
 
 // Phase 9.22: removed MOCK_CLIENT_PROSPECT (Burke) + MOCK_CLIENT_INACTIVE
@@ -172,6 +175,7 @@ const ai = (
   client_id: MOCK_CLIENT_HOLLOWAY.id,
   source_plan_id: MOCK_PLAN_HOLLOWAY_V1.id,
   source_lens_run_id: null,
+  source_recommendation_id: null,
   parent_action_item_id: null,
   description: "—",
   category: "ENTITY",
