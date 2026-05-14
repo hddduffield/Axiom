@@ -640,16 +640,34 @@ function PlanRowEl({ p }: { p: PlanRow }) {
 }
 
 function PlanStatusBadge({ status }: { status: string }) {
+  // Phase 17.9 — surface the manual-orchestrator dependency on queued
+  // / processing plans via title-tooltip so advisors aren't surprised
+  // when nothing happens until Hayden runs the CLI.
   const tone =
     status === "approved"
       ? { fg: "var(--s-green)", bg: "var(--s-green-bg)", label: "Approved" }
       : status === "draft"
         ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Draft" }
-        : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: status };
+        : status === "queued"
+          ? { fg: "var(--s-amber)", bg: "var(--s-amber-bg)", label: "Queued · awaiting orchestrator" }
+          : status === "processing"
+            ? { fg: "var(--s-blue)", bg: "var(--s-blue-bg)", label: "Processing" }
+            : status === "ready_for_review"
+              ? { fg: "var(--s-blue)", bg: "var(--s-blue-bg)", label: "Ready for review" }
+              : status === "failed"
+                ? { fg: "var(--s-red)", bg: "var(--s-red-bg)", label: "Failed" }
+                : { fg: "var(--s-slate)", bg: "var(--s-slate-bg)", label: status };
+  const title =
+    status === "queued"
+      ? "Plan is queued in the database. Generation begins when Hayden runs `npm run generate-pending` on his laptop. Expected wall-clock: ~25–40 min once started."
+      : status === "processing"
+        ? "Orchestrator has claimed this plan and is currently generating. Wall-clock: ~25–40 min."
+        : undefined;
   return (
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium"
       style={{ background: tone.bg, color: tone.fg }}
+      title={title}
     >
       <span className="h-1.5 w-1.5 rounded-full" style={{ background: tone.fg }} />
       {tone.label}

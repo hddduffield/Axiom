@@ -456,6 +456,52 @@ export function GenerateForm({ clients }: { clients: ClientOption[] }) {
   // ─────────────── Form state ───────────────
   return (
     <form onSubmit={onSubmit} className="max-w-2xl">
+      {/* Phase 17.9 — Plan generation single-point-of-failure transparency.
+          Plans queue in the DB; the orchestrator runs on Hayden's laptop. */}
+      <Card
+        className="mb-4"
+        style={{
+          borderLeftWidth: 3,
+          borderLeftColor: "var(--s-amber)",
+          background: "var(--s-amber-bg)",
+        }}
+      >
+        <CardContent className="px-4 py-3">
+          <div className="flex items-start gap-2.5">
+            <Info
+              className="mt-0.5 h-4 w-4 flex-shrink-0"
+              style={{ color: "var(--s-amber)" }}
+            />
+            <div className="flex-1 text-[13px]" style={{ color: "var(--text)" }}>
+              <strong>How plan generation works.</strong>
+              <p className="mt-1" style={{ color: "var(--text-2)" }}>
+                Submitting this form queues the plan in the database.
+                The orchestrator that does the actual generation runs
+                manually on Hayden&apos;s laptop via{" "}
+                <code
+                  className="rounded px-1 py-0.5 text-[11px]"
+                  style={{
+                    background: "var(--surface-2)",
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--text)",
+                  }}
+                >
+                  npm run generate-pending
+                </code>
+                . Expected wall-clock once it starts: ~25–40 min.
+                Your plan&apos;s status shows{" "}
+                <strong>queued</strong> until then.
+              </p>
+              <p className="mt-2 text-[11px]" style={{ color: "var(--text-3)" }}>
+                Queue status is visible on the Plans tab of each client.
+                If Hayden is unavailable, generation is paused — this is a
+                known single point of failure.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Stage 0 failures or other top-level errors */}
       {topLevelError && (
         <Card
