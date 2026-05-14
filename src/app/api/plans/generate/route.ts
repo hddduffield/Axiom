@@ -12,6 +12,7 @@ import {
   validateFactReview,
   type Stage0LlmApiClient,
 } from "@/lib/orchestrator/glue/stage0Validator";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 import type { PlansApi } from "@/lib/api/types";
 
 const STORAGE_BUCKET = "plan-inputs";
@@ -202,6 +203,15 @@ export async function POST(request: Request) {
       .eq("id", plan.id);
     if (pathErr) return err(mapDbError(pathErr), dbErrorMessage(pathErr));
 
+    // Phase 17.3 — queueing a plan is itself a meaningful client touch
+    // (the advisor is actively working that household).
+    await recordMeaningfulTouch(
+      auth.supabase,
+      clientId,
+      "plan_generated",
+      auth.advisor.id,
+    );
+
     const body: PlansApi.GenerateAcceptedResponse = {
       id: plan.id,
       status: "queued",
@@ -308,6 +318,14 @@ export async function POST(request: Request) {
     })
     .eq("id", plan.id);
   if (pathErr) return err(mapDbError(pathErr), dbErrorMessage(pathErr));
+
+  // Phase 17.3 — same touch on the JSON-fallback path.
+  await recordMeaningfulTouch(
+    auth.supabase,
+    clientId,
+    "plan_generated",
+    auth.advisor.id,
+  );
 
   const body: PlansApi.GenerateAcceptedResponse = {
     id: plan.id,

@@ -1,6 +1,7 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -40,5 +41,15 @@ export async function POST(_request: Request, { params }: RouteContext) {
     .single();
   if (error) return err(mapDbError(error), dbErrorMessage(error));
   // TODO: Phase 5e — audit_log insert (entity='plan', action='approved').
+
+  // Phase 17.3 — plan approval is a meaningful touch. Phase 17.5 will
+  // additionally call promotePlanRecsToActionItems here.
+  await recordMeaningfulTouch(
+    auth.supabase,
+    data.client_id,
+    "plan_approved",
+    auth.advisor.id,
+  );
+
   return ok(data);
 }

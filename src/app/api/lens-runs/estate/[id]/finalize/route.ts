@@ -5,6 +5,7 @@
 import { requireAdvisor } from "@/lib/api/auth";
 import { err, ok } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -44,6 +45,14 @@ export async function POST(_request: Request, { params }: RouteContext) {
     .select("*")
     .single();
   if (error) return err(mapDbError(error), dbErrorMessage(error));
+
+  // Phase 17.3 — finalizing the estate lens is a meaningful touch.
+  await recordMeaningfulTouch(
+    auth.supabase,
+    data.client_id,
+    "lens_finalized",
+    auth.advisor.id,
+  );
 
   return ok(data);
 }

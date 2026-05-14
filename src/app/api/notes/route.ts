@@ -2,6 +2,7 @@ import { z } from "zod";
 import { requireAdvisor } from "@/lib/api/auth";
 import { created, err } from "@/lib/api/respond";
 import { dbErrorMessage, mapDbError } from "@/lib/api/db_queries";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 
 const createSchema = z.object({
   client_id: z.string().uuid(),
@@ -38,5 +39,9 @@ export async function POST(request: Request) {
     .single();
   if (error) return err(mapDbError(error), dbErrorMessage(error));
   // TODO: Phase 5e — audit_log insert (entity='note', action='created').
+
+  // Phase 17.3 — saving a note counts as a meaningful client touch.
+  await recordMeaningfulTouch(auth.supabase, data.client_id, "note", auth.advisor.id);
+
   return created(data);
 }

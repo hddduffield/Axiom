@@ -6,6 +6,7 @@ import {
   closeDerivativeRemindersIfNeeded,
   spawnDerivativeReminderIfNeeded,
 } from "@/lib/api/action_item_lifecycle";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 import type { Database } from "@/lib/supabase/database.types";
 
 type ActionItemUpdate = Database["public"]["Tables"]["action_items"]["Update"];
@@ -117,6 +118,16 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return err(
       "internal_error",
       `Lifecycle hook failed after action item update: ${(e as Error).message}`,
+    );
+  }
+
+  // Phase 17.3 — completing an action item is a meaningful client touch.
+  if (parsed.data.status === "complete" && current.status !== "complete") {
+    await recordMeaningfulTouch(
+      auth.supabase,
+      data.client_id,
+      "action_completed",
+      auth.advisor.id,
     );
   }
 
