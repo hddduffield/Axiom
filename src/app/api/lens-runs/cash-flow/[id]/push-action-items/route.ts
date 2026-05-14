@@ -18,6 +18,7 @@ import {
   isCashFlowLensOutput,
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 import type { Json } from "@/lib/supabase/database.types";
 
 interface RouteContext {
@@ -116,6 +117,14 @@ export async function POST(request: Request, { params }: RouteContext) {
     .update({ output: newOutput as unknown as Json })
     .eq("id", id);
   if (updErr) return err(mapDbError(updErr), dbErrorMessage(updErr));
+
+  // Phase 17.3 — promoting lens recs counts as a meaningful client touch.
+  await recordMeaningfulTouch(
+    auth.supabase,
+    lensRow.client_id,
+    "lens_finalized",
+    auth.advisor.id,
+  );
 
   return ok({ created: created ?? [], skipped: parsed.data.recommendation_ids.length - toPush.length });
 }

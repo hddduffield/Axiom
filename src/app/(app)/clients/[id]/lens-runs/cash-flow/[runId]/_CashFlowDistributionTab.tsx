@@ -29,6 +29,7 @@ import {
   type CashFlowLensOutput,
 } from "@/lib/api/cash_flow_lens";
 import type { LensRun } from "@/lib/api/types";
+import { promoteCashFlowLensAndSetCurrent } from "@/lib/lens-execution/promoteLensRecsToActionItems";
 
 interface Props {
   lensId: string;
@@ -62,6 +63,7 @@ export function CashFlowDistributionTab({
   const slider = output.distribution_plan.slider_state;
   const [generatingRecs, setGeneratingRecs] = useState(false);
   const [pushing, setPushing] = useState(false);
+  const [finalizing, setFinalizing] = useState(false);
 
   const aiDistRecs = output.ai_suggestions.distribution_recommendations;
   const pushedSet = useMemo(
@@ -232,6 +234,32 @@ export function CashFlowDistributionTab({
       setPushing(false);
     }
   }, [selectedIds, lensId, output, onChange]);
+
+  const finalizeAndPromote = useCallback(async () => {
+    setFinalizing(true);
+    try {
+      const ids = Array.from(selectedIds);
+      const result = await promoteCashFlowLensAndSetCurrent(lensId, ids);
+      if (result.errors.length > 0) {
+        toast.error(result.errors[0]);
+        return;
+      }
+      // Reflect new pushed state + set-current locally without an
+      // extra fetch.
+      onChange({
+        ...output,
+        pushed_action_item_ids: [...output.pushed_action_item_ids, ...ids],
+      });
+      setSelectedIds(new Set());
+      toast.success(
+        result.created_count > 0
+          ? `Lens set as current · ${result.created_count} action item${result.created_count === 1 ? "" : "s"} created`
+          : "Lens set as current",
+      );
+    } finally {
+      setFinalizing(false);
+    }
+  }, [lensId, output, onChange, selectedIds]);
 
   const toggleSelected = (id: string) => {
     setSelectedIds((cur) => {
@@ -464,21 +492,35 @@ export function CashFlowDistributionTab({
                 })}
             </ul>
 
-            <div className="mt-3 flex items-center justify-end gap-2">
+            <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
               <span className="text-[12px]" style={{ color: "var(--text-3)" }}>
                 {selectedIds.size} selected
               </span>
               <Button
                 size="sm"
+                variant="outline"
                 onClick={pushSelected}
-                disabled={pushing || selectedIds.size === 0}
+                disabled={pushing || finalizing || selectedIds.size === 0}
               >
                 {pushing ? (
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                 ) : (
                   <ChevronRight className="mr-1.5 h-3.5 w-3.5" />
                 )}
-                Push selected to action items
+                Push selected
+              </Button>
+              <Button
+                size="sm"
+                onClick={finalizeAndPromote}
+                disabled={pushing || finalizing}
+                title="Push selected recommendations to action items AND promote this lens to current"
+              >
+                {finalizing ? (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <ChevronRight className="mr-1.5 h-3.5 w-3.5" />
+                )}
+                Finalize & Promote
               </Button>
             </div>
           </>

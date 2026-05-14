@@ -14,6 +14,7 @@ import {
   isEstateLensOutput,
   type EstateLensOutput,
 } from "@/lib/estate-lens/types";
+import { recordMeaningfulTouch } from "@/lib/cadence/touchHelpers";
 import type { Json } from "@/lib/supabase/database.types";
 
 interface RouteContext {
@@ -106,6 +107,14 @@ export async function POST(request: Request, { params }: RouteContext) {
     .update({ output: newOutput as unknown as Json })
     .eq("id", id);
   if (updErr) return err(mapDbError(updErr), dbErrorMessage(updErr));
+
+  // Phase 17.3 — promoting lens recs counts as a meaningful client touch.
+  await recordMeaningfulTouch(
+    auth.supabase,
+    lensRow.client_id,
+    "lens_finalized",
+    auth.advisor.id,
+  );
 
   return ok({
     created: createdRows ?? [],

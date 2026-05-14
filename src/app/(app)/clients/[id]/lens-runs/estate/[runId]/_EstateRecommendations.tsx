@@ -28,6 +28,7 @@ import {
   type EstateLensOutput,
   type EstateRecommendation,
 } from "@/lib/estate-lens/types";
+import { promoteEstateLensAndSetCurrent } from "@/lib/lens-execution/promoteLensRecsToActionItems";
 
 interface Props {
   lensId: string;
@@ -38,6 +39,7 @@ interface Props {
 
 export function EstateRecommendationsPanel({ lensId, output, onChange, editable }: Props) {
   const [pushing, setPushing] = useState(false);
+  const [finalizing, setFinalizing] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(
     new Set(output.recommendations.map((r) => r.id)),
@@ -134,6 +136,29 @@ export function EstateRecommendationsPanel({ lensId, output, onChange, editable 
     }
   }, [selected, pushedSet, lensId, output, onChange]);
 
+  const finalizeAndPromote = useCallback(async () => {
+    const ids = Array.from(selected).filter((id) => !pushedSet.has(id));
+    setFinalizing(true);
+    try {
+      const result = await promoteEstateLensAndSetCurrent(lensId, ids);
+      if (result.errors.length > 0) {
+        toast.error(result.errors[0]);
+        return;
+      }
+      onChange({
+        ...output,
+        pushed_action_item_ids: [...output.pushed_action_item_ids, ...ids],
+      });
+      toast.success(
+        result.created_count > 0
+          ? `Lens set as current · ${result.created_count} action item${result.created_count === 1 ? "" : "s"} created`
+          : "Lens set as current",
+      );
+    } finally {
+      setFinalizing(false);
+    }
+  }, [selected, pushedSet, lensId, output, onChange]);
+
   return (
     <PanelCard
       title="Action Item Recommendations"
@@ -215,19 +240,37 @@ export function EstateRecommendationsPanel({ lensId, output, onChange, editable 
               );
             })}
           </ul>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span
               className="text-[11px]"
               style={{ color: "var(--text-3)", fontFamily: "var(--font-mono)" }}
             >
               {Array.from(selected).filter((id) => !pushedSet.has(id)).length} new selected
             </span>
-            <Button size="sm" onClick={push} disabled={pushing}>
-              {pushing ? (
-                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              ) : null}
-              Push selected to action items
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={push}
+                disabled={pushing || finalizing}
+              >
+                {pushing ? (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : null}
+                Push selected
+              </Button>
+              <Button
+                size="sm"
+                onClick={finalizeAndPromote}
+                disabled={pushing || finalizing}
+                title="Push selected recommendations to action items AND promote this lens to current"
+              >
+                {finalizing ? (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : null}
+                Finalize & Promote
+              </Button>
+            </div>
           </div>
         </div>
       )}
