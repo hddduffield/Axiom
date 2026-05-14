@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
+import { Loader2, Pencil, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -71,6 +71,8 @@ const editClientSchema = z.object({
     .int("Whole number")
     .min(1, "≥ 1")
     .max(3650, "≤ 3650"),
+  // Phase 18.4 — written context paragraph
+  context_paragraph: z.string(),
 });
 type EditClientValues = z.infer<typeof editClientSchema>;
 
@@ -87,6 +89,13 @@ function buildPatch(
   if (cleanNotes !== (client.notes ?? null)) patch.notes = cleanNotes;
   if (values.cadence_target_days !== (client.cadence_target_days ?? null)) {
     patch.cadence_target_days = values.cadence_target_days;
+  }
+  const cleanContext =
+    values.context_paragraph.trim().length > 0
+      ? values.context_paragraph.trim()
+      : null;
+  if (cleanContext !== (client.context_paragraph ?? null)) {
+    patch.context_paragraph = cleanContext;
   }
   return Object.keys(patch).length === 0 ? null : patch;
 }
@@ -111,6 +120,7 @@ export function ClientEditDialog({
         ? "dormant"
         : "prospect";
 
+  const [generatingContext, setGeneratingContext] = useState(false);
   const form = useForm<EditClientValues>({
     resolver: zodResolver(editClientSchema),
     defaultValues: {
@@ -122,8 +132,29 @@ export function ClientEditDialog({
       cadence_target_days:
         client.cadence_target_days ??
         defaultCadenceForArchetype(client.archetype),
+      context_paragraph: client.context_paragraph ?? "",
     },
   });
+
+  async function handleGenerateContext() {
+    setGeneratingContext(true);
+    try {
+      const res = await api.clients.generateContext(client.id);
+      form.setValue("context_paragraph", res.draft_paragraph);
+      const noteParts: string[] = [];
+      if (res.sources.plan_id) noteParts.push("latest plan");
+      if (res.sources.lens_count > 0)
+        noteParts.push(`${res.sources.lens_count} lens summary${res.sources.lens_count === 1 ? "" : "ies"}`);
+      if (res.sources.has_advisor_notes) noteParts.push("advisor notes");
+      const sourceMsg =
+        noteParts.length > 0 ? ` from ${noteParts.join(" + ")}` : "";
+      toast.success(`Draft generated${sourceMsg} · review before saving.`);
+    } catch (e) {
+      toast.error(isApiError(e) ? e.message : "Could not generate context.");
+    } finally {
+      setGeneratingContext(false);
+    }
+  }
 
   async function onSubmit(values: EditClientValues) {
     const patch = buildPatch(values, client);
@@ -156,6 +187,7 @@ export function ClientEditDialog({
         cadence_target_days:
           client.cadence_target_days ??
           defaultCadenceForArchetype(client.archetype),
+        context_paragraph: client.context_paragraph ?? "",
       });
     }
   }
@@ -325,6 +357,52 @@ export function ClientEditDialog({
             />
             <FormField
               control={form.control}
+              name="context_paragraph"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel
+                      className="text-[11px] uppercase"
+                      style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
+                    >
+                      Client context paragraph
+                    </FormLabel>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleGenerateContext}
+                      disabled={generatingContext}
+                      className="h-7 px-2 text-[11px]"
+                      title="Generate a draft from the latest plan + lens summaries (review before saving)"
+                    >
+                      {generatingContext ? (
+                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="mr-1 h-3 w-3" />
+                      )}
+                      Generate from latest plan
+                    </Button>
+                  </div>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      placeholder="3-5 sentences about this client: who they are, their business, planning thesis, sensitivities, current focus. This appears prominently on their Overview page."
+                      {...field}
+                    />
+                  </FormControl>
+                  <p
+                    className="text-[11px]"
+                    style={{ color: "var(--text-3)" }}
+                  >
+                    AI-generated drafts must be reviewed before saving — they may need editing for tone, accuracy, or omission.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
@@ -332,7 +410,7 @@ export function ClientEditDialog({
                     className="text-[11px] uppercase"
                     style={{ color: "var(--text-2)", letterSpacing: "0.04em" }}
                   >
-                    Notes
+                    Internal notes
                   </FormLabel>
                   <FormControl>
                     <Textarea

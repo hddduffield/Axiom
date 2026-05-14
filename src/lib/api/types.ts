@@ -116,6 +116,19 @@ export namespace ClientsApi {
   export type UpdateResponse = Client;
 
   // DELETE returns 204 no content (soft-delete: status → inactive)
+
+  // Phase 18.4 — AI-generated draft context paragraph. Caller saves
+  // by calling PATCH /api/clients/[id] with context_paragraph in the
+  // body; nothing is auto-persisted by the generate endpoint.
+  export interface GenerateContextResponse {
+    draft_paragraph: string;
+    sources: {
+      plan_id: string | null;
+      lens_count: number;
+      has_advisor_notes: boolean;
+    };
+    cost_cents: number;
+  }
 }
 
 // ────────────────────────────────────────────────────────────────────────

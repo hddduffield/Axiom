@@ -143,6 +143,14 @@ export const api = {
       request<ClientsApi.UpdateResponse>(`/api/clients/${id}`, { method: "PATCH", body }),
     softDelete: (id: string) =>
       request<void>(`/api/clients/${id}`, { method: "DELETE" }),
+    // Phase 18.4 — generate a draft context paragraph using Haiku.
+    // Returns the draft for the advisor to review before saving via
+    // PATCH /api/clients/[id].
+    generateContext: (id: string) =>
+      request<ClientsApi.GenerateContextResponse>(
+        `/api/clients/${id}/generate-context`,
+        { method: "POST" },
+      ),
   },
   plans: {
     listByClient: (clientId: string, q: PlansApi.ListByClientQuery = {}) =>

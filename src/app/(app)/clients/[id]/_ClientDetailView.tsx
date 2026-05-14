@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/axiom/Tab
 import { ActionItemDrawer } from "@/components/axiom/ActionItemDrawer";
 import { PanelCard } from "@/components/axiom/PanelCard";
 import { Chip, Count } from "@/components/axiom/Chip";
+import { ClientContextBlock } from "@/components/axiom/ClientContextBlock";
 import { ClientEditDialog } from "./_ClientEditDialog";
 import { ClientArchiveDialog } from "./_ClientArchiveDialog";
 import { ClientRestoreDialog } from "./_ClientRestoreDialog";
@@ -416,11 +417,13 @@ function OverviewTab({
   items,
   notes,
   onOpenItem,
+  onOpenEdit,
 }: {
   client: ClientWithAdvisor;
   items: ActionItem[];
   notes: NoteWithAuthor[];
   onOpenItem: (i: ActionItem) => void;
+  onOpenEdit?: () => void;
 }) {
   const aiOpen = items.filter((a) => a.status !== "complete");
   const overdue = aiOpen.filter((a) => a.timing_bucket === "overdue").length;
@@ -429,7 +432,14 @@ function OverviewTab({
   const recent = [...notes].slice(0, 3);
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
+    <div className="flex flex-col gap-4">
+      {/* Phase 18.4 — Context paragraph block at the top. */}
+      <ClientContextBlock
+        paragraph={client.context_paragraph}
+        updatedAt={client.context_updated_at}
+        onEditClick={onOpenEdit}
+      />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
       {/* Left rail */}
       <div className="flex flex-col gap-4">
         <PanelCard title="Profile">
@@ -546,6 +556,7 @@ function OverviewTab({
           )}
         </PanelCard>
       </div>
+    </div>
     </div>
   );
 }
