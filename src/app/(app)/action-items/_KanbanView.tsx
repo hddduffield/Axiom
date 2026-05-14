@@ -416,6 +416,7 @@ export function KanbanView({
             <ActionCard
               item={draggingItem}
               clientName={clientNameOf(draggingItem.client_id)}
+              clientId={draggingItem.client_id}
               archived={isArchivedClient(draggingItem.client_id)}
             />
           </div>
@@ -430,6 +431,7 @@ export function KanbanView({
 function DraggableCard({
   item,
   clientName,
+  clientId,
   onClick,
   completed,
   compact,
@@ -437,6 +439,7 @@ function DraggableCard({
 }: {
   item: ActionItem;
   clientName: string | null;
+  clientId?: string | null;
   onClick: () => void;
   completed?: boolean;
   compact?: boolean;
@@ -463,6 +466,7 @@ function DraggableCard({
       <ActionCard
         item={item}
         clientName={clientName}
+        clientId={clientId}
         onClick={onClick}
         completed={completed}
         compact={compact}
@@ -588,6 +592,7 @@ function AdvisorColumn({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              clientId={it.client_id}
               archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
             />
@@ -656,6 +661,7 @@ function CompletedColumn({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              clientId={it.client_id}
               archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
               completed
@@ -765,6 +771,7 @@ function BacklogSection({
               key={it.id}
               item={it}
               clientName={clientNameOf(it.client_id)}
+              clientId={it.client_id}
               archived={isArchivedClient(it.client_id)}
               onClick={() => onCardClick(it)}
               compact

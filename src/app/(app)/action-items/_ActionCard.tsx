@@ -7,6 +7,7 @@
 // category + partner-blocked + long-running tags). Phase 9.19 adds
 // the draggable wrapper via @dnd-kit/core's useDraggable hook.
 
+import Link from "next/link";
 import { FileText, Layers, Link as LinkIcon } from "lucide-react";
 import * as React from "react";
 import type { ActionItem } from "@/lib/api/types";
@@ -14,6 +15,11 @@ import type { ActionItem } from "@/lib/api/types";
 export interface ActionCardProps {
   item: ActionItem;
   clientName: string | null;
+  /** Phase 17.7 — when supplied, the client name renders as a Next.js
+   *  Link to /clients/[id]. Drag interactions still need to land on
+   *  the card, so the link uses onClick stopPropagation so the parent
+   *  card click / drag handlers don't fire when the name is clicked. */
+  clientId?: string | null;
   onClick?: () => void;
   /** When true the card paints in muted/strike-through tone (used by the
    *  read-only Completed column). */
@@ -57,7 +63,7 @@ function TimingBadge({ bucket }: { bucket: string | null }) {
 
 export const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(
   function ActionCard(
-    { item, clientName, onClick, completed, compact, archived },
+    { item, clientName, clientId, onClick, completed, compact, archived },
     ref,
   ) {
     const partnerBlocked = item.partner_required && item.partner_type;
@@ -89,9 +95,21 @@ export const ActionCard = React.forwardRef<HTMLDivElement, ActionCardProps>(
           className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]"
           style={{ color: "var(--text-3)" }}
         >
-          <span style={{ color: "var(--text-2)" }}>
-            {withoutFamily(clientName)}
-          </span>
+          {clientId ? (
+            <Link
+              href={`/clients/${clientId}`}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="font-medium underline-offset-2 hover:underline"
+              style={{ color: "var(--psa-navy)" }}
+            >
+              {withoutFamily(clientName)}
+            </Link>
+          ) : (
+            <span style={{ color: "var(--text-2)" }}>
+              {withoutFamily(clientName)}
+            </span>
+          )}
           <span>·</span>
           <span
             className="uppercase"
