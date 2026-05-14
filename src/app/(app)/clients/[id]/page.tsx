@@ -61,12 +61,12 @@ export default async function ClientDetailPage({ params, searchParams }: RouteCo
     includeArchivedLensRuns
       ? supabase
           .from("lens_runs")
-          .select("id, lens_type, status, generated_at, cost_cents, context_input")
+          .select("id, lens_type, status, generated_at, cost_cents, context_input, output")
           .eq("client_id", id)
           .order("generated_at", { ascending: false })
       : supabase
           .from("lens_runs")
-          .select("id, lens_type, status, generated_at, cost_cents, context_input")
+          .select("id, lens_type, status, generated_at, cost_cents, context_input, output")
           .eq("client_id", id)
           .neq("status", "archived")
           .order("generated_at", { ascending: false }),

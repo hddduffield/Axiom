@@ -62,7 +62,13 @@ type PlanRow = Pick<
 >;
 type LensRunRow = Pick<
   LensRun,
-  "id" | "lens_type" | "status" | "generated_at" | "cost_cents" | "context_input"
+  | "id"
+  | "lens_type"
+  | "status"
+  | "generated_at"
+  | "cost_cents"
+  | "context_input"
+  | "output"
 >;
 
 interface AdvisorOption {
@@ -365,7 +371,8 @@ export function ClientDetailView({
             client={client}
             items={items}
             notes={notes}
-            onOpenItem={setActiveItem}
+            plans={plans}
+            lensRuns={lensRuns}
           />
         </TabsContent>
 
@@ -416,147 +423,509 @@ function OverviewTab({
   client,
   items,
   notes,
-  onOpenItem,
-  onOpenEdit,
+  plans,
+  lensRuns,
 }: {
   client: ClientWithAdvisor;
   items: ActionItem[];
   notes: NoteWithAuthor[];
-  onOpenItem: (i: ActionItem) => void;
-  onOpenEdit?: () => void;
+  plans: PlanRow[];
+  lensRuns: LensRunRow[];
 }) {
+  // Phase 18.6 — digest layout. Sections:
+  //   A. Context paragraph
+  //   B. At-a-glance strip (last contact, cadence, plan status, open items)
+  //   C. Current state per lens type (cash flow + estate)
+  //   D. Latest activity (most-recent note + plan event + item completion)
+  //   E. Decisions needed (placeholder — Phase 21)
+  //   F. Quick actions
+
   const aiOpen = items.filter((a) => a.status !== "complete");
-  const overdue = aiOpen.filter((a) => a.timing_bucket === "overdue").length;
-  const week = aiOpen.filter((a) => a.timing_bucket === "this_week").length;
-  const pending = aiOpen.filter((a) => a.status === "pending_decision").length;
-  const recent = [...notes].slice(0, 3);
+  const aiComplete = items.filter((a) => a.status === "complete");
+
+  // Latest plan = most-recent non-archived plan with a meaningful status.
+  const latestPlan = [...plans]
+    .filter((p) => p.status !== "archived")
+    .sort((a, b) => b.generated_at.localeCompare(a.generated_at))[0];
+
+  // Latest "current" lens per type — used by Section C.
+  const currentCashFlow = lensRuns.find(
+    (l) => l.lens_type === "cash_flow" && l.status === "current",
+  );
+  const currentEstate = lensRuns.find(
+    (l) => l.lens_type === "estate" && l.status === "current",
+  );
+
+  // Latest activity events.
+  const latestNote = [...notes].sort((a, b) =>
+    b.created_at.localeCompare(a.created_at),
+  )[0];
+  const latestCompleteItem = aiComplete
+    .filter((a) => a.completed_at)
+    .sort((a, b) => (b.completed_at ?? "").localeCompare(a.completed_at ?? ""))[0];
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Phase 18.4 — Context paragraph block at the top. */}
+    <div className="flex flex-col gap-5">
+      {/* A — Context paragraph */}
       <ClientContextBlock
         paragraph={client.context_paragraph}
         updatedAt={client.context_updated_at}
-        onEditClick={onOpenEdit}
       />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
-      {/* Left rail */}
-      <div className="flex flex-col gap-4">
-        <PanelCard title="Profile">
-          <dl className="grid grid-cols-[110px_1fr] gap-y-2 text-[13px]">
-            <dt style={{ color: "var(--text-3)" }}>Status</dt>
-            <dd>
-              <ClientStatusBadge s={client.status} />
-            </dd>
-            <dt style={{ color: "var(--text-3)" }}>Archetype</dt>
-            <dd>
-              {client.archetype ? (
-                <span className="inline-flex items-center gap-2">
-                  <Tag>{client.archetype}</Tag>
-                  <span className="text-[12px]" style={{ color: "var(--text-3)" }}>
-                    {archetypeLabel(client.archetype)}
-                  </span>
-                </span>
-              ) : (
-                "—"
-              )}
-            </dd>
-            <dt style={{ color: "var(--text-3)" }}>Lead advisor</dt>
-            <dd>
-              {client.advisors
-                ? `${client.advisors.first_name} ${client.advisors.last_name}`
-                : "—"}
-            </dd>
-            <dt style={{ color: "var(--text-3)" }}>Created</dt>
-            <dd style={{ fontFamily: "var(--font-mono)" }}>
-              {fmtDate(client.created_at)}
-            </dd>
-          </dl>
-        </PanelCard>
 
-        <PanelCard title="Activity">
-          <Stat
-            label="Open items"
-            value={aiOpen.length}
-            delta={`${overdue} overdue · ${week} this week · ${pending} pending`}
-          />
-          <div
-            className="my-3 h-px"
-            style={{ background: "var(--border)" }}
-          />
-          <Stat
-            label="Notes"
-            value={notes.length}
-            delta={`${notes.filter((n) => n.promoted_to_action_item_id).length} promoted to items`}
-          />
-        </PanelCard>
+      {/* B — At-A-Glance strip */}
+      <AtAGlanceStrip
+        client={client}
+        latestPlan={latestPlan ?? null}
+        openItemsCount={aiOpen.length}
+      />
+
+      {/* C — Current state per lens type */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <CurrentLensCard
+          clientId={client.id}
+          lensTypeKey="cash_flow"
+          lensTypeLabel="Cash Flow Plan"
+          row={currentCashFlow ?? null}
+        />
+        <CurrentLensCard
+          clientId={client.id}
+          lensTypeKey="estate"
+          lensTypeLabel="Estate Scenario"
+          row={currentEstate ?? null}
+        />
       </div>
 
-      {/* Main column */}
-      <div className="flex flex-col gap-4">
-        <PanelCard title="Open action items" count={aiOpen.length} flush>
-          {aiOpen.length === 0 ? (
-            <div
-              className="px-4 py-6 text-center text-sm"
-              style={{ color: "var(--text-3)" }}
-            >
-              All clear — no open items.
-            </div>
-          ) : (
-            <table className="w-full text-[13px]">
-              <thead
-                className="border-b"
-                style={{ borderColor: "var(--border)", color: "var(--text-3)" }}
-              >
-                <tr>
-                  <ColHead>Item</ColHead>
-                  <ColHead width={110}>Owner</ColHead>
-                  <ColHead width={110}>Due</ColHead>
-                  <ColHead width={140}>Status</ColHead>
-                </tr>
-              </thead>
-              <tbody>
-                {aiOpen.slice(0, 10).map((a) => (
-                  <ItemRow key={a.id} a={a} onClick={() => onOpenItem(a)} />
-                ))}
-              </tbody>
-            </table>
-          )}
-        </PanelCard>
+      {/* D — Latest activity */}
+      <LatestActivityCard
+        latestNote={latestNote ?? null}
+        latestPlan={latestPlan ?? null}
+        latestCompleteItem={latestCompleteItem ?? null}
+      />
 
-        <PanelCard title="Recent notes">
-          {recent.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-3)" }}>
-              No notes yet.
-            </p>
-          ) : (
-            <ul className="flex flex-col gap-3">
-              {recent.map((n) => (
-                <li
-                  key={n.id}
-                  className="border-l-2 pl-3"
-                  style={{ borderColor: "var(--border)" }}
-                >
-                  <div className="text-[11px]" style={{ color: "var(--text-3)" }}>
-                    {fmtRelative(n.created_at)}
-                    {n.advisors ? ` · ${n.advisors.first_name}` : ""}
-                    {n.tag ? (
-                      <>
-                        {" · "}
-                        <Tag>{n.tag}</Tag>
-                      </>
-                    ) : null}
-                  </div>
-                  <p className="mt-1 text-[13px]" style={{ color: "var(--text)" }}>
-                    {n.body}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </PanelCard>
-      </div>
+      {/* E — Decisions needed (placeholder for Phase 21) */}
+      <PanelCard title="Decisions needed">
+        <p
+          className="text-[12px] italic"
+          style={{ color: "var(--text-3)" }}
+        >
+          Decisions tracking coming in Phase 21.
+        </p>
+      </PanelCard>
+
+      {/* F — Quick actions */}
+      <QuickActionsRow clientId={client.id} />
     </div>
+  );
+}
+
+// ───────────── Phase 18.6 sub-components ─────────────
+
+function AtAGlanceStrip({
+  client,
+  latestPlan,
+  openItemsCount,
+}: {
+  client: ClientWithAdvisor;
+  latestPlan: PlanRow | null;
+  openItemsCount: number;
+}) {
+  const cadenceDays = client.cadence_target_days;
+  const lastTouch = client.last_meaningful_contact_at;
+  // Compute cadence status: on track / due soon / overdue / not set.
+  let cadenceTone: { fg: string; bg: string; label: string } = {
+    fg: "var(--text-3)",
+    bg: "var(--surface-2)",
+    label: "Not set",
+  };
+  let cadenceDelta = "";
+  if (cadenceDays) {
+    if (!lastTouch) {
+      cadenceTone = {
+        fg: "var(--s-amber)",
+        bg: "var(--s-amber-bg)",
+        label: "Never contacted",
+      };
+    } else {
+      const ms = Date.now() - new Date(lastTouch).getTime();
+      const daysSince = Math.floor(ms / 86_400_000);
+      const daysUntilDue = cadenceDays - daysSince;
+      if (daysUntilDue < 0) {
+        const overdueBy = -daysUntilDue;
+        cadenceTone = {
+          fg: overdueBy >= 30 ? "var(--s-red)" : "var(--s-amber)",
+          bg: overdueBy >= 30 ? "var(--s-red-bg)" : "var(--s-amber-bg)",
+          label: `${overdueBy} day${overdueBy === 1 ? "" : "s"} overdue`,
+        };
+        cadenceDelta = `Target: every ${cadenceDays}d`;
+      } else if (daysUntilDue <= 7) {
+        cadenceTone = {
+          fg: "var(--s-amber)",
+          bg: "var(--s-amber-bg)",
+          label: `Due in ${daysUntilDue} day${daysUntilDue === 1 ? "" : "s"}`,
+        };
+        cadenceDelta = `Target: every ${cadenceDays}d`;
+      } else {
+        cadenceTone = {
+          fg: "var(--s-green)",
+          bg: "var(--s-green-bg)",
+          label: "On track",
+        };
+        cadenceDelta = `Due in ${daysUntilDue}d · every ${cadenceDays}d`;
+      }
+    }
+  }
+
+  const planLabel = latestPlan
+    ? latestPlan.status === "approved"
+      ? "Approved"
+      : latestPlan.status === "ready_for_review"
+        ? "Ready for review"
+        : latestPlan.status === "processing"
+          ? "Processing"
+          : latestPlan.status === "queued"
+            ? "Queued"
+            : latestPlan.status === "failed"
+              ? "Failed"
+              : latestPlan.status
+    : "No plan yet";
+  const planDelta = latestPlan
+    ? `Generated ${fmtRelative(latestPlan.generated_at)}`
+    : "Generate via /plans/generate";
+
+  return (
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <GlanceTile
+        label="Last contact"
+        value={lastTouch ? fmtRelative(lastTouch) : "—"}
+        delta={lastTouch ? fmtDate(lastTouch) : "Never"}
+      />
+      <GlanceTile
+        label="Cadence"
+        value={cadenceTone.label}
+        valueFg={cadenceTone.fg}
+        valueBg={cadenceTone.bg}
+        delta={cadenceDelta}
+      />
+      <GlanceTile
+        label="Plan status"
+        value={planLabel}
+        delta={planDelta}
+      />
+      <GlanceTile
+        label="Open action items"
+        value={String(openItemsCount)}
+        delta={openItemsCount > 0 ? "Click Items tab" : "All clear"}
+      />
+    </div>
+  );
+}
+
+function GlanceTile({
+  label,
+  value,
+  delta,
+  valueFg,
+  valueBg,
+}: {
+  label: string;
+  value: string;
+  delta?: string;
+  valueFg?: string;
+  valueBg?: string;
+}) {
+  return (
+    <div
+      className="rounded-md border px-3 py-3"
+      style={{
+        borderColor: "var(--border)",
+        background: "var(--surface)",
+      }}
+    >
+      <div
+        className="text-[10px] uppercase"
+        style={{
+          color: "var(--text-3)",
+          letterSpacing: "0.06em",
+          fontFamily: "var(--font-mono)",
+        }}
+      >
+        {label}
+      </div>
+      <div
+        className="mt-1 inline-flex items-center rounded px-1.5 py-0.5 text-[13px] font-medium"
+        style={{
+          background: valueBg ?? "transparent",
+          color: valueFg ?? "var(--text)",
+          marginLeft: valueBg ? "-0.375rem" : 0,
+        }}
+      >
+        {value}
+      </div>
+      {delta ? (
+        <div
+          className="mt-1 text-[11px]"
+          style={{ color: "var(--text-3)" }}
+        >
+          {delta}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function CurrentLensCard({
+  clientId,
+  lensTypeKey,
+  lensTypeLabel,
+  row,
+}: {
+  clientId: string;
+  lensTypeKey: "cash_flow" | "estate";
+  lensTypeLabel: string;
+  row: LensRunRow | null;
+}) {
+  const summary =
+    row && (row as unknown as { output?: { executive_summary?: { text: string } } }).output?.executive_summary?.text;
+
+  if (!row) {
+    return (
+      <PanelCard title={`Current ${lensTypeLabel}`}>
+        <p
+          className="text-[13px]"
+          style={{ color: "var(--text-3)" }}
+        >
+          No current {lensTypeLabel.toLowerCase()} —{" "}
+          <Link
+            href={`/clients/${clientId}?tab=lenses`}
+            className="underline-offset-2 hover:underline"
+            style={{ color: "var(--psa-navy)" }}
+          >
+            create one
+          </Link>
+          .
+        </p>
+      </PanelCard>
+    );
+  }
+
+  const href =
+    lensTypeKey === "cash_flow"
+      ? `/clients/${clientId}/lens-runs/cash-flow/${row.id}`
+      : `/clients/${clientId}/lens-runs/estate/${row.id}`;
+
+  return (
+    <PanelCard
+      title={`Current ${lensTypeLabel}`}
+      action={
+        <Link
+          href={href}
+          className="inline-flex items-center gap-1 text-[11px] hover:underline"
+          style={{ color: "var(--psa-navy)" }}
+        >
+          Open <ChevronRight className="h-3 w-3" />
+        </Link>
+      }
+    >
+      <div className="flex flex-col gap-2">
+        <div
+          className="text-[13px] font-medium"
+          style={{ color: "var(--text)" }}
+        >
+          {row.context_input ??
+            (lensTypeKey === "cash_flow" ? "Cash Flow Plan" : "Estate Plan")}
+        </div>
+        <div
+          className="text-[11px]"
+          style={{ color: "var(--text-3)" }}
+        >
+          Generated {fmtRelative(row.generated_at)} · status {row.status}
+        </div>
+        {summary ? (
+          <p
+            className="text-[12px] leading-snug"
+            style={{ color: "var(--text-2)" }}
+          >
+            {summary}
+          </p>
+        ) : (
+          <p
+            className="text-[12px] italic"
+            style={{ color: "var(--text-3)" }}
+          >
+            No executive summary yet — visit the lens to generate one.
+          </p>
+        )}
+      </div>
+    </PanelCard>
+  );
+}
+
+function LatestActivityCard({
+  latestNote,
+  latestPlan,
+  latestCompleteItem,
+}: {
+  latestNote: NoteWithAuthor | null;
+  latestPlan: PlanRow | null;
+  latestCompleteItem: ActionItem | null;
+}) {
+  const events: Array<{ key: string; ts: string; body: React.ReactNode }> = [];
+  if (latestNote) {
+    const body = latestNote.body;
+    const preview =
+      body.length > 220 ? body.slice(0, 220).trimEnd() + "…" : body;
+    events.push({
+      key: "note",
+      ts: latestNote.created_at,
+      body: (
+        <>
+          <div
+            className="text-[11px]"
+            style={{ color: "var(--text-3)" }}
+          >
+            Note
+            {latestNote.advisors
+              ? ` · ${latestNote.advisors.first_name}`
+              : ""}
+            {latestNote.tag ? ` · ${latestNote.tag}` : ""}
+          </div>
+          <p
+            className="mt-0.5 text-[13px]"
+            style={{ color: "var(--text)" }}
+          >
+            {preview}
+          </p>
+        </>
+      ),
+    });
+  }
+  if (latestPlan) {
+    const eventTime =
+      latestPlan.approved_at ?? latestPlan.generated_at;
+    const action = latestPlan.approved_at
+      ? "approved"
+      : latestPlan.status === "ready_for_review"
+        ? "ready for review"
+        : `${latestPlan.status}`;
+    events.push({
+      key: "plan",
+      ts: eventTime,
+      body: (
+        <>
+          <div
+            className="text-[11px]"
+            style={{ color: "var(--text-3)" }}
+          >
+            Plan {action}
+          </div>
+          <p
+            className="mt-0.5 text-[13px]"
+            style={{ color: "var(--text)" }}
+          >
+            {latestPlan.fact_review_filename ?? "Plan"}
+          </p>
+        </>
+      ),
+    });
+  }
+  if (latestCompleteItem) {
+    events.push({
+      key: "item",
+      ts: latestCompleteItem.completed_at ?? latestCompleteItem.updated_at,
+      body: (
+        <>
+          <div
+            className="text-[11px]"
+            style={{ color: "var(--text-3)" }}
+          >
+            Action item completed
+          </div>
+          <p
+            className="mt-0.5 text-[13px]"
+            style={{ color: "var(--text)" }}
+          >
+            {latestCompleteItem.description}
+          </p>
+        </>
+      ),
+    });
+  }
+  events.sort((a, b) => b.ts.localeCompare(a.ts));
+
+  return (
+    <PanelCard title="Latest activity">
+      {events.length === 0 ? (
+        <p
+          className="text-[12px] italic"
+          style={{ color: "var(--text-3)" }}
+        >
+          No activity yet for this client.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {events.map((e) => (
+            <li
+              key={e.key}
+              className="border-l-2 pl-3"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <div
+                className="text-[11px]"
+                style={{ color: "var(--text-3)" }}
+              >
+                {fmtRelative(e.ts)}
+              </div>
+              {e.body}
+            </li>
+          ))}
+        </ul>
+      )}
+    </PanelCard>
+  );
+}
+
+function QuickActionsRow({ clientId }: { clientId: string }) {
+  // Phase 18.6 — quick action shortcuts. + New Note / + Add Action Item
+  // are deep-links to existing pages with the client preselected
+  // (Phase 9.20 composer is global on /notes; action items kanban has
+  // no compose modal yet — deep-linked path lands the user there).
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Link
+        href={`/notes?client=${clientId}`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] hover:bg-[var(--surface-2)]"
+        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+      >
+        + New note
+      </Link>
+      <Link
+        href={`/action-items?client=${clientId}`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] hover:bg-[var(--surface-2)]"
+        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+      >
+        + Add action item
+      </Link>
+      <Link
+        href={`/plans/generate?client=${clientId}`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] hover:bg-[var(--surface-2)]"
+        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+      >
+        Generate plan
+      </Link>
+      <Link
+        href={`/clients/${clientId}?tab=lenses&new=cash_flow`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] hover:bg-[var(--surface-2)]"
+        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+      >
+        + New Cash Flow Lens
+      </Link>
+      <Link
+        href={`/clients/${clientId}?tab=lenses&new=estate`}
+        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[12px] hover:bg-[var(--surface-2)]"
+        style={{ borderColor: "var(--border)", color: "var(--text)" }}
+      >
+        + New Estate Lens
+      </Link>
     </div>
   );
 }
