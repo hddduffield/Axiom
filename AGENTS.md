@@ -2288,3 +2288,200 @@ Client wrappers: `api.lensRuns.cashFlow.refreshFromPlan(id)` /
 - **Stage 1 archetype → cash-flow assumptions** — POST archetype
   could swap default growth_rate / capital_gains_rate to PSA's
   archetype-tuned defaults.
+
+# Phase 17: Architecture foundation — plan/lens execute + cadence engine
+
+The architectural shift: plans and lenses are no longer terminal
+states. Approving a plan or promoting a lens to "current" now
+**creates** the work that follows. Every client has an expected
+contact cadence so the dashboard can surface households going stale
+before they're actually cold.
+
+## What landed (10 sub-phases)
+
+| # | Topic |
+| --- | --- |
+| 17.1 | Migration 0007: clients cadence cols + action_items.source_recommendation_id |
+| 17.2 | Cadence field on client create + edit dialogs (shared `CadencePicker`) |
+| 17.3 | `recordMeaningfulTouch` wired into notes / plans / lenses / action item complete |
+| 17.4 | Lens status expanded to draft / reviewed / presented / current / superseded / approved / archived + Set Current API |
+| 17.5 | Plan approve → `promotePlanRecsToActionItems`; one row per REC |
+| 17.6 | Lens "Finalize & Promote" button: push selected recs + flip to current |
+| 17.7 | Client name on every action item card → clickable Next.js Link |
+| 17.8 | "Going Stale" dashboard module — ranked overdue list |
+| 17.9 | Plan generation SPOF banner + queued tooltip |
+| 17.10 | AGENTS.md + v1.5 backlog + final wrap |
+
+## Cadence engine
+
+`src/lib/cadence/defaults.ts` seeds defaults by archetype:
+
+```
+PRE  = 30  days  (Monthly — transition prep)
+MID  = 21  days  (Every 3 weeks — live transaction)
+POST = 60  days  (Bi-Monthly — stabilized)
+NONE = 90  days  (Quarterly fallback)
+```
+
+`CADENCE_PRESETS` exposes Monthly / Bi-Monthly / Quarterly /
+Semi-Annually / Annually + a Custom integer for the picker. The
+`CadencePicker` component is shared between New Client and Edit
+Client dialogs.
+
+`src/lib/cadence/touchHelpers.ts` exports
+`recordMeaningfulTouch(supabase, clientId, type, advisorId)` — bumps
+`clients.last_meaningful_contact_at = NOW()` and writes an audit_log
+entry with `details.kind='meaningful_touch'`. Touch types: `note`,
+`plan_approved`, `plan_generated`, `lens_finalized`,
+`action_completed`. Wired into:
+
+- POST /api/notes
+- POST /api/plans/[id]/approve
+- POST /api/plans/generate (both FR and JSON paths)
+- POST /api/lens-runs/cash-flow/[id]/finalize
+- POST /api/lens-runs/estate/[id]/finalize
+- POST /api/lens-runs/{cash-flow,estate}/[id]/push-action-items
+- PATCH /api/action-items/[id] on status → complete
+
+Failures inside `recordMeaningfulTouch` log to console but do NOT
+roll back the primary mutation — touch state is best-effort
+telemetry.
+
+## Going Stale dashboard module
+
+`src/app/(app)/dashboard/_GoingStaleModule.tsx`. Server-side query
+in `dashboard/page.tsx` reads cadence + last-touch on the same
+clients query the dashboard already runs, derives overdue rows
+(last_touch + cadence < now), sorts most-overdue first, caps at 20.
+
+Tones: red ≥ 60 days late, amber ≥ 30, slate < 30. Empty state =
+"All clients on cadence". Rendered just below the hero, above the
+stat tiles.
+
+Null `last_meaningful_contact_at` counts as infinitely stale so
+brand-new clients with no touch history surface immediately.
+
+## Action item source provenance
+
+Migration 0007 adds `action_items.source_recommendation_id` (text).
+Combined with the existing `source_plan_id` + `source_lens_run_id`,
+every action item knows where it came from:
+
+- `source_plan_id` + `source_recommendation_id` → plan promotion
+- `source_lens_run_id` (recommendation_ids tracked in lens output JSONB) → lens promotion
+- All null → manually created via the Notes promote flow
+
+Unique index `idx_action_items_plan_rec_unique` on
+`(source_plan_id, source_recommendation_id)` enforces idempotency:
+re-approving the same plan no-ops on already-promoted recs.
+
+The action item card surfaces a small **from plan** (amber) /
+**from lens** (blue) chip when provenance is set, with the REC id
+as a tooltip on plan-sourced items.
+
+## Plan approval → action items
+
+`src/lib/plan-execution/promoteRecsToActionItems.ts` walks
+`plans.stage3a_output.result.recommendations[]` and emits ONE row
+per recommendation (NOT per nested action_item — 80 recs typically
+produce 80 rows, not 400). Mappings:
+
+| Orchestrator | DB action_items |
+| --- | --- |
+| TimingBucket `0-30 days` | `next_30_days` |
+| TimingBucket `30-60 days` | `next_60_days` |
+| TimingBucket `60-120 days` | `next_90_days` |
+| TimingBucket `4-6 months` / `6-12 months` / `12-24 months` | `this_year` |
+| TimingBucket `Ongoing` | `ongoing` |
+| Category `Entity Structure` | `ENTITY` (SCREAMING_SNAKE) |
+| ActionOwner `PSA` | advisor email |
+| ActionOwner `CPA`/`Attorney`/etc | lowercase literal |
+| DurationClass `long_running` | `long_running` (preserves Phase 5d derivative-reminder hooks) |
+| DurationClass `point_in_time` / `short_running` | `one_time` |
+
+`partner_required` and `partner_type` aggregate from the rec's
+nested action_items (any partner-required sub-item flags the whole
+row). The row's `description` uses the first nested action_item's
+description for the imperative summary.
+
+The `/api/plans/[id]/approve` response shape changed to
+`{ plan, action_items_created, action_items_skipped_existing, promotion_errors }`.
+PlanActions toasts "Plan approved · N action items created". Errors
+surface as a warning toast and `console.warn` but do not roll back
+approval (the plan transition already committed).
+
+## Lens status taxonomy
+
+Migration 0007 expands `lens_runs.status` to allow:
+
+```
+draft → reviewed → presented → current ↔ superseded
+                                       ↓
+                                    archived
+```
+
+`approved` is retained for backward compatibility — existing
+finalize endpoints still emit it. The new `current` state is what
+the rest of the app should treat as "live" for that
+(client_id, lens_type) pair. Only one `current` per pair —
+promoting a new one auto-demotes the prior to `superseded`.
+
+API: `POST /api/lens-runs/[id]/set-current` (atomic demote-then-
+promote). UI: small "Set current" inline button on each non-
+archived lens row.
+
+Combined flow: "Finalize & Promote" in the lens distribution /
+recommendations panel calls push-action-items + set-current
+sequentially. Pure UI composition via
+`src/lib/lens-execution/promoteLensRecsToActionItems.ts`.
+
+## Plan generation SPOF transparency
+
+The orchestrator runs on Hayden's laptop. v1.5 leaves this gap
+in place but no longer hides it from advisors:
+
+- `/plans/generate` shows an amber Info banner above the form
+  explaining the manual `npm run generate-pending` step + the
+  ~25–40 min wall-clock + the SPOF.
+- Per-client Plans tab labels queued plans **"Queued · awaiting
+  orchestrator"** with a title-tooltip explaining the dependency.
+- The full status enum gets explicit tones (processing = blue,
+  ready_for_review = blue, failed = red).
+
+## Manual setup step
+
+Apply `supabase/migrations/0007_cadence_engine.sql` via Supabase
+Dashboard SQL editor before the Phase 17 features can be used.
+Idempotent — re-applying is safe. Without it, cadence-related
+queries error and the Set Current endpoint rejects.
+
+## v1.5 backlog added during Phase 17
+
+- **Orchestrator on hosted infra** — Inngest or pg-boss, eliminates
+  the SPOF banner.
+- **Cadence color coding on the clients list table** — light red /
+  amber chip next to overdue rows in `/clients`.
+- **Cadence-based notifications** — Slack / email / iMessage when a
+  client crosses their threshold.
+- **Stage 1 / 4 emit timing recommendations into a plan-level
+  cadence override** — the system would propose Monthly during the
+  transaction window, then Quarterly post-exit.
+- **Promotion preview** — before clicking Approve, show a
+  modal listing the N action items about to spawn so the advisor
+  can review category / timing / owner mappings.
+- **Promotion granularity toggle** — allow opt-in to per-nested-
+  action-item promotion (the 400-item explosion) for clients who
+  want maximum granularity.
+- **Auto-promotion bypass** — a "approve without promoting" mode
+  for plans that only need the approval transition for compliance
+  records.
+- **last_meaningful_contact_at backfill** — derive from latest
+  existing note/audit_log entry for each existing client so the
+  Going Stale module isn't artificially noisy on day one of v1.5.
+- **Edit action item provenance** — surface the `source_plan_id`
+  in the action item drawer with a deep link back to the plan.
+- **Lens "current" usage in main plan body** — when a plan is
+  generated for a client with a `current` lens, the plan body
+  could cross-reference its scenario.
+- **Audit log enum expansion** — add `meaningful_touch` as an
+  explicit `action` so queries don't need to filter on `details.kind`.

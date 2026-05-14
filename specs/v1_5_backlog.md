@@ -193,3 +193,66 @@ about those.
    second pass with a hardcoded `Page N of TOTAL` per page. Hacky;
    doubles render cost; not robust if React-PDF computes a different
    page split on the second pass. Last resort.
+
+
+---
+
+## Phase 17 follow-ups (Architecture foundation)
+
+Tracking the v1.5 backlog created by Phase 17. Full per-item context is
+in the AGENTS.md "Phase 17" section.
+
+### Plan / Lens execution
+
+- **Phase 18: Hosted orchestrator** — replace the manual
+  `npm run generate-pending` SPOF with Inngest or pg-boss. Removes the
+  Phase 17.9 transparency banner. Critical when the team grows past 3
+  advisors or volume exceeds ~5 plans/hour.
+- **Approval promotion preview** — modal before `POST /plans/[id]/approve`
+  listing the N action items about to spawn so advisor can review
+  category / timing / owner mappings before committing.
+- **Per-nested-action-item promotion mode (Phase 19)** — opt-in toggle
+  that emits ~400 rows for Holloway-scale plans instead of 80. Most
+  clients won't want this granularity, but power users will.
+- **Approve-without-promotion mode** — for compliance-only re-approvals
+  that don't need a fresh action item batch.
+- **Lens "current" cross-reference in plan body (Phase 20)** — when a
+  plan is generated for a client with a current lens, the plan body
+  could deep-link the lens.
+
+### Cadence engine
+
+- **last_meaningful_contact_at backfill (Phase 21)** — derive from
+  latest existing note / audit_log entry per client so the Going Stale
+  module doesn't paint every existing client as overdue on day one.
+- **Cadence color coding on /clients list** — surface red / amber
+  chips on rows past their threshold for the same at-a-glance signal
+  the dashboard module provides.
+- **Cadence-based notifications** — Slack / email / iMessage when a
+  client crosses their threshold.
+- **Stage 1/4 cadence override emission** — plan generator could
+  propose Monthly during the transaction window, then Quarterly
+  post-exit.
+
+### Provenance UX
+
+- **Action item drawer: source link** — surface `source_plan_id` in
+  the drawer with a deep link back to the plan.
+- **Lens-source provenance includes rec id** — currently the chip
+  shows only "from lens" without the rec slug. Phase 13/14 push
+  endpoints don't write source_recommendation_id; could be added so
+  the chip carries the same fidelity as plan-sourced items.
+
+### Audit log
+
+- **Add 'meaningful_touch' as explicit audit_log.action** — currently
+  recordMeaningfulTouch writes `action='updated'` +
+  `details.kind='meaningful_touch'`. A first-class enum value would
+  make audit_log queries cleaner. Requires migration to expand
+  audit_log_action_check.
+
+### Migration tracking
+
+- **Apply migration 0007** via Supabase Dashboard SQL editor before
+  Phase 17 features are live in production. Idempotent.
+
